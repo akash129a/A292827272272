@@ -549,15 +549,13 @@ function stopListening(_0x14a2f7) {
 }
 async function startBot(_0x3cad9e) {
   console.log(colors.hex("#f5ab00")(createLine("START LOGGING IN", true)));
-
   const _0x3b1314 = require("../../package.json").version;
-
   if (global.GoatBot.Listening) {
     await stopListening();
   }
-
   log.info("LOGIN FACEBOOK", getText("login", "currentlyLogged"));
-  log.warn("FCA", "Modified By Mohammad Akash 😈");
+  const fcaVersion = (() => { try { return JSON.parse(require("fs").readFileSync(require.resolve("fca-eryxenx").replace(/index\.js$/, "package.json"), "utf8")).version; } catch { return "unknown"; } })();
+  log.warn("FCA", `Modified By Mohammad Akash 😈 | fca-eryxenx v${fcaVersion}`);
   try {
     var _0x41cca2 = path.join(process.cwd(), "account.txt");
     var _0x11ae53 = fs.readFileSync(_0x41cca2, 'utf8');
@@ -584,9 +582,38 @@ async function startBot(_0x3cad9e) {
     login({
       'appState': _0x812929
     }, global.GoatBot.config.optionsFca, async function (_0x3f689f, _0x4d5048) {
+      if (_0x3f689f) {
+        log.err("LOGIN FACEBOOK", "Login failed:", _0x3f689f);
+        process.exit(1);
+      }
       global.GoatBot.fcaApi = _0x4d5048;
       global.GoatBot.botID = _0x4d5048.getCurrentUserID();
       log.info("LOGIN FACEBOOK", getText("login", 'loginSuccess'));
+
+      // ✅ sessionGuard — appstate corruption ও silent logout থেকে protect
+      try {
+        if (typeof _0x4d5048.sessionGuard === "function") {
+          const accountPath = path.join(process.cwd(), "account.txt");
+          _0x4d5048.sessionGuard(accountPath, {
+            interval: 3 * 60 * 1000,
+            debounce: 30 * 1000
+          });
+          log.info("SESSION GUARD", "Active — auto-saving appstate every 3 min");
+        }
+      } catch (sgErr) {
+        log.warn("SESSION GUARD", "Could not start: " + (sgErr.message || sgErr));
+      }
+
+      // ✅ E2EE — Signal Protocol encrypted conversations
+      try {
+        if (typeof _0x4d5048.connectE2EE === "function") {
+          await _0x4d5048.connectE2EE();
+          log.info("E2EE", "Signal Protocol connected ✅");
+        }
+      } catch (e2eeErr) {
+        log.warn("E2EE", "Could not connect (non-fatal): " + (e2eeErr.message || e2eeErr));
+      }
+
       let _0x70f374 = false;
       global.botID = _0x4d5048.getCurrentUserID();
       logColor("#f5ab00", createLine("BOT INFO"));
@@ -597,7 +624,6 @@ async function startBot(_0x3cad9e) {
       log.info("LANGUAGE", global.GoatBot.config.language);
       log.info("BOT NICK NAME", global.GoatBot.config.nickNameBot || "GOAT BOT");
       let _0xe3d6c8 = {};
-      // ✅ FIX 1: GBAN check fail হলে process.exit() করবে না, বট চালু থাকবে
       try {
         const _0x22b9f2 = await axios.get('https://raw.githubusercontent.com/ntkhang03/Goat-Bot-V2-Gban/master/gban.json');
         _0xe3d6c8 = _0x22b9f2.data;
@@ -632,16 +658,13 @@ async function startBot(_0x3cad9e) {
           process.exit();
         }
       } catch (_0x4a5348) {
-        // ✅ FIX 1: আগে এখানে process.exit() ছিল — এখন শুধু warning দিয়ে চালু থাকবে
         log.warn("GBAN", "Cannot check GBAN list (network error), continuing anyway...");
       }
       let _0x4d48d2 = '';
-      // ✅ FIX 2: Notification fetch fail হলে process.exit() করবে না, বট চালু থাকবে
       try {
         const _0x4c818f = await axios.get("https://raw.githubusercontent.com/ntkhang03/Goat-Bot-V2-Gban/master/notification.txt");
         _0x4d48d2 = _0x4c818f.data;
       } catch (_0x106e88) {
-        // ✅ FIX 2: আগে এখানে process.exit() ছিল — এখন শুধু warning দিয়ে চালু থাকবে
         log.warn('ERROR', "Can't get notifications data, continuing anyway...");
       }
       if (_0x70f374 == true) {
@@ -765,7 +788,8 @@ async function startBot(_0x3cad9e) {
         if (_0x570bf7) {
           global.responseUptimeCurrent = responseUptimeError;
           if (_0x570bf7.error == "Not logged in" || _0x570bf7.error == "Not logged in." || _0x570bf7.error == "Connection refused: Server unavailable") {
-            log.err("NOT LOGGEG IN", getText("login", "notLoggedIn"), _0x570bf7);
+            const _safeErr2 = _0x570bf7 && typeof _0x570bf7 === 'object' ? { error: _0x570bf7.error || String(_0x570bf7) } : _0x570bf7;
+            log.err("NOT LOGGEG IN", getText("login", "notLoggedIn"), _safeErr2);
             global.responseUptimeCurrent = responseUptimeError;
             global.statusAccountBot = "can't login";
             if (!_0x54729a) {
@@ -803,7 +827,8 @@ async function startBot(_0x3cad9e) {
                 'globalData': _0x2a1319,
                 'error': _0x570bf7
               });
-              return log.err("LISTEN_MQTT", getText('login', "callBackError"), _0x570bf7);
+              const _safeErr = _0x570bf7 && typeof _0x570bf7 === 'object' ? { error: _0x570bf7.error || String(_0x570bf7), type: _0x570bf7.type } : _0x570bf7;
+              return log.err("LISTEN_MQTT", getText('login', "callBackError"), _safeErr);
             }
           }
         }
