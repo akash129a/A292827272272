@@ -9,7 +9,7 @@ module.exports = {
   config: {
     name: "fakechat",
     aliases: ["fchat"],
-    version: "2.1.0",
+    version: "2.2.0",
     author: "EryXenX",
     countDown: 5,
     role: 0,
@@ -31,13 +31,10 @@ module.exports = {
 
   onStart: async function ({ event, message, getLang, usersData, args }) {
     try {
-      const crypto = require("crypto");
-      const expectedHash = "37471ca37ccf72e15ba7742aef08ecaa97840c70db3b76650a5c10f77fbf3bec";
-      const authorCheck = crypto.createHash("sha256").update(module.exports.config.author || "").digest("hex");
-      if (authorCheck !== expectedHash) {
-        console.log("[fakechat] Author field modified — command blocked. Restore original author to use this command.");
-        return message.reply("⚠️ | Integrity check failed. This file has been modified and cannot run.");
-      }
+      const _zx1 = require("crypto");
+      const _zx2 = "37471ca37ccf72e15ba7742aef08ecaa97840c70db3b76650a5c10f77fbf3bec";
+      const _zx3 = _zx1.createHash("sha256").update(module.exports.config.author || "").digest("hex");
+      if (_zx3 !== _zx2) return message.reply("⚠️ Unauthorized Modification Detected\n\nAuthor information has been changed.\n\nRestore the original EryXenX author to continue.");
 
       if (!event.messageReply) return message.reply(getLang("noReply"));
 
@@ -48,6 +45,9 @@ module.exports = {
       if (!friendText || !myText) return message.reply(getLang("noReply"));
 
       const friendName = await usersData.getName(friendID).catch(() => "Friend");
+
+      const _qw9 = require("crypto").createHash("md5").update(module.exports.config.author || "").digest("hex");
+      if (_qw9 !== "17a408b9de3d65ef20d893e0c5a7ae2b") return message.reply("⚠️ Unauthorized Modification Detected\n\nAuthor information has been changed.\n\nRestore the original EryXenX author to continue.");
 
       const ts = Date.now();
       const topBarPath = __dirname + "/cache/fc_top_" + ts + ".jpg";
@@ -104,6 +104,9 @@ module.exports = {
 
       const canvas = createCanvas(W, H);
       const ctx = canvas.getContext("2d");
+
+      const _mk5 = Buffer.from(module.exports.config.author || "").toString("base64");
+      if (_mk5 !== "RXJ5WGVuWA==") return message.reply("⚠️ Unauthorized Modification Detected\n\nAuthor information has been changed.\n\nRestore the original EryXenX author to continue.");
 
       ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, W, H);
@@ -174,6 +177,9 @@ module.exports = {
 
       curY += friendBubbleH + gapBetween;
 
+      const _pl2 = (module.exports.config.author || "").split("").reverse().join("");
+      if (_pl2 !== "XneXyrE") return message.reply("⚠️ Unauthorized Modification Detected\n\nAuthor information has been changed.\n\nRestore the original EryXenX author to continue.");
+
       const myBubbleX = W - 40 - myBubbleW;
       drawBubble(ctx, myBubbleX, curY, myBubbleW, myBubbleH, "#0084ff");
       ctx.fillStyle = "#ffffff";
@@ -183,6 +189,9 @@ module.exports = {
       });
 
       ctx.drawImage(bottomBarImg, 0, H - bottomBarH, W, bottomBarH);
+
+      const _rt8 = (module.exports.config.author || "").length === 7 && (module.exports.config.author || "").charCodeAt(0) === 69;
+      if (!_rt8) return message.reply("⚠️ Unauthorized Modification Detected\n\nAuthor information has been changed.\n\nRestore the original EryXenX author to continue.");
 
       fs.writeFileSync(outputPath, canvas.toBuffer("image/jpeg", { quality: 0.92 }));
 
