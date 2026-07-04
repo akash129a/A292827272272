@@ -28,7 +28,7 @@ module.exports = {
 ├─ 🔗 Cᴏɴᴛᴀᴄᴛ ─╮
 │ 📘 Facebook  : fb.com/akashx404 
 │ 💬 Messenger: m.me/akashx404 
-│ 📞 WhatsApp  : wa.me/01933165880
+│ 📞 WhatsApp  : 0194046054
 ╰────────────────╯`;
 
     const cacheDir = path.join(__dirname, "cache");
@@ -36,7 +36,7 @@ module.exports = {
 
     if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
 
-    const imgLink = "https://i.imgur.com/1G4ZhU7.jpeg";
+    const imgLink = "https://i.imgur.com/b4WUrLL.jpeg";
 
     const send = () => {
       api.sendMessage(
