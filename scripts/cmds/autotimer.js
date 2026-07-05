@@ -3,23 +3,20 @@ const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
 
+// গ্লোবাল স্টেট ব্যাকআপ (সার্ভিস চালু/বন্ধ রাখার জন্য)
+if (global.autoTimerStatus === undefined) global.autoTimerStatus = true; 
+
 module.exports.config = {
   name: "autotimer",
-  version: "5.1",
+  version: "5.2",
   role: 0,
   author: "Akash Chowdhury",
-  description: "⏰ প্রতি ঘণ্টায় ভিডিওসহ অটো মেসেজ পাঠাবে (Ultra Optimized)",
+  description: "⏰ প্রতি ঘণ্টায় ভিডিওসহ অটো মেসেজ পাঠাবে এবং অন/অফ করা যাবে",
   category: "AutoTime",
   countDown: 3,
 };
 
 module.exports.onLoad = async function ({ api }) {
-
-  // 🔒 author lock check
-  if (module.exports.config.author !== "Akash Chowdhury") {
-    console.error("❌ Author নাম পরিবর্তন করা হয়েছে। ফাইল চলবে না।");
-    return process.exit(1);
-  }
 
   const timerData = {
     "12:00 AM": { text: "⌚┆এখন রাত ১২টা বাজে❥︎খাউয়া দাউয়া করে নেউ,🍽️🍛",         video: "https://files.catbox.moe/8btwbx.mp4" },
@@ -51,19 +48,20 @@ module.exports.onLoad = async function ({ api }) {
   const cacheDir = path.join(__dirname, "cache");
   if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
 
-  // 🔥 FIX: per group + per time tracking
+  // 🔥 per group + per time tracking
   if (!global.__sentMap) global.__sentMap = {};
 
   let isChecking = false;
 
   const checkTimeAndSend = async () => {
-    if (isChecking) return;
+    // অন/অফ চেক এবং লক স্টেট চেক
+    if (!global.autoTimerStatus || isChecking) return;
     isChecking = true;
 
     try {
       const now = moment().tz("Asia/Dhaka").format("hh:mm A");
 
-      // If the current time isn't in our active schedule list, skip
+      // সঠিক সময় না হলে স্কিপ করবে
       if (!timerData[now]) {
         isChecking = false;
         return;
@@ -72,29 +70,92 @@ module.exports.onLoad = async function ({ api }) {
       const todayDate = moment().tz("Asia/Dhaka").format("DD-MM-YYYY");
       const { text, video } = timerData[now];
 
-      // Cleanup previous dates' tracking data from memory
+      // পুরনো ডেটা ক্লিনিং
       for (const key of Object.keys(global.__sentMap)) {
-        if (key !== todayDate) {
-          delete global.__sentMap[key];
+        if (key !== todayDate) delete global.__sentMap[key];
+      }
+
+      if (!global.__sentMap[todayDate]) global.__sentMap[todayDate] = {};
+      if (!global.__sentMap[todayDate][now]) global.__sentMap[todayDate][now] = [];
+
+      // থ্রেড লিস্ট বা গ্রুপ লিস্ট নিয়ে আসা (সর্বোচ্চ ১০০টি সচল চ্যাট)
+      const threads = await api.getThreadList(100, null, ["INBOX"]);
+      
+      // ভিডিও ডাউনলোডের পাথ সেটআপ
+      const videoPath = path.join(cacheDir, `timer_${now.replace(/:| /g, "_")}.mp4`);
+
+      // যদি এই নির্দিষ্ট ঘণ্টায় মেসেজ অলরেডি পাঠানো না হয়ে থাকে, তবেই ডাউনলোড করবে
+      let downloaded = false;
+
+      for (const thread of threads) {
+        if (!thread.isGroup || !thread.isSubscribed) continue; // শুধু একটিভ গ্রুপ চ্যাটে যাবে
+        
+        // অলরেডি এই গ্রুপে পাঠানো হয়ে গেলে স্কিপ করবে
+        if (global.__sentMap[todayDate][now].includes(thread.threadID)) continue;
+
+        // প্রথমবার ভিডিও ডাউনলোড লজিক
+        if (!downloaded) {
+          const response = await axios({
+            method: "get",
+            url: video,
+            responseType: "stream"
+          });
+          const writer = fs.createWriteStream(videoPath);
+          response.data.pipe(writer);
+          
+          await new Promise((resolve, reject) => {
+            writer.on("finish", resolve);
+            writer.on("error", reject);
+          });
+          downloaded = true;
         }
+
+        // মেসেজ পাঠানো
+        api.sendMessage(
+          {
+            body: text,
+            attachment: fs.createReadStream(videoPath)
+          },
+          thread.threadID,
+          (err) => {
+            if (!err) {
+              global.__sentMap[todayDate][now].push(thread.threadID);
+            }
+          }
+        );
       }
 
-      // Initialize structures if they don't exist
-      if (!global.__sentMap[todayDate]) {
-        global.__sentMap[todayDate] = {};
-      }
-      if (!global.__sentMap[todayDate][now]) {
-        global.__sentMap[todayDate][now] = [];
-      }
+      // কাজ শেষে ক্যাশ ফাইল ডিলিট করার ট্রাই (একটু পর যাতে ফাইল লক রিলিজ হয়)
+      setTimeout(() => {
+        if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
+      }, 15000);
 
-      // Remaining code logic continues here...
     } catch (error) {
-      console.error(error);
+      console.error("AutoTimer Error: ", error);
     } finally {
       isChecking = false;
     }
   };
 
-  // Set interval to check every second or minute depending on your implementation
+  // প্রতি ৩০ সেকেন্ড পর পর টাইম চেক করবে
   setInterval(checkTimeAndSend, 30000); 
+};
+
+// 🎮 ম্যানুয়ালি অন/অফ করার জন্য অনস্টার্ট মেথড
+module.exports.onStart = async function ({ api, event, args }) {
+  const { threadID, messageID } = event;
+  
+  if (!args[0]) {
+    return api.sendMessage(`🔧 বর্তমানে অটো-টাইমারটি ${global.autoTimerStatus ? "চালু (ON)" : "বন্ধ (OFF)"} আছে।\n\nচালু করতে লিখুন: /autotimer on\nবন্ধ করতে লিখুন: /autotimer off`, threadID, messageID);
+  }
+
+  if (args[0].toLowerCase() === "on") {
+    global.autoTimerStatus = true;
+    return api.sendMessage("✅ অটো-টাইমার সাকসেসফুলি চালু করা হয়েছে। এখন থেকে প্রতি ঘণ্টায় ভিডিও মেসেজ যাবে।", threadID, messageID);
+  } else if (args[0].toLowerCase() === "off") {
+    global.autoTimerStatus = false;
+    return api.sendMessage("❌ অটো-টাইমার বন্ধ করা হয়েছে। পরবর্তী নির্দেশ না দেওয়া পর্যন্ত কোনো মেসেজ যাবে না।", threadID, messageID);
+  } else {
+    return api.sendMessage("⚠️ ভুল কমান্ড! দয়া করে '/autotimer on' অথবা '/autotimer off' ব্যবহার করুন।", threadID, messageID);
+  }
 };
