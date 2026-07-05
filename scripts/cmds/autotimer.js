@@ -1,6 +1,4 @@
-📄 | Source code of "autotimer.js":
-
-const moment = require("moment-timezone");
+const  moment = require("moment-timezone");
 const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
