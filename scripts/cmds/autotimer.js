@@ -27,7 +27,7 @@ function saveStatusMap(map) {
 
 module.exports.config = {
   name: "autotimer",
-  version: "6.0",
+  version: "6.5",
   role: 0, 
   author: "Akash Chowdhury",
   description: "⏰ প্রতি ঘণ্টায় ভিডিওসহ অটো মেসেজ পাঠাবে (On/Off সিস্টেমসহ)",
@@ -60,7 +60,7 @@ module.exports.onLoad = async function ({ api }) {
     "02:00 PM": { text: "⌚┆এখন দুপুর ২টা বাজে❥︎দুপুরের খাবার খেয়েছো তো?🍛🌤️", video: "https://files.catbox.moe/nstu8b.mp4" },
     "03:00 PM": { text: "⌚┆এখন বিকাল ৩টা বাজে❥︎কাজে ফোকাস করো,🧑🔧☀️", video: "https://files.catbox.moe/xmrujv.mp4" },
     "04:00 PM": { text: "⌚┆এখন বিকাল ৪টা বাজe❥︎আসরের নামাজ পড়ে নাও,🙇🥀", video: "https://files.catbox.moe/jndni6.mp4" },
-    "05:00 PM": { text: "⌚┆এখন বিকাল ৫টা বাজে❥︎একটু বিশ্রাম নাও,🙂↕️🌆", video: "https://files.catbox.moe/dv3qv4.mp4" },
+    "05:00 PM": { text: "⌚┆এখন বিকাল ৫টা বাজে❥︎একতু বিশ্রাম নাও,🙂↕️🌆", video: "https://files.catbox.moe/dv3qv4.mp4" },
     "06:00 PM": { text: "⌚┆এখন সন্ধ্যা ৬টা বাজে❥︎পরিবারকে সময় দাও,😍🌇", video: "https://files.catbox.moe/au2yk5.mp4" },
     "07:00 PM": { text: "⌚┆এখন সন্ধ্যা ৭টা বাজে❥︎এশার নামাজ পড়ো,❤️🌃", video: "https://files.catbox.moe/4v4uyv.mp4" },
     "08:00 PM": { text: "⌚┆এখন রাত ৮টা বাজে❥︎আজকের কাজ শেষ করো,🧖🙂↔️", video: "https://files.catbox.moe/ltspa4.mp4" },
@@ -81,13 +81,11 @@ module.exports.onLoad = async function ({ api }) {
       const now = moment().tz("Asia/Dhaka").format("hh:mm A");
       if (!timerData[now]) return;
 
-      // এক মিনিটে যেন বারবার মেসেজ না যায়
       const currentMinute = moment().tz("Asia/Dhaka").format("HH:mm");
       if (global.__sentMap[currentMinute]) return;
 
       const statusMap = getStatusMap();
       
-      // বটের থ্রেড লিস্ট নেওয়ার প্রসেস
       let allThreads = [];
       try {
         allThreads = await api.getThreadList(100, null, ["INBOX"]);
@@ -103,13 +101,11 @@ module.exports.onLoad = async function ({ api }) {
       const videoName = now.replace(/[: ]/g, "_") + ".mp4";
       const videoPath = path.join(cacheDir, videoName);
 
-      // ভিডিও ডাউনলোড লজিক ঠিক করা হয়েছে
       if (!fs.existsSync(videoPath)) {
         try {
           console.log(`[AUTOTIMER] Downloading video for ${now}...`);
           const res = await axios.get(video, { responseType: "arraybuffer" });
           fs.writeFileSync(videoPath, Buffer.from(res.data));
-          console.log(`[AUTOTIMER] Cache success for ${now}`);
         } catch (err) {
           console.error(`[AUTOTIMER] Video download failed:`, err.message);
           return;
@@ -130,7 +126,6 @@ ${text}
       for (const thread of allThreads) {
         const threadID = thread.threadID;
         
-        // শুধু On থাকা গ্রুপেই মেসেজ যাবে
         if (statusMap[threadID] === true) {
           try {
             await api.sendMessage({
@@ -152,11 +147,11 @@ ${text}
     }
   };
 
-  // প্রতি ৩০ সেকেন্ড পর পর টাইম চেক করবে
   setInterval(checkTimeAndSend, 30000);
 };
 
-module.exports.run = async function ({ api, event, args }) {
+// এখানে run এর জায়গায় onStart ব্যবহার করা হয়েছে এররটি ফিক্স করার জন্য
+module.exports.onStart = async function ({ api, event, args }) {
   const { threadID, messageID } = event;
   const statusMap = getStatusMap();
 
