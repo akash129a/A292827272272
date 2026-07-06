@@ -13,14 +13,14 @@ module.exports = {
 		guide: {
 			vi: "   {pn} <new prefix>: thay đổi prefix mới trong box chat của bạn"
 				+ "\n   Ví dụ:"
-				+ "\n    {pn} +"
+				+ "\n    {pn} *"
 				+ "\n\n   {pn} <new prefix> -g: thay đổi prefix mới trong hệ thống bot (chỉ admin bot)"
 				+ "\n   Ví dụ:"
 				+ "\n    {pn} + -g"
 				+ "\n\n   {pn} reset: thay đổi prefix trong box chat của bạn về mặc định",
 			en: "   {pn} <new prefix>: change new prefix in your box chat"
 				+ "\n   Example:"
-				+ "\n    {pn} +"
+				+ "\n    {pn} *"
 				+ "\n\n   {pn} <new prefix> -g: change new prefix in system bot (only admin bot)"
 				+ "\n   Example:"
 				+ "\n    {pn} + -g"
@@ -36,7 +36,7 @@ module.exports = {
 			confirmThisThread: "Vui lòng thả cảm xúc bất kỳ vào tin nhắn này để xác nhận thay đổi prefix trong nhóm chat của bạn",
 			successGlobal: "Đã thay đổi prefix hệ thống bot thành: %1",
 			successThisThread: "Đã thay đổi prefix trong nhóm chat của bạn thành: %1",
-			myPrefix: "🌐 Prefix của hệ thống: %1\n🛸 Prefix của nhóm bạn: %2"
+			myPrefix: "👑 Owner: Akash Chowdhury ~_~\n🌐 Global prefix: %1\n🛸 Your group chat prefix: %2"
 		},
 		en: {
 			reset: "Your prefix has been reset to default: %1",
@@ -81,20 +81,21 @@ module.exports = {
 			confirmThisThread: "আপনার box chat এ prefix পরিবর্তন নিশ্চিত করতে এই message এ react করুন",
 			successGlobal: "System bot এর prefix পরিবর্তন হয়েছে: %1",
 			successThisThread: "আপনার box chat এর prefix পরিবর্তন হয়েছে: %1",
-			myPrefix: "👑 Owner: Akash Chowdhury\n✨──────────────────✨\n➕ Global Prefix: [ %1 ]\n🛸 Group Prefix: [ %2 ]\n✨──────────────────✨"
+			myPrefix: "👑 Owner: Akash Chowdhury\n✨──────────────────✨\n➕ Global Prefix: [ %1 ]\n*️⃣ Group Prefix: [ %2 ]\n✨──────────────────✨"
 		}
 	},
 
 	onStart: async function ({ message, role, args, commandName, event, threadsData, getLang }) {
-		// অন-স্টার্ট (onStart) এ যদি কোনো অতিরিক্ত লেখা বা আর্গুমেন্ট না থাকে, তবে সরাসরি ডিজাইনটি শো করবে
 		if (!args[0]) {
-			const threadPrefix = await threadsData.get(event.threadID, "data.prefix") || global.GoatBot.config.prefix;
-			return message.reply(getLang("myPrefix", global.GoatBot.config.prefix, threadPrefix));
+			const threadPrefix = await threadsData.get(event.threadID, "data.prefix") || "*";
+			const globalPrefix = global.GoatBot?.config?.prefix || "+";
+			return message.reply(getLang("myPrefix", globalPrefix, threadPrefix));
 		}
 
 		if (args[0] == 'reset') {
 			await threadsData.set(event.threadID, null, "data.prefix");
-			return message.reply(getLang("reset", global.GoatBot.config.prefix));
+			const globalPrefix = global.GoatBot?.config?.prefix || "+";
+			return message.reply(getLang("reset", globalPrefix));
 		}
 
 		const newPrefix = args[0];
@@ -121,7 +122,7 @@ module.exports = {
 		if (event.userID !== Reaction.author)
 			return;
 		if (Reaction.setGlobal) {
-			global.GoatBot.config.prefix = Reaction.newPrefix;
+			if (global.GoatBot?.config) global.GoatBot.config.prefix = Reaction.newPrefix;
 			fs.writeFileSync(global.client.dirConfig, JSON.stringify(global.GoatBot.config, null, 4));
 			message.reply(getLang("successGlobal", Reaction.newPrefix));
 		}
