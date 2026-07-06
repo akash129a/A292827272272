@@ -50,7 +50,7 @@ module.exports.onLoad = async function ({ api }) {
     "04:00 AM": { text: "এখন রাত ৪টা বাজে❥︎ফজরের প্রস্তুতি নাও,🌄", video: "https://files.catbox.moe/siojtf.mp4" },
     "05:00 AM": { text: "এখন সকাল ৫টা বাজে❥︎নামাজ পড়ছো তো?🌅☀️", video: "https://files.catbox.moe/5v4nxi.mp4" },
     "06:00 AM": { text: "এখন সকাল ৬টা বাজে❥︎ঘুম থেকে উঠো সবাই,🌞☕", video: "https://files.catbox.moe/q9rf0f.mp4" },
-    "07:00 AM": { text: "এখন সকাল ۷টা বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
+    "07:00 AM": { text: "এখন সকাল ০৭:০০ AM বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
     "08:00 AM": { text: "এখন সকাল ৮টা বাজে❥︎কাজ শুরু করো মন দিয়ে,🌤️✨", video: "https://files.catbox.moe/tb5xef.mp4" },
     "09:00 AM": { text: "এখন সকাল ৯টা বাজে❥︎চল কাজে মন দিই!🕘", video: "https://files.catbox.moe/2mi5oo.mp4" },
     "10:00 AM": { text: "এখন সকাল ১০টা বাজে❥︎তোমাদের মিস করছি,🌞☀️", video: "https://files.catbox.moe/q2vg9i.mp4" },
@@ -104,7 +104,6 @@ module.exports.onLoad = async function ({ api }) {
       const currentDate = moment().tz(timeZone).format("DD-MM-YYYY");
       const currentShortTime = moment().tz(timeZone).format("hh:mm A");
 
-      // স্টাইলিশ লেআউট এবং ওনার নেম
       const formattedMessage = 
         `◢◤━━━━━━━━━━━━━━━━◥◣\n` +
         `🕒>ᴛɪᴍᴇ: ${currentShortTime}\n` +
@@ -144,7 +143,8 @@ module.exports.onLoad = async function ({ api }) {
 
       for (const thread of groupThreads) {
         const threadID = thread.threadID;
-        if (statusMap[threadID] === false) continue;
+        const key = threadID.toString();
+        if (statusMap[key] === false) continue; // ডিফল্ট অন বা ট্রু থাকলে মেসেজ যাবে
 
         const msgPayload = { body: formattedMessage };
         if (attachmentPath && fs.existsSync(attachmentPath)) {
@@ -169,27 +169,27 @@ module.exports.onLoad = async function ({ api }) {
     }
   };
 
-  setInterval(checkTimeAndSend, 30000);
+  // প্রতি ১ মিনিটে (৬০ সেকেন্ড) চেক করবে সঠিক ঘণ্টা পড়েছে কি না
+  setInterval(checkTimeAndSend, 60 * 1000);
 };
 
-module.exports.run = async function ({ api, event, args }) {
-  const { threadID, messageID } = event;
+// বটের হ্যান্ডলারের জন্য onStart এক্সপোর্ট (যা দিয়ে কমান্ড অন/অফ কাজ করবে)
+module.exports.onStart = async function({ api, event, args }) {
+  const threadID = event.threadID;
   const statusMap = getStatusMap();
+  const key = threadID.toString();
 
-  if (!args[0]) {
-    return api.sendMessage("⏰ অটো-টাইমার অন বা অফ করতে ব্যবহার করুন:\n• autotimer on\n• autotimer off", threadID, messageID);
+  if (args[0] === "on") {
+    statusMap[key] = true;
+    saveStatusMap(statusMap);
+    return api.sendMessage("⏰ [AUTOTIMER] Auto Time message is now turned ON for this group chat. The bot will send automated hourly updates!", threadID, event.messageID);
   }
 
-  const mode = args[0].toLowerCase();
-  if (mode === "on") {
-    statusMap[threadID] = true;
+  if (args[0] === "off") {
+    statusMap[key] = false;
     saveStatusMap(statusMap);
-    return api.sendMessage("✅ এই গ্রুপে অটো-টাইমার সফলভাবে চালু (ON) করা হয়েছে। এখন থেকে প্রতি ঘণ্টায় মেসেজ পাঠানো হবে।", threadID, messageID);
-  } else if (mode === "off") {
-    statusMap[threadID] = false;
-    saveStatusMap(statusMap);
-    return api.sendMessage("❌ এই গ্রুপে অটো-টাইমার বন্ধ (OFF) করা হয়েছে।", threadID, messageID);
-  } else {
-    return api.sendMessage("⚠️ ভুল কমান্ড! দয়া করে 'on' অথবা 'off' ব্যবহার করুন।", threadID, messageID);
+    return api.sendMessage("⏰ [AUTOTIMER] Auto Time message is now turned OFF.", threadID, event.messageID);
   }
+
+  return api.sendMessage("Use: autotimer on / autotimer off", threadID, event.messageID);
 };
