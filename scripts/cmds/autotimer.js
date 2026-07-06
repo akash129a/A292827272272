@@ -43,30 +43,30 @@ module.exports.onLoad = async function ({ api }) {
   }
 
   const timerData = {
-    "12:00 AM": { text: "⌚┆এখন রাত ১২টা বাজে❥︎খাউয়া দাউয়া করে নেউ,🍽️🍛", video: "https://files.catbox.moe/8btwbx.mp4" },
-    "01:00 AM": { text: "⌚┆এখন রাত ১টা বাজে❥︎সবাই শুয়ে পড়ো,🌌💤", video: "https://files.catbox.moe/9iq1ki.mp4" },
-    "02:00 AM": { text: "⌚┆এখন রাত ২টা বাজে❥︎প্রেম না কইরা যাইয়া ঘুমা বেক্কল,😾🌠", video: "https://files.catbox.moe/g9zf5c.mp4" },
-    "03:00 AM": { text: "⌚┆এখন রাত ৩টা বাজে❥︎যারা ছ্যাকা খাইছে তারা জেগে আছে,🫠🌃", video: "https://files.catbox.moe/siojtf.mp4" },
-    "04:00 AM": { text: "⌚┆এখন রাত ৪টা বাজে❥︎ফজরের প্রস্তুতি নাও,🌄", video: "https://files.catbox.moe/siojtf.mp4" },
-    "05:00 AM": { text: "⌚┆এখন সকাল ৫টা বাজে❥︎নামাজ পড়ছো তো?🌅☀️", video: "https://files.catbox.moe/5v4nxi.mp4" },
-    "06:00 AM": { text: "⌚┆এখন সকাল ৬টা বাজে❥︎ঘুম থেকে উঠো সবাই,🌞☕", video: "https://files.catbox.moe/q9rf0f.mp4" },
-    "07:00 AM": { text: "⌚┆এখন সকাল ৭টা বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
-    "08:00 AM": { text: "⌚┆এখন সকাল ৮টা বাজে❥︎কাজ শুরু করো মন দিয়ে,🌤️✨", video: "https://files.catbox.moe/tb5xef.mp4" },
-    "09:00 AM": { text: "⌚┆এখন সকাল ৯টা বাজে❥︎চল কাজে মন দিই!🕘", video: "https://files.catbox.moe/2mi5oo.mp4" },
-    "10:00 AM": { text: "⌚┆এখন সকাল ১০টা বাজে❥︎তোমাদের মিস করছি,🌞☀️", video: "https://files.catbox.moe/q2vg9i.mp4" },
-    "11:00 AM": { text: "⌚┆এখন সকাল ১১টা বাজে❥︎কাজ চালিয়ে যাও!😌", video: "https://files.catbox.moe/zzm2xo.mp4" },
-    "12:00 PM": { text: "⌚┆এখন দুপুর ১২টা বাজে❥︎ভালোবাসা জানাও সবাইকে,❤️", video: "https://files.catbox.moe/g8d1av.mp4" },
-    "01:00 PM": { text: "⌚┆এখন দুপুর ১টা বাজে❥︎জোহরের নামাজ পড়ে নাও,🙇🤲", video: "https://files.catbox.moe/ypt7au.mp4" },
-    "02:00 PM": { text: "⌚┆এখন দুপুর ২টা বাজে❥︎দুপুরের খাবার খেয়েছো তো?🍛🌤️", video: "https://files.catbox.moe/nstu8b.mp4" },
-    "03:00 PM": { text: "⌚┆এখন বিকাল ৩টা বাজে❥︎কাজে ফোকাস করো,🧑🔧☀️", video: "https://files.catbox.moe/xmrujv.mp4" },
-    "04:00 PM": { text: "⌚┆এখন বিকাল ৪টা বাজe❥︎আসরের নামাজ পড়ে নাও,🙇🥀", video: "https://files.catbox.moe/jndni6.mp4" },
-    "05:00 PM": { text: "⌚┆এখন বিকাল ৫টা বাজে❥︎একতু বিশ্রাম নাও,🙂↕️🌆", video: "https://files.catbox.moe/dv3qv4.mp4" },
-    "06:00 PM": { text: "⌚┆এখন সন্ধ্যা ৬টা বাজে❥︎পরিবারকে সময় দাও,😍🌇", video: "https://files.catbox.moe/au2yk5.mp4" },
-    "07:00 PM": { text: "⌚┆এখন সন্ধ্যা ৭টা বাজে❥︎এশার নামাজ পড়ো,❤️🌃", video: "https://files.catbox.moe/4v4uyv.mp4" },
-    "08:00 PM": { text: "⌚┆এখন রাত ৮টা বাজে❥︎আজকের কাজ শেষ করো,🧖🙂↕️", video: "https://files.catbox.moe/ltspa4.mp4" },
-    "09:00 PM": { text: "⌚┆এখন রাত ৯টা বাজে❥︎ঘুমের প্রস্তুতি নাও,😴🌙", video: "https://files.catbox.moe/sxs5io.mp4" },
-    "10:00 PM": { text: "⌚┆এখন রাত ১০টা বাজে❥︎ঘুমাতে যাও, স্বপ্নে দেখা হবে,😴🙂↕️", video: "https://files.catbox.moe/0e4s7h.mp4" },
-    "11:00 PM": { text: "⌚┆এখন রাত ১১টা বাজে❥︎ভালোবাসা রইলো,🥰🌌", video: "https://files.catbox.moe/ndbhtu.mp4" }
+    "12:00 AM": { text: "এখন রাত ১২টা বাজে❥︎খাউয়া দাউয়া করে নেউ,🍽️🍛", video: "https://files.catbox.moe/8btwbx.mp4" },
+    "01:00 AM": { text: "এখন রাত ১টা বাজে❥︎সবাই শুয়ে পড়ো,🌌💤", video: "https://files.catbox.moe/9iq1ki.mp4" },
+    "02:00 AM": { text: "এখন রাত ২টা বাজে❥︎প্রেম না কইরা যাইয়া ঘুমা বেক্কল,😾🌠", video: "https://files.catbox.moe/g9zf5c.mp4" },
+    "03:00 AM": { text: "এখন রাত ৩টা বাজে❥︎যারা ছ্যাকা খাইছে তারা জেগে আছে,🫠🌃", video: "https://files.catbox.moe/siojtf.mp4" },
+    "04:00 AM": { text: "এখন রাত ৪টা বাজে❥︎ফজরের প্রস্তুতি নাও,🌄", video: "https://files.catbox.moe/siojtf.mp4" },
+    "05:00 AM": { text: "এখন সকাল ৫টা বাজে❥︎নামাজ পড়ছো তো?🌅☀️", video: "https://files.catbox.moe/5v4nxi.mp4" },
+    "06:00 AM": { text: "এখন সকাল ৬টা বাজে❥︎ঘুম থেকে উঠো সবাই,🌞☕", video: "https://files.catbox.moe/q9rf0f.mp4" },
+    "07:00 AM": { text: "এখন সকাল ৭টা বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
+    "08:00 AM": { text: "এখন সকাল ৮টা বাজে❥︎কাজ শুরু করো মন দিয়ে,🌤️✨", video: "https://files.catbox.moe/tb5xef.mp4" },
+    "09:00 AM": { text: "এখন সকাল ৯টা বাজে❥︎চল কাজে মন দিই!🕘", video: "https://files.catbox.moe/2mi5oo.mp4" },
+    "10:00 AM": { text: "এখন সকাল ১০টা বাজে❥︎তোমাদের মিস করছি,🌞☀️", video: "https://files.catbox.moe/q2vg9i.mp4" },
+    "11:00 AM": { text: "এখন সকাল ১১টা বাজে❥︎কাজ চালিয়ে যাও!😌", video: "https://files.catbox.moe/zzm2xo.mp4" },
+    "12:00 PM": { text: "এখন দুপুর ১২টা বাজে❥︎ভালোবাসা জানাও সবাইকে,❤️", video: "https://files.catbox.moe/g8d1av.mp4" },
+    "01:00 PM": { text: "এখন দুপুর ১টা বাজে❥︎জোহরের নামাজ পড়ে নাও,🙇🤲", video: "https://files.catbox.moe/ypt7au.mp4" },
+    "02:00 PM": { text: "এখন দুপুর ২টা বাজে❥︎দুপুরের খাবার খেয়েছো তো?🍛🌤️", video: "https://files.catbox.moe/nstu8b.mp4" },
+    "03:00 PM": { text: "এখন বিকাল ৩টা বাজে❥︎কাজে ফোকাস করো,🧑🔧☀️", video: "https://files.catbox.moe/xmrujv.mp4" },
+    "04:00 PM": { text: "এখন বিকাল ৪টা বাজে❥︎আসরের নামাজ পড়ে নাও,🙇🥀", video: "https://files.catbox.moe/jndni6.mp4" },
+    "05:00 PM": { text: "এখন বিকাল ৫টা বাজে❥︎একতু বিশ্রাম নাও,🙂↕️🌆", video: "https://files.catbox.moe/dv3qv4.mp4" },
+    "06:00 PM": { text: "এখন সন্ধ্যা ৬টা বাজে❥︎পরিবারকে সময় দাও,😍🌇", video: "https://files.catbox.moe/au2yk5.mp4" },
+    "07:00 PM": { text: "এখন সন্ধ্যা ৭টা বাজে❥︎এশার নামাজ পড়ো,❤️🌃", video: "https://files.catbox.moe/4v4uyv.mp4" },
+    "08:00 PM": { text: "এখন রাত ৮টা বাজে❥︎আজকের কাজ শেষ করো,🧖🙂↕️", video: "https://files.catbox.moe/ltspa4.mp4" },
+    "09:00 PM": { text: "এখন রাত ৯টা বাজে❥︎ঘুমের প্রস্তুতি নাও,😴🌙", video: "https://files.catbox.moe/sxs5io.mp4" },
+    "10:00 PM": { text: "এখন রাত ১০টা বাজে❥︎ঘুমাতে যাও, স্বপ্নে দেখা হবে,😴🙂↕️", video: "https://files.catbox.moe/0e4s7h.mp4" },
+    "11:00 PM": { text: "এখন রাত ১১টা বাজে❥︎ভালোবাসা রইলো,🥰🌌", video: "https://files.catbox.moe/ndbhtu.mp4" }
   };
 
   const cacheDir = path.join(__dirname, "cache");
@@ -78,10 +78,11 @@ module.exports.onLoad = async function ({ api }) {
 
   const checkTimeAndSend = async () => {
     try {
-      const now = moment().tz("Asia/Dhaka").format("hh:mm A");
+      const timeZone = "Asia/Dhaka";
+      const now = moment().tz(timeZone).format("hh:mm A");
       if (!timerData[now]) return;
 
-      const currentMinute = moment().tz("Asia/Dhaka").format("HH:mm");
+      const currentMinute = moment().tz(timeZone).format("HH:mm");
       if (global.__sentMap[currentMinute]) return;
 
       const statusMap = getStatusMap();
@@ -96,77 +97,99 @@ module.exports.onLoad = async function ({ api }) {
       
       if (!allThreads || allThreads.length === 0) return;
 
-      // গ্রুপ ফিল্টার করা (শুধু গ্রুপ চ্যাটগুলো নেওয়া হবে)
-      const groupThreads = allThreads.filter(thread => thread.isGroup && thread.isSubscribed);
+      const groupThreads = allThreads.filter(thread => thread.isGroup);
       if (groupThreads.length === 0) return;
+
+      const currentHourData = timerData[now];
+      const currentDate = moment().tz(timeZone).format("DD-MM-YYYY");
+      const currentShortTime = moment().tz(timeZone).format("hh:mm A");
+
+      // ওনারের নাম পরিবর্তন করে Akash Chowdhury করা হয়েছে
+      const formattedMessage = 
+        `◢◤━━━━━━━━━━━━━━━━◥◣\n` +
+        `🕒>ᴛɪᴍᴇ: ${currentShortTime}\n` +
+        `⌚┆${currentHourData.text}\n` +
+        `◥◣━━━━━━━━━━━━━━━━◢◤\n` +
+        `📅>...ᴅᴀᴛᴇ: ${currentDate}\n` +
+        `━━━━━━━━━━━━━━━━━━━━\n` +
+        `𝙱𝙾𝚃 𝙾𝚆𝙽𝙴𝚁:- ᴀᴋᴀsʜ-ᴄʜᴏᴡᴅʜᴜʀʏ\n` +
+        `━━━━━━━━━━━━━━━━━━━━`;
+
+      let attachmentPath = null;
+      if (currentHourData.video) {
+        try {
+          const ext = path.extname(currentHourData.video.split('?')[0]) || '.mp4';
+          attachmentPath = path.join(cacheDir, `timer_media_${currentMinute.replace(':', '_')}${ext}`);
+          
+          const response = await axios({
+            method: 'get',
+            url: currentHourData.video,
+            responseType: 'stream'
+          });
+          
+          const writer = fs.createWriteStream(attachmentPath);
+          response.data.pipe(writer);
+          
+          await new Promise((resolve, reject) => {
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+          });
+        } catch (downloadErr) {
+          console.error(`[AUTOTIMER] Failed to download media for ${now}:`, downloadErr.message);
+          attachmentPath = null; 
+        }
+      }
 
       global.__sentMap[currentMinute] = true;
 
-      const { text, video } = timerData[now];
-      const tempVideoPath = path.join(cacheDir, `autotimer_${Date.now()}.mp4`);
-
-      // ভিডিও ডাউনলোড করা
-      try {
-        const response = await axios.get(video, { responseType: "arraybuffer", timeout: 20000 });
-        await fs.writeFile(tempVideoPath, response.data);
-      } catch (downloadErr) {
-        console.error("[AUTOTIMER] Video download failed:", downloadErr.message);
-        return;
-      }
-
-      // লুপ চালিয়ে সব গ্রুপে মেসেজ পাঠানো
       for (const thread of groupThreads) {
         const threadID = thread.threadID;
-
-        // যদি কোনো গ্রুপে ম্যানুয়ালি অফ (False) করে রাখা হয়, তবে সেখানে যাবে না
         if (statusMap[threadID] === false) continue;
 
-        api.sendMessage(
-          {
-            body: text,
-            attachment: fs.createReadStream(tempVideoPath)
-          },
-          threadID,
-          (err) => {
-            if (err) console.error(`[AUTOTIMER] Failed to send to ${threadID}:`, err.message);
-          }
-        );
+        const msgPayload = { body: formattedMessage };
+        if (attachmentPath && fs.existsSync(attachmentPath)) {
+          msgPayload.attachment = fs.createReadStream(attachmentPath);
+        }
+
+        api.sendMessage(msgPayload, threadID, (err) => {
+          if (err) console.error(`[AUTOTIMER] Error sending to ${threadID}:`, err.message);
+        });
       }
 
-      // ফাইল ব্যবহারের পর ডিলিট করার জন্য একটু সময় দেওয়া
       setTimeout(() => {
-        fs.remove(tempVideoPath).catch(e => console.error("[AUTOTIMER] Cleanup error:", e.message));
-      }, 15000);
+        if (attachmentPath && fs.existsSync(attachmentPath)) {
+          fs.unlink(attachmentPath, (err) => {
+            if (err) console.error("[AUTOTIMER] Cache delete error:", err.message);
+          });
+        }
+      }, 10000);
 
-    } catch (err) {
-      console.error("[AUTOTIMER] Main interval error:", err.message);
+    } catch (mainErr) {
+      console.error("[AUTOTIMER] Loop main error:", mainErr.message);
     }
   };
 
-  // প্রতি ৩০ সেকেন্ড পর পর টাইম চেক করবে
   setInterval(checkTimeAndSend, 30000);
 };
 
-// অন/অফ কমান্ড কন্ট্রোল করার জন্য onStart ফাংশন
-module.exports.onStart = async function ({ api, event, args }) {
-  const threadID = event.threadID;
+module.exports.run = async function ({ api, event, args }) {
+  const { threadID, messageID } = event;
   const statusMap = getStatusMap();
 
   if (!args[0]) {
-    return api.sendMessage("⏰ autotimer ব্যবহার করতে লিখুন: autotimer on অথবা autotimer off", threadID, event.messageID);
+    return api.sendMessage("⏰ অটো-টাইমার অন বা অফ করতে ব্যবহার করুন:\n• autotimer on\n• autotimer off", threadID, messageID);
   }
 
   const mode = args[0].toLowerCase();
-
   if (mode === "on") {
     statusMap[threadID] = true;
     saveStatusMap(statusMap);
-    return api.sendMessage("✅ এই গ্রুপে প্রতি ঘণ্টার অটোমেটিক মেসেজ অন করা হয়েছে।", threadID, event.messageID);
+    return api.sendMessage("✅ এই গ্রুপে অটো-টাইমার সফলভাবে চালু (ON) করা হয়েছে। এখন থেকে প্রতি ঘণ্টায় মেসেজ পাঠানো হবে।", threadID, messageID);
   } else if (mode === "off") {
     statusMap[threadID] = false;
     saveStatusMap(statusMap);
-    return api.sendMessage("❌ এই গ্রুপে প্রতি ঘণ্টার অটোমেটিক মেসেজ অফ করা হয়েছে।", threadID, event.messageID);
+    return api.sendMessage("❌ এই গ্রুপে অটো-টাইমার বন্ধ (OFF) করা হয়েছে।", threadID, messageID);
   } else {
-    return api.sendMessage("⚠️ ভুল কমান্ড! দয়া করে 'on' অথবা 'off' লিখুন।", threadID, event.messageID);
+    return api.sendMessage("⚠️ ভুল কমান্ড! দয়া করে 'on' অথবা 'off' ব্যবহার করুন।", threadID, messageID);
   }
 };
