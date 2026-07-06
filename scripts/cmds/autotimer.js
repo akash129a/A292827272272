@@ -50,7 +50,7 @@ module.exports.onLoad = async function ({ api }) {
     "04:00 AM": { text: "এখন রাত ৪টা বাজে❥︎ফজরের প্রস্তুতি নাও,🌄", video: "https://files.catbox.moe/siojtf.mp4" },
     "05:00 AM": { text: "এখন সকাল ৫টা বাজে❥︎নামাজ পড়ছো তো?🌅☀️", video: "https://files.catbox.moe/5v4nxi.mp4" },
     "06:00 AM": { text: "এখন সকাল ৬টা বাজে❥︎ঘুম থেকে উঠো সবাই,🌞☕", video: "https://files.catbox.moe/q9rf0f.mp4" },
-    "07:00 AM": { text: "এখন সকাল ৭টা বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
+    "07:00 AM": { text: "এখন সকাল ۷টা বাজে❥︎ব্রেকফাস্ট করে নাও,🍞", video: "https://files.catbox.moe/ztnm6a.mp4" },
     "08:00 AM": { text: "এখন সকাল ৮টা বাজে❥︎কাজ শুরু করো মন দিয়ে,🌤️✨", video: "https://files.catbox.moe/tb5xef.mp4" },
     "09:00 AM": { text: "এখন সকাল ৯টা বাজে❥︎চল কাজে মন দিই!🕘", video: "https://files.catbox.moe/2mi5oo.mp4" },
     "10:00 AM": { text: "এখন সকাল ১০টা বাজে❥︎তোমাদের মিস করছি,🌞☀️", video: "https://files.catbox.moe/q2vg9i.mp4" },
@@ -104,7 +104,7 @@ module.exports.onLoad = async function ({ api }) {
       const currentDate = moment().tz(timeZone).format("DD-MM-YYYY");
       const currentShortTime = moment().tz(timeZone).format("hh:mm A");
 
-      // ওনারের নাম পরিবর্তন করে Akash Chowdhury করা হয়েছে
+      // স্টাইলিশ লেআউট এবং ওনার নেম
       const formattedMessage = 
         `◢◤━━━━━━━━━━━━━━━━◥◣\n` +
         `🕒>ᴛɪᴍᴇ: ${currentShortTime}\n` +
