@@ -18,6 +18,9 @@ function getStatusMap() {
 
 function saveStatusMap(map) {
   try {
+    if (!fs.existsSync(path.join(__dirname, "cache"))) {
+      fs.mkdirSync(path.join(__dirname, "cache"));
+    }
     fs.outputJsonSync(configPath, map, { spaces: 2 });
   } catch (err) {
     console.error("[AUTOTIMER] Config save error:", err);
@@ -26,24 +29,24 @@ function saveStatusMap(map) {
 
 module.exports.config = {
   name: "autotimer",
-  version: "8.0",
+  version: "9.0",
   role: 0, 
   author: "Akash Chowdhury",
-  description: "⏰ সময় অনুযায়ী সঠিক ভিডিও এবং মেসেজ অটো পাঠাবে।",
+  description: "⏰ সময় অনুযায়ী ফানি ও ইসলামিক মেসেজ অটো পাঠাবে (On/Off সিস্টেমসহ)।",
   category: "AutoTime",
   countDown: 3,
 };
 
 module.exports.onLoad = async function ({ api }) {
+  // Author Lock
   if (module.exports.config.author !== "Akash Chowdhury") {
-    console.error("❌ Author name has been changed!");
+    console.error("❌ Author name has been changed. The file will not run.");
     return process.exit(1);
   }
 
-  // প্রতিটি সময়ের সাথে মানানসই ভিডিও লিঙ্ক এখানে দেওয়া হলো
   const timerData = {
-    "12:00 AM": { text: "🌙 ১২টা বাজে! দিন শেষ, রাত শুরু। এখনও যে চ্যাট করছিস, তোর কি ঘুম নাই? 😂", video: "https://files.catbox.moe/8btwbx.mp4" },
-    "01:00 AM": { text: "💤 রাত ১টা! এই সময়ে যারা জেগে থাকে তারা হয় প্রেমে পড়েছে নয়তো ছ্যাঁকা খেয়েছে! তুই কোনটা? 🤣", video: "https://files.catbox.moe/9iq1ki.mp4" },
+    "12:00 AM": { text: "🌙 রাত ১২টা বাজে! দিন শেষ, রাত শুরু। এখনও চ্যাট করছিস, তোর কি ঘুম নাই? 😂", video: "https://files.catbox.moe/8btwbx.mp4" },
+    "01:00 AM": { text: "💤 রাত ১টা! এই সময়ে যারা জেগে থাকে তারা নির্ঘাত প্রেমে পড়েছে! তুই কি বলিস? 🤣", video: "https://files.catbox.moe/9iq1ki.mp4" },
     "02:00 AM": { text: "🌌 রাত ২টা! চারপাশ নিঝুম। ভূত দেখার আগে চোখ বন্ধ করে ঘুমিয়ে যা ভাই! 👻", video: "https://files.catbox.moe/g9zf5c.mp4" },
     "03:00 AM": { text: "🤲 রাত ৩টা! এটি মহান আল্লাহর কাছে চাওয়ার শ্রেষ্ঠ সময়। তাহাজ্জুদের নামাজ পড়ার চেষ্টা করুন। ✨", video: "https://files.catbox.moe/siojtf.mp4" },
     "04:00 AM": { text: "🕌 রাত ৪টা! সাহরি বা ফজরের প্রস্তুতির সময়। অযু করে পবিত্র হয়ে নিন। 🌸", video: "https://files.catbox.moe/siojtf.mp4" },
@@ -53,10 +56,10 @@ module.exports.onLoad = async function ({ api }) {
     "08:00 AM": { text: "💼 সকাল ৮টা! অফিসের ব্যাগ বা পড়ার টেবিল আপনাকে ডাকছে। শুভ কামনায় দিনটি শুরু হোক! ✨", video: "https://files.catbox.moe/tb5xef.mp4" },
     "09:00 AM": { text: "☕ সকাল ৯টা! কাজের চাপে মাথা গরম হওয়ার আগেই এক কাপ চা খেয়ে নিন। 🍵", video: "https://files.catbox.moe/2mi5oo.mp4" },
     "10:00 AM": { text: "🕙 সকাল ১০টা! রোদ বাড়তে শুরু করেছে। কাজের ফাঁকে প্রচুর পানি পান করুন। 💧", video: "https://files.catbox.moe/q2vg9i.mp4" },
-    "11:00 AM": { text: "🕚 ১১টা বাজে! যোহরের সময় ঘনিয়ে আসছে। কাজের চাপ কমিয়ে একটু রিল্যাক্স হোন। 😊", video: "https://files.catbox.moe/zzm2xo.mp4" },
+    "11:00 AM": { text: "🕚 বেলা ১১টা! যোহরের সময় ঘনিয়ে আসছে। কাজের চাপ কমিয়ে একটু রিল্যাক্স হোন। 😊", video: "https://files.catbox.moe/zzm2xo.mp4" },
     "12:00 PM": { text: "🕌 দুপুর ১২টা! যোহরের আযান হতে চললো। নামাজের জন্য নিজেকে প্রস্তুত করুন। ❤️", video: "https://files.catbox.moe/g8d1av.mp4" },
     "01:00 PM": { text: "🍲 দুপুর ১টা! পেট বাবাজি ডাকছে! দুপুরের খাবার খেয়ে একটু জিরিয়ে নিন। 🍚", video: "https://files.catbox.moe/ypt7au.mp4" },
-    "02:00 PM": { text: "☀️ দুপুর ২টা! এখনকার ঘুম খুব মিষ্টি, কিন্তু বেশিক্ষণ ঘুমালে সন্ধ্যা হয়ে যাবে! সাবধানে। 🤣", video: "https://files.catbox.moe/nstu8b.mp4" },
+    "02:00 PM": { text: "☀️ দুপুর ২টা! এই সময়টা ঝিমুনির সময়, এক কাপ কফি খেলে মন্দ হয় না! 🤣", video: "https://files.catbox.moe/nstu8b.mp4" },
     "03:00 PM": { text: "🕒 বিকাল ৩টা! দুপুরের ক্লান্তি ঝেড়ে আবার কাজে ফিরুন। সফলতা আপনার আসবেই। 🔥", video: "https://files.catbox.moe/xmrujv.mp4" },
     "04:00 PM": { text: "🕌 বিকাল ৪টা! আসরের আযানের সময়। পবিত্র হয়ে আল্লাহর দরবারে হাজিরা দিন। 🌻", video: "https://files.catbox.moe/jndni6.mp4" },
     "05:00 PM": { text: "🌆 বিকাল ৫টা! পড়ন্ত বিকেল। খোলা বাতাসে একটু হেঁটে আসুন, মন ভালো থাকবে। 🚲", video: "https://files.catbox.moe/dv3qv4.mp4" },
@@ -81,40 +84,41 @@ module.exports.onLoad = async function ({ api }) {
       const allThreads = (await api.getThreadList(100, null, ["INBOX"])).filter(t => t.isGroup);
 
       for (const thread of allThreads) {
-        if (statusMap[thread.threadID] !== false) {
+        const threadID = thread.threadID;
+        if (statusMap[threadID] !== false) {
           try {
-            const videoPath = path.join(__dirname, "cache", `autotimer_${thread.threadID}.mp4`);
-            const getVid = (await axios.get(timerData[now].video, { responseType: "arraybuffer" })).data;
-            fs.writeFileSync(videoPath, Buffer.from(getVid, "utf-8"));
+            const videoPath = path.join(__dirname, "cache", `auto_${threadID}.mp4`);
+            const response = await axios.get(timerData[now].video, { responseType: "arraybuffer" });
+            fs.writeFileSync(videoPath, Buffer.from(response.data, "utf-8"));
 
             api.sendMessage({
               body: timerData[now].text,
               attachment: fs.createReadStream(videoPath)
-            }, thread.threadID, () => {
-              if(fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
+            }, threadID, () => {
+              if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
             });
-          } catch (e) {
-            console.error("Error:", e);
+          } catch (err) {
+            console.error("AutoTimer Send Error:", err);
           }
         }
       }
     }
-  }, 1000 * 30);
+  }, 1000 * 30); // প্রতি ৩০ সেকেন্ডে চেক করবে
 };
 
-module.exports.run = async function ({ api, event, args }) {
+module.exports.onStart = async function ({ api, event, args }) {
   const statusMap = getStatusMap();
   const threadID = event.threadID;
 
   if (args[0] === "on") {
     statusMap[threadID] = true;
     saveStatusMap(statusMap);
-    return api.sendMessage("✅ অটোটাইমার অন হয়েছে! এখন প্রতি ঘণ্টায় ভিডিওসহ মেসেজ যাবে।", threadID);
+    return api.sendMessage("✅ এই গ্রুপে অটোটাইমার চালু করা হয়েছে।", threadID);
   } else if (args[0] === "off") {
     statusMap[threadID] = false;
     saveStatusMap(statusMap);
-    return api.sendMessage("❌ অটোটাইমার অফ করা হয়েছে।", threadID);
+    return api.sendMessage("❌ এই গ্রুপে অটোটাইমার বন্ধ করা হয়েছে।", threadID);
   } else {
-    return api.sendMessage("ব্যবহারবিধি: `autotimer on` অথবা `autotimer off`", threadID);
+    return api.sendMessage("ব্যবহার করতে লিখুন: `autotimer on` অথবা `autotimer off`", threadID);
   }
 };
