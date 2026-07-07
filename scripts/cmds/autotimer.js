@@ -71,7 +71,7 @@ module.exports.onLoad = async function ({ api }) {
     "03:00 AM": { text: "তাহাজ্জুদের সময় (রাত ৩টা)। আল্লাহর কাছে চাওয়ার শ্রেষ্ঠ সময়। দোয়া করুন। ✨", video: "https://files.catbox.moe/siojtf.mp4" },
     "04:00 AM": { text: "ভোর ৪টা বাজে! সেহরি বা ফজরের প্রস্তুতির সময়। পবিত্র হয়ে নিন। 🌸", video: "https://files.catbox.moe/siojtf.mp4" },
     "05:00 AM": { text: "ফজরের আযান! নামাজের দিকে আসুন, নামাজের মধ্যেই রয়েছে পরম শান্তি। 🕌", video: "https://files.catbox.moe/5v4nxi.mp4" },
-    "06:00 AM": { text: "শুভ সকাল! সকাল ৬টা বাজে। অলসতা ছেড়ে সুন্দর একটা দিন শুরু করো! 💪", video: "https://files.catbox.moe/q9rf0f.mp4" },
+    "06:00 AM": { text: "শুভ সকাল! সকাল ৬টা বাজে। অলসতা ছেড়ে সুন্দর একটা দিন সুন্দর করো! 💪", video: "https://files.catbox.moe/q9rf0f.mp4" },
     "07:00 AM": { text: "সকাল ৭টা! ঘুম থেকে উঠে হাত-মুখ ধুয়ে নাস্তা খেয়ে নাও জলদি। ☕", video: "https://files.catbox.moe/ztnm6a.mp4" },
     "08:00 AM": { text: "সকাল ৮টা! স্কুল-কলেজ আর কোচিংয়ে যাওয়ার সময় হয়ে গেছে, ব্যাগ গোছাও! 🎒", video: "https://files.catbox.moe/tb5xef.mp4" },
     "09:00 AM": { text: "সকাল ৯টা! ক্লাসে স্যার ঢোকার আগে জলদি বেঞ্চে গিয়ে বসো, নাইলে খবর আছে! 📖", video: "https://files.catbox.moe/2mi5oo.mp4" },
@@ -82,76 +82,69 @@ module.exports.onLoad = async function ({ api }) {
     "02:00 PM": { text: "দুপুর ২টা! এই টাইমে ভাত খাওয়ার পর যে ঘুমটা আসে, ওটা অমৃত! 💤", video: "https://files.catbox.moe/nstu8b.mp4" },
     "03:00 PM": { text: "বিকাল ৩টা! অলসতা ঝেড়ে আবার একটু পড়াশোনায় মন দাও অথবা একটু রিল্যাক্স করো। 🔥", video: "https://files.catbox.moe/xmrujv.mp4" },
     "04:00 PM": { text: "আসরের সময় (বিকাল ৪টা)। পবিত্র হয়ে আল্লাহর দরবারে হাজিরা দিন। 🌻", video: "https://files.catbox.moe/jndni6.mp4" },
-    "05:00 PM": { text: "বিকাল ৫টা! পড়ন্ত বিকেল। বন্ধুদের সাথে মাঠে গিয়ে একটু ফুটবল বা আড্ডা দেওয়ার সময়। ⚽", video: "https://files.catbox.moe/dv3qv4.mp4" },
+    "05:00 PM": { text: "বিকাল ৫টা! পড়ন্ত বিকেল। বন্ধুদের সাথে মাঠে গিয়ে একটু ফুটবল বা আড্ডা দেওয়ার সময়। ⚽", video: "https://files.catbox.moe/dv3qv4.mp4" },
     "06:00 PM": { text: "মাগরিবের আযান (সন্ধ্যা ৬টা)। আড্ডা বন্ধ করে জলদি ঘরে ফেরো এবং নামাজ পড়ো। 🕌", video: "https://files.catbox.moe/au2yk5.mp4" },
     "07:00 PM": { text: "সন্ধ্যা ৭টা বাজে! এশার নামাজ পড়ো অথবা পড়তে বসো। অলসতা করো না। ❤️🌃", video: "https://files.catbox.moe/au2yk5.mp4" },
     "08:00 PM": { text: "রাত ৮টা! ফেসবুক স্ক্রল করা বন্ধ করে একটু বই খাতা খুলে বসো তো দেখি! 📚", video: "https://files.catbox.moe/tb5xef.mp4" },
-    "09:00 PM": { text: "রাত ৯টা! রাতের খাবারের সময় হয়ে গেছে। গরম গরম খাবার খেয়ে নাও। 🍲", video: "https://files.catbox.moe/ypt7au.mp4" },
-    "10:00 PM": { text: "রাত ১০টা! আজকের মতো পড়াশোনা শেষ। এখন একটু ফোন টিপতেই পারো। 📱", video: "https://files.catbox.moe/q2vg9i.mp4" },
-    "11:00 PM": { text: "রাত ১১টা! গভীর রাত হতে চললো। যারা এখনও জেগে আছো, তারা চোখ বন্ধ করো। 🌙", video: "https://files.catbox.moe/8btwbx.mp4" }
+    "09:00 PM": { text: "রাত ৯টা! রাতের খাবারের সময় হয়ে গেছে। গরম গরম খাবার খেয়ে নাও। 🍲", video: "https://files.catbox.moe/tb5xef.mp4" },
+    "10:00 PM": { text: "রাত ১০টা! আড্ডা বা পড়াশোনা শেষ করে এবার একটু নিজের জন্য সময় নাও। 🌟", video: "https://files.catbox.moe/tb5xef.mp4" },
+    "11:00 PM": { text: "রাত ১১টা! বিছানায় যাওয়ার আগে সারাদিনের ভুলত্রুটির জন্য আল্লাহর কাছে ক্ষমা চেয়ে নাও। 🌙", video: "https://files.catbox.moe/tb5xef.mp4" }
   };
 
-  // প্রতি ১ মিনিটে চেক করবে
+  let lastSentHour = -1;
+
+  // প্রতি ১ মিনিটে চেক করবে সময় হয়েছে কিনা
   setInterval(async () => {
-    const currentMinute = moment().tz(timeZone).format("mm");
-    if (currentMinute !== "05") return; // ঠিক ০৫ মিনিটে ট্রিগার হবে
+    const now = moment().tz(timeZone);
+    const currentHour = now.hour();
+    const currentMinute = now.minute();
 
-    const currentTimeStr = moment().tz(timeZone).format("hh:00 A");
-    const currentDateStr = moment().tz(timeZone).format("DD-MM-YYYY");
+    // প্রতি ঘণ্টার ০৫ মিনিটে মেসেজ যাবে (এবং এক ঘণ্টায় যেন একবারই যায়)
+    if (currentMinute === 5 && currentHour !== lastSentHour) {
+      lastSentHour = currentHour;
 
-    if (timerData[currentTimeStr]) {
-      const { text, video } = timerData[currentTimeStr];
+      // timerData এর কী (Key) ফরম্যাট অনুযায়ী রূপান্তর (যেমন: 01:00 AM)
+      const targetTimeStr = now.clone().minute(0).format("hh:00 A");
+      const matchedData = timerData[targetTimeStr];
+
+      if (!matchedData) return;
+
       const statusMap = getStatusMap();
-      const activeThreads = Object.keys(statusMap).filter(key => statusMap[key] === true);
-
-      if (activeThreads.length === 0) return;
-
-      const msg = `◢◤━━━━━━━━━━━━━━━━◥◣\n🕒>ᴛɪᴍᴇ: ${currentTimeStr}\n⌚┆${text}\n◥◣━━━━━━━━━━━━━━━━◢◤\n📅>ᴅᴀᴛᴇ: ${currentDateStr}\n━━━━━━━━━━━━━━━━━━━━\n𝙱𝙾𝚃 𝙾𝚆𝙽𝙴𝚁:- Akash Chowdhury\n━━━━━━━━━━━━━━━━━━━━`;
       
-      const videoPath = path.join(__dirname, "cache", `autotimer_${currentTimeStr.replace(/:| /g, "_")}.mp4`);
-
-      try {
-        // ভিডিও একবারই ডাউনলোড হবে সবার জন্য
-        const response = await axios({
-          method: "GET",
-          url: video,
-          responseType: "stream"
-        });
-
-        const writer = fs.createWriteStream(videoPath);
-        response.data.pipe(writer);
-
-        writer.on("finish", () => {
-          let sendCount = 0;
-          
-          activeThreads.forEach(threadID => {
-            api.sendMessage({
-              body: msg,
-              attachment: fs.createReadStream(videoPath)
-            }, threadID, (err) => {
-              if (err) console.error(`[AUTOTIMER] Error sending to ${threadID}:`, err);
-              
-              sendCount++;
-              // সব গ্রুপে পাঠানো শেষ হলে নিরাপদভাবে ৫ সেকেন্ড পর ফাইল ডিলিট করবে
-              if (sendCount === activeThreads.length) {
-                setTimeout(() => {
-                  if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
-                }, 5000);
-              }
+      // যেসব গ্রুপে 'on' করা আছে, শুধু সেগুলোতে মেসেজ পাঠাবে
+      for (const threadID of Object.keys(statusMap)) {
+        if (statusMap[threadID] === true) {
+          try {
+            const videoPath = path.join(__dirname, "cache", `temp_timer_${threadID}.mp4`);
+            const response = await axios({
+              method: "get",
+              url: matchedData.video,
+              responseType: "stream"
             });
-          });
-        });
 
-        writer.on("error", (err) => {
-          console.error("[AUTOTIMER] Stream writing error:", err);
-          activeThreads.forEach(id => api.sendMessage(msg, id));
-        });
+            const writer = fs.createWriteStream(videoPath);
+            response.data.pipe(writer);
 
-      } catch (error) {
-        console.error(`[AUTOTIMER] Network Error:`, error);
-        // ডাউনলোড ফেইল হলে শুধু টেক্সট মেসেজ পাঠাবে
-        activeThreads.forEach(id => api.sendMessage(msg, id));
+            writer.on("finish", () => {
+              api.sendMessage({
+                body: matchedData.text,
+                attachment: fs.createReadStream(videoPath)
+              }, threadID, () => {
+                fs.unlinkSync(videoPath); // পাঠানোর পর ফাইল ডিলিট
+              });
+            });
+
+            writer.on("error", (err) => {
+              console.error("[AUTOTIMER] File write error:", err);
+            });
+
+          } catch (error) {
+            console.error(`[AUTOTIMER] Error sending to ${threadID}:`, error);
+            // ভিডিও ডাউনলোড ফেইল করলে শুধু টেক্সট পাঠাবে
+            api.sendMessage(matchedData.text, threadID);
+          }
+        }
       }
     }
-  }, 60000);
+  }, 60000); // প্রতি ৬০ সেকেন্ডে চেক
 };
