@@ -3,7 +3,7 @@ exports.config = {
   version: "1.0.0",
   author: "EryXenX",
   countDown: 0,
-  role: 1, // এখানে role ০ থেকে ১ করা হয়েছে (Admin Only)
+  role: 1, // Admin Only
   shortDescription: "Fork Link",
   longDescription: "Responds with GitHub repo link when 'fork' or 'repository' is mentioned. Cooldown: 10 seconds. Admin only.",
   category: "system",
@@ -17,7 +17,7 @@ const cool = 10000;
 
 exports.onStart = async function(){};
 
-exports.onChat = async function({event: z, api: y, role: userRole}){
+exports.onChat = async function({ event: z, api: y, threadsData }) {
   const t = z.threadID;
   const n = Date.now();
   
@@ -30,8 +30,13 @@ exports.onChat = async function({event: z, api: y, role: userRole}){
   const fork = m.includes("fork") || m.includes("repository");
 
   if(fork){
-    // এখানে চেক করা হচ্ছে ব্যবহারকারী অ্যাডমিন (role >= 1) কিনা
-    if (userRole < 1) {
+    // থ্রেড ডেটা থেকে চেক করা হচ্ছে মেসেজ প্রদানকারী অ্যাডমিন কি না
+    const threadInfo = await threadsData.get(t);
+    const adminIDs = threadInfo.adminIDs || [];
+    const isGroupAdmin = adminIDs.includes(z.senderID);
+
+    // যদি ইউজার গ্রুপের অ্যাডমিন না হয় (এবং বটের গ্লোবাল অ্যাডমিনও না হয়)
+    if (!isGroupAdmin) {
       return y.sendMessage("❌ এই কমান্ডটি শুধুমাত্র গ্রুপের অ্যাডমিনদের জন্য!", t, z.messageID);
     }
 
