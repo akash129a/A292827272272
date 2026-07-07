@@ -3,7 +3,6 @@ const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
 
-// কনফিগারেশন ফাইল পাথ
 const configPath = path.join(__dirname, "cache", "autotimer_config.json");
 
 function getStatusMap() {
@@ -27,49 +26,46 @@ function saveStatusMap(map) {
 
 module.exports.config = {
   name: "autotimer",
-  version: "6.5",
+  version: "8.0",
   role: 0, 
   author: "Akash Chowdhury",
-  description: "⏰ প্রতি ঘণ্টায় নতুন ভিডিওসহ অটো মেসেজ পাঠাবে (On/Off সিস্টেমসহ)",
+  description: "⏰ সময় অনুযায়ী সঠিক ভিডিও এবং মেসেজ অটো পাঠাবে।",
   category: "AutoTime",
   countDown: 3,
 };
 
 module.exports.onLoad = async function ({ api }) {
-  // Author lock check
   if (module.exports.config.author !== "Akash Chowdhury") {
-    console.error("❌ Author name has been changed. The file will not run.");
+    console.error("❌ Author name has been changed!");
     return process.exit(1);
   }
 
-  // আপনার দেওয়া ১২টি ভিডিও লিঙ্ক এখানে সেট করা হয়েছে
+  // প্রতিটি সময়ের সাথে মানানসই ভিডিও লিঙ্ক এখানে দেওয়া হলো
   const timerData = {
-    "12:00 AM": { text: "🌙 রাত ১২টা বাজে! অনেক রাত হলো, এবার ঘুমানো দরকার।", video: "https://files.catbox.moe/tf2wix.mp4" },
-    "01:00 AM": { text: "💤 রাত ১টা বাজে! এখনও জেগে আছেন কেন? ঘুমান!", video: "https://files.catbox.moe/knidwi.mp4" },
-    "02:00 AM": { text: "🌌 রাত ২টা বাজে! চারপাশ খুব শান্ত, শুভ রাত্রি।", video: "https://files.catbox.moe/g0mifl.mp4" },
-    "03:00 AM": { text: "🕌 রাত ৩টা বাজে! তাহাজ্জুদের সময় হয়ে গেছে।", video: "https://files.catbox.moe/qleixe.mp4" },
-    "04:00 AM": { text: "🌅 ভোর ৪টা বাজে! ফজরের জন্য প্রস্তুতি নিন।", video: "https://files.catbox.moe/udao5p.mp4" },
-    "05:00 AM": { text: "🕌 ভোর ৫টা বাজে! ফজরের আজান হয়ে গেছে। নামাজ পড়ুন।", video: "https://files.catbox.moe/beiu9p.mp4" },
-    "06:00 AM": { text: "☀️ সকাল ৬টা বাজে! শুভ সকাল। দিনটি ভালো কাটুক।", video: "https://files.catbox.moe/dyopmh.mp4" },
-    "07:00 AM": { text: "🍳 সকাল ৭টা বাজে! নাস্তা করে নিন।", video: "https://files.catbox.moe/de8utb.mp4" },
-    "08:00 AM": { text: "💼 সকাল ৮টা বাজে! কাজের সময় হয়ে গেলো।", video: "https://files.catbox.moe/vz971z.mp4" },
-    "09:00 AM": { text: "☕ সকাল ৯টা বাজে! এক কাপ চা খান আর কাজে মন দিন।", video: "https://files.catbox.moe/vz971z.mp4" },
-    "10:00 AM": { text: "🕙 সকাল ১০টা বাজে! আপনার সকালের ব্যস্ততা কেমন চলছে?", video: "https://files.catbox.moe/v90l1g.mp4" },
-    "11:00 AM": { text: "🕚 বেলা ১১টা বাজে! রোদ অনেক কড়া, সাবধানে থাকুন।", video: "https://files.catbox.moe/2jyp2x.mp4" },
-    
-    // দুপুরের পর থেকে লিঙ্কগুলো আবার রিপিট করা হয়েছে (২৪ ঘণ্টা কভার করার জন্য)
-    "12:00 PM": { text: "🕛 দুপুর ১২টা বাজে! যোহরের নামাজের সময়।", video: "https://files.catbox.moe/tf2wix.mp4" },
-    "01:00 PM": { text: "🍛 দুপুর ১টা বাজে! দুপুরের খাবারের সময় হয়েছে।", video: "https://files.catbox.moe/knidwi.mp4" },
-    "02:00 PM": { text: "🕑 দুপুর ২টা বাজে! কিছুক্ষণ বিশ্রাম নিতে পারেন।", video: "https://files.catbox.moe/g0mifl.mp4" },
-    "03:00 PM": { text: "🕒 দুপুর ৩টা বাজে! কাজের ফাঁকে বিরতি নিন।", video: "https://files.catbox.moe/qleixe.mp4" },
-    "04:00 PM": { text: "🕓 বিকাল ৪টা বাজে! আসরের নামাজের সময়।", video: "https://files.catbox.moe/udao5p.mp4" },
-    "05:00 PM": { text: "🕔 বিকাল ৫টা বাজে! একটু রিফ্রেশ হয়ে নিন।", video: "https://files.catbox.moe/beiu9p.mp4" },
-    "06:00 PM": { text: "🕕 সন্ধ্যা ৬টা বাজে! মাগরিবের নামাজের সময়।", video: "https://files.catbox.moe/dyopmh.mp4" },
-    "07:00 PM": { text: "🕖 সন্ধ্যা ৭টা বাজে! পড়াশোনা বা পরিবারকে সময় দিন।", video: "https://files.catbox.moe/de8utb.mp4" },
-    "08:00 PM": { text: "🕗 রাত ৮টা বাজে! এশার নামাজের সময় হয়েছে।", video: "https://files.catbox.moe/vz971z.mp4" },
-    "09:00 PM": { text: "🕘 রাত ৯টা বাজে! রাতের খাবারের সময়।", video: "https://files.catbox.moe/vz971z.mp4" },
-    "10:00 PM": { text: "🕙 রাত ১০টা বাজে! ঘুমানোর প্রস্তুতি নিন।", video: "https://files.catbox.moe/v90l1g.mp4" },
-    "11:00 PM": { text: "🕚 রাত ১১টা বাজে! সারাদিনের কাজের ক্লান্তি দূর হোক।", video: "https://files.catbox.moe/2jyp2x.mp4" }
+    "12:00 AM": { text: "🌙 ১২টা বাজে! দিন শেষ, রাত শুরু। এখনও যে চ্যাট করছিস, তোর কি ঘুম নাই? 😂", video: "https://files.catbox.moe/8btwbx.mp4" },
+    "01:00 AM": { text: "💤 রাত ১টা! এই সময়ে যারা জেগে থাকে তারা হয় প্রেমে পড়েছে নয়তো ছ্যাঁকা খেয়েছে! তুই কোনটা? 🤣", video: "https://files.catbox.moe/9iq1ki.mp4" },
+    "02:00 AM": { text: "🌌 রাত ২টা! চারপাশ নিঝুম। ভূত দেখার আগে চোখ বন্ধ করে ঘুমিয়ে যা ভাই! 👻", video: "https://files.catbox.moe/g9zf5c.mp4" },
+    "03:00 AM": { text: "🤲 রাত ৩টা! এটি মহান আল্লাহর কাছে চাওয়ার শ্রেষ্ঠ সময়। তাহাজ্জুদের নামাজ পড়ার চেষ্টা করুন। ✨", video: "https://files.catbox.moe/siojtf.mp4" },
+    "04:00 AM": { text: "🕌 রাত ৪টা! সাহরি বা ফজরের প্রস্তুতির সময়। অযু করে পবিত্র হয়ে নিন। 🌸", video: "https://files.catbox.moe/siojtf.mp4" },
+    "05:00 AM": { text: "📢 ফজরের আযান! নামাজের দিকে আসুন, নামাজের মধ্যেই রয়েছে পরম শান্তি। 🕌", video: "https://files.catbox.moe/5v4nxi.mp4" },
+    "06:00 AM": { text: "☀️ শুভ সকাল! সকাল ৬টা বাজে। সুন্দর একটি দিন আপনার অপেক্ষায়। অলসতা ছাড়ুন! 💪", video: "https://files.catbox.moe/q9rf0f.mp4" },
+    "07:00 AM": { text: "🍳 সকাল ৭টা! নাস্তার টেবিল কি রেডি? জলদি খেয়ে কাজে নামুন। ☕", video: "https://files.catbox.moe/ztnm6a.mp4" },
+    "08:00 AM": { text: "💼 সকাল ৮টা! অফিসের ব্যাগ বা পড়ার টেবিল আপনাকে ডাকছে। শুভ কামনায় দিনটি শুরু হোক! ✨", video: "https://files.catbox.moe/tb5xef.mp4" },
+    "09:00 AM": { text: "☕ সকাল ৯টা! কাজের চাপে মাথা গরম হওয়ার আগেই এক কাপ চা খেয়ে নিন। 🍵", video: "https://files.catbox.moe/2mi5oo.mp4" },
+    "10:00 AM": { text: "🕙 সকাল ১০টা! রোদ বাড়তে শুরু করেছে। কাজের ফাঁকে প্রচুর পানি পান করুন। 💧", video: "https://files.catbox.moe/q2vg9i.mp4" },
+    "11:00 AM": { text: "🕚 ১১টা বাজে! যোহরের সময় ঘনিয়ে আসছে। কাজের চাপ কমিয়ে একটু রিল্যাক্স হোন। 😊", video: "https://files.catbox.moe/zzm2xo.mp4" },
+    "12:00 PM": { text: "🕌 দুপুর ১২টা! যোহরের আযান হতে চললো। নামাজের জন্য নিজেকে প্রস্তুত করুন। ❤️", video: "https://files.catbox.moe/g8d1av.mp4" },
+    "01:00 PM": { text: "🍲 দুপুর ১টা! পেট বাবাজি ডাকছে! দুপুরের খাবার খেয়ে একটু জিরিয়ে নিন। 🍚", video: "https://files.catbox.moe/ypt7au.mp4" },
+    "02:00 PM": { text: "☀️ দুপুর ২টা! এখনকার ঘুম খুব মিষ্টি, কিন্তু বেশিক্ষণ ঘুমালে সন্ধ্যা হয়ে যাবে! সাবধানে। 🤣", video: "https://files.catbox.moe/nstu8b.mp4" },
+    "03:00 PM": { text: "🕒 বিকাল ৩টা! দুপুরের ক্লান্তি ঝেড়ে আবার কাজে ফিরুন। সফলতা আপনার আসবেই। 🔥", video: "https://files.catbox.moe/xmrujv.mp4" },
+    "04:00 PM": { text: "🕌 বিকাল ৪টা! আসরের আযানের সময়। পবিত্র হয়ে আল্লাহর দরবারে হাজিরা দিন। 🌻", video: "https://files.catbox.moe/jndni6.mp4" },
+    "05:00 PM": { text: "🌆 বিকাল ৫টা! পড়ন্ত বিকেল। খোলা বাতাসে একটু হেঁটে আসুন, মন ভালো থাকবে। 🚲", video: "https://files.catbox.moe/dv3qv4.mp4" },
+    "06:00 PM": { text: "🌇 সন্ধ্যা ৬টা! মাগরিবের সময়। দিন শেষে ঘরে ফেরার সময়। শান্তিতে সময় কাটুক। 🕌", video: "https://files.catbox.moe/au2yk5.mp4" },
+    "07:00 PM": { text: "🕌 সন্ধ্যা ৭টা! এশার আযান হয়ে গেছে। সারাদিনের সব গুনাহের জন্য মাফ চেয়ে নামাজ পড়ুন। ❤️🤲", video: "https://files.catbox.moe/4v4uyv.mp4" },
+    "08:00 PM": { text: "🕗 রাত ৮টা! রাতের ডিনারের সময়। পরিবারের সাথে হাসি-খুশিতে খাবার উপভোগ করুন। 🥘", video: "https://files.catbox.moe/ltspa4.mp4" },
+    "09:00 PM": { text: "🕘 রাত ৯টা! সারাদিনের ব্যস্ততা শেষ। এবার নিজের জন্য একটু সময় দিন। 📺", video: "https://files.catbox.moe/sxs5io.mp4" },
+    "10:00 PM": { text: "😴 রাত ১০টা! মোবাইল রেখে ঘুমানোর প্রস্তুতি নিন। শরীরকে বিশ্রাম দেওয়া খুব জরুরি। 💤", video: "https://files.catbox.moe/0e4s7h.mp4" },
+    "11:00 PM": { text: "📱 রাত ১১টা! রিলস দেখা বন্ধ কর ভাই! কাল সকালে তাড়াতাড়ি উঠতে হবে। শুভ রাত্রি! 🌙", video: "https://files.catbox.moe/ndbhtu.mp4" }
   };
 
   if (!global.__sentMap) global.__sentMap = {};
@@ -85,7 +81,7 @@ module.exports.onLoad = async function ({ api }) {
       const allThreads = (await api.getThreadList(100, null, ["INBOX"])).filter(t => t.isGroup);
 
       for (const thread of allThreads) {
-        if (statusMap[thread.threadID] !== false) { // Default true (On)
+        if (statusMap[thread.threadID] !== false) {
           try {
             const videoPath = path.join(__dirname, "cache", `autotimer_${thread.threadID}.mp4`);
             const getVid = (await axios.get(timerData[now].video, { responseType: "arraybuffer" })).data;
@@ -95,15 +91,15 @@ module.exports.onLoad = async function ({ api }) {
               body: timerData[now].text,
               attachment: fs.createReadStream(videoPath)
             }, thread.threadID, () => {
-              fs.unlinkSync(videoPath);
+              if(fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
             });
           } catch (e) {
-            console.error("Error sending auto message:", e);
+            console.error("Error:", e);
           }
         }
       }
     }
-  }, 1000 * 30); // প্রতি ৩০ সেকেন্ড পর চেক করবে
+  }, 1000 * 30);
 };
 
 module.exports.run = async function ({ api, event, args }) {
@@ -113,12 +109,12 @@ module.exports.run = async function ({ api, event, args }) {
   if (args[0] === "on") {
     statusMap[threadID] = true;
     saveStatusMap(statusMap);
-    return api.sendMessage("✅ এই গ্রুপে অটোটাইমার অন করা হয়েছে।", threadID);
+    return api.sendMessage("✅ অটোটাইমার অন হয়েছে! এখন প্রতি ঘণ্টায় ভিডিওসহ মেসেজ যাবে।", threadID);
   } else if (args[0] === "off") {
     statusMap[threadID] = false;
     saveStatusMap(statusMap);
-    return api.sendMessage("❌ এই গ্রুপে অটোটাইমার অফ করা হয়েছে।", threadID);
+    return api.sendMessage("❌ অটোটাইমার অফ করা হয়েছে।", threadID);
   } else {
-    return api.sendMessage("ব্যবহারবিধি: `autotimer on` অথবা `autotimer off` লিখুন।", threadID);
+    return api.sendMessage("ব্যবহারবিধি: `autotimer on` অথবা `autotimer off`", threadID);
   }
 };
