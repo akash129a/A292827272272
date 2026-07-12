@@ -17,7 +17,7 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "4.8",
+    version: "4.9",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
@@ -45,21 +45,21 @@ module.exports = {
         });
       }
 
-      // সাব-কমান্ড চেকিং (teach, list, edit, remove etc.)
+      // সাব-কমান্ড চেকিং (teach, list, edit, remove etc.) - Render ঘুম থেকে ওঠার জন্য timeout ১৫ সেকেন্ড করা হলো
       if (args[0] === "autoteach") {
         const mode = args[1]?.toLowerCase();
         if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
 
         const status = mode === "on";
-        await axios.post(`${simsim}/setting`, { autoTeach: status }, { timeout: 10000 });
+        await axios.post(`${simsim}/setting`, { autoTeach: status }, { timeout: 15000 });
         return message.reply(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`);
       }
 
       if (args[0] === "list") {
-        const res = await axios.get(`${simsim}/list`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/list`, { timeout: 15000 });
         return message.reply(
 `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬
-├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
+├ 📝 𝐓eᴀᴄʜᴇᴅ 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
 ├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}
 ╰─╼👤 𝐃eᴠ: Akash Chowdhury`
         );
@@ -69,7 +69,7 @@ module.exports = {
         const trigger = args.slice(1).join(" ").trim();
         if (!trigger) return message.reply("Use: baby msg [trigger]");
 
-        const res = await axios.get(`${simsim}/simsimi-list?ask=${encodeURIComponent(trigger)}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/simsimi-list?ask=${encodeURIComponent(trigger)}`, { timeout: 15000 });
         if (!res.data.replies?.length) return message.reply("❌ No replies found for this trigger.");
 
         const formatted = res.data.replies.map((rep, i) => `➤ ${i+1}. ${rep}`).join("\n");
@@ -86,7 +86,7 @@ ${formatted}`
         if (parts.length < 2) return message.reply("Use: baby teach question - answer");
 
         const [ask, ans] = parts.map(s => s.trim());
-        const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
         return message.reply(res.data.message || "✅ Taught successfully!");
       }
 
@@ -95,7 +95,7 @@ ${formatted}`
         if (parts.length < 3) return message.reply("Use: baby edit question - old reply - new reply");
 
         const [ask, oldR, newR] = parts.map(s => s.trim());
-        const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&old=${encodeURIComponent(oldR)}&new=${encodeURIComponent(newR)}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&old=${encodeURIComponent(oldR)}&new=${encodeURIComponent(newR)}`, { timeout: 15000 });
         return message.reply(res.data.message || "✅ Edited successfully!");
       }
 
@@ -104,7 +104,7 @@ ${formatted}`
         if (parts.length < 2) return message.reply("Use: baby remove/rm question - answer");
 
         const [ask, ans] = parts.map(s => s.trim());
-        const res = await axios.get(`${simsim}/remove?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/remove?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 15000 });
         return message.reply(res.data.message || "✅ Removed successfully!");
       }
 
@@ -136,16 +136,16 @@ ${formatted}`
         });
       }
 
-      // SimSimi API কল (Default Chat)
+      // SimSimi API কল (Default Chat) - Timeout ১৫ সেকেন্ড করা হলো
       await typing(api, threadID, 500);
       try {
-        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
         
         if (res.data?.success && res.data?.response) {
           return message.reply(res.data.response, (err, info) => {
             if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
           });
-        } else if (res.data?.reply) { // ব্যাকআপ হিসেবে যদি অবজেক্ট স্ট্রাকচার আলাদা হয়
+        } else if (res.data?.reply) { 
           return message.reply(res.data.reply, (err, info) => {
             if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
           });
@@ -158,7 +158,8 @@ ${formatted}`
       }
 
     } catch (err) {
-      return message.reply("❌ Error connected to server!");
+      console.error("[BABY] Main Error:", err.message);
+      return message.reply("❌ Server busy! পরে ট্রাই করো");
     }
   },
 
@@ -195,10 +196,10 @@ ${formatted}`
         });
       }
 
-      // রিপ্লাই চেইনে এপিআই কল
+      // রিপ্লাই চেইনে এপিআই কল - Timeout ১৫ সেকেন্ড করা হলো
       await typing(api, threadID, 500);
       try {
-        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
         
         if (res.data?.success && res.data?.response) {
           return message.reply(res.data.response, (err, info) => {
@@ -212,10 +213,12 @@ ${formatted}`
           return message.reply("Baby একটু বিজি আছে জানু, একটু পর বলো 🥺");
         }
       } catch (e) {
+        console.error("[BABY] Reply API Error:", e.message);
         return message.reply("API ডাউন আছে, পরে ট্রাই করো 🥲");
       }
-    } catch {
-      return message.reply("❌ Server busy!");
+    } catch (err) {
+      console.error("[BABY] Reply Main Error:", err.message);
+      return message.reply("❌ Server busy! পরে ট্রাই করো");
     }
   }
 };
