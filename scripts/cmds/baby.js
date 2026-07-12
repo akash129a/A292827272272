@@ -17,7 +17,7 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "4.7",
+    version: "4.8",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
@@ -45,7 +45,7 @@ module.exports = {
         });
       }
 
-      // ১. আগে চেক করবে কোনো স্পেশাল সাব-কমান্ড (teach, list, edit etc.) আছে কি না
+      // সাব-কমান্ড চেকিং (teach, list, edit, remove etc.)
       if (args[0] === "autoteach") {
         const mode = args[1]?.toLowerCase();
         if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
@@ -59,7 +59,7 @@ module.exports = {
         const res = await axios.get(`${simsim}/list`, { timeout: 10000 });
         return message.reply(
 `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬
-├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧ս: ${res.data.totalQuestions || 0}
+├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
 ├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}
 ╰─╼👤 𝐃eᴠ: Akash Chowdhury`
         );
@@ -108,27 +108,23 @@ ${formatted}`
         return message.reply(res.data.message || "✅ Removed successfully!");
       }
 
-      // ২. সাব-কমান্ড না হলে সাধারণ চ্যাটের ক্ষেত্রে নাম চেক করবে
+      // সাধারণ চ্যাটের ক্ষেত্রে বটের মালিক (Akash) চেক করবে
       if (
         query.includes("akash kmn") || 
         query.includes("akash kemon") || 
-        query.includes("আকাশ কেমন") || 
+        query.includes("akash kemon acho") || 
+        query.includes("আকাশ কেমন") ||
         query.includes("boter malik") || 
         query.includes("বটের মালিক") || 
         query.includes("owner")
       ) {
-        const akashReplies = [
-          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨",
-          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸"
-        ];
-        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
-          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        await typing(api, threadID, 500);
+        return message.reply("Akash boss তো সবসময় আগুন 🔥 ওনার মনটা আকাশের মতোই বড়! 🥰");
       }
 
+      // Riya (রিয়া) নাম ধরে ডাকলে চমৎকার রিপ্লাই
       if (query.includes("riya") || query.includes("রিয়া")) {
+        await typing(api, threadID, 500);
         const riyaReplies = [
           "আরেহ্ রিয়া! চমৎকার একটি মিষ্টি নাম। শুনলেই মন ভালো হয়ে যায়! ✨🌸",
           "রিয়া তো একদম লক্ষ্মী একটা মেয়ে, যেমন সুন্দর নাম তেমন সুন্দর তার মন! 💖",
@@ -140,12 +136,26 @@ ${formatted}`
         });
       }
 
-      // ৩. কোনো কন্ডিশন না মিললে সিমসিমি এপিআই থেকে রিপ্লাই আনবে
+      // SimSimi API কল (Default Chat)
       await typing(api, threadID, 500);
-      const res = await axios.get(`${simsim}/simsimi?ask=${encodeURIComponent(query)}`, { timeout: 10000 });
-      return message.reply(res.data.reply || "Opps! Baby forms no reply.", (err, info) => {
-        if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-      });
+      try {
+        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        
+        if (res.data?.success && res.data?.response) {
+          return message.reply(res.data.response, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        } else if (res.data?.reply) { // ব্যাকআপ হিসেবে যদি অবজেক্ট স্ট্রাকচার আলাদা হয়
+          return message.reply(res.data.reply, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        } else {
+          return message.reply("Baby একটু বিজি আছে জানু, একটু পর বলো 🥺");
+        }
+      } catch (e) {
+        console.error("[BABY] API Error:", e.message);
+        return message.reply("API ডাউন আছে, পরে ট্রাই করো 🥲");
+      }
 
     } catch (err) {
       return message.reply("❌ Error connected to server!");
@@ -154,28 +164,28 @@ ${formatted}`
 
   onReply: async function ({ api, event, reply, message, usersData }) {
     const senderID = event.senderID;
+    const senderName = await usersData.getName(senderID);
     const threadID = event.threadID;
     const query = event.body.trim().toLowerCase();
 
     try {
+      // রিপ্লাই চেইনেও মালিক চেকিং
       if (
         query.includes("akash kmn") || 
         query.includes("akash kemon") || 
-        query.includes("আকাশ কেমন") || 
+        query.includes("akash kemon acho") || 
+        query.includes("আকাশ কেমন") ||
         query.includes("boter malik") || 
         query.includes("বটের মালিক") || 
         query.includes("owner")
       ) {
-        const akashReplies = [
-          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
-        ];
-        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
-          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        await typing(api, threadID, 500);
+        return message.reply("Akash boss তো সবসময় আগুন 🔥 ওনার মনটা আকাশের মতোই বড়! 🥰");
       }
 
+      // রিপ্লাই চেইনেও রিয়া চেকিং
       if (query.includes("riya") || query.includes("রিয়া")) {
+        await typing(api, threadID, 500);
         const riyaReplies = [
           "আরেহ্ রিয়া! চমৎকার একটি মিষ্টি নাম। শুনলেই মন ভালো হয়ে যায়! ✨🌸",
           "রিয়া নামটা শুনলেই কেমন যেন একটা চমৎকার আর মায়াবী অনুভূতি হয়! 🥰"
@@ -185,11 +195,25 @@ ${formatted}`
         });
       }
 
+      // রিপ্লাই চেইনে এপিআই কল
       await typing(api, threadID, 500);
-      const res = await axios.get(`${simsim}/simsimi?ask=${encodeURIComponent(query)}`, { timeout: 10000 });
-      return message.reply(res.data.reply || "...", (err, info) => {
-        if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-      });
+      try {
+        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        
+        if (res.data?.success && res.data?.response) {
+          return message.reply(res.data.response, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        } else if (res.data?.reply) {
+          return message.reply(res.data.reply, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        } else {
+          return message.reply("Baby একটু বিজি আছে জানু, একটু পর বলো 🥺");
+        }
+      } catch (e) {
+        return message.reply("API ডাউন আছে, পরে ট্রাই করো 🥲");
+      }
     } catch {
       return message.reply("❌ Server busy!");
     }
