@@ -17,7 +17,7 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "4.5",
+    version: "4.6",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
@@ -45,15 +45,33 @@ module.exports = {
         });
       }
 
-      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে আকাশ কেমন জিজ্ঞেস করলে)
-      if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
+      // বটের মালিক বা ওনার (Akash) সম্পর্কে জিজ্ঞাসা করলে
+      if (
+        query.includes("akash kmn") || 
+        query.includes("akash kemon") || 
+        query.includes("আকাশ কেমন") || 
+        query.includes("boter malik") || 
+        query.includes("বটের মালিক") || 
+        query.includes("owner")
+      ) {
         const akashReplies = [
           "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨",
           "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
-          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸"
         ];
         return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)]);
+      }
+
+      // Riya (রিয়া) নাম ধরে ডাকলে চমৎকার রিপ্লাই
+      if (query.includes("riya") || query.includes("রিয়া")) {
+        const riyaReplies = [
+          "আরেহ্ রিয়া! চমৎকার একটি মিষ্টি নাম। শুনলেই মন ভালো হয়ে যায়! ✨🌸",
+          "রিয়া তো একদম লক্ষ্মী একটা মেয়ে, যেমন সুন্দর নাম তেমন সুন্দর তার মন! 💖",
+          "রিয়া নামটা শুনলেই কেমন যেন একটা চমৎকার আর মায়াবী অনুভূতি হয়! 🥰",
+          "হুম বলো রিয়া সোনা, তোমার জন্য চমৎকার সব গল্প নিয়ে হাজির আমি! 🙈"
+        ];
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)]);
       }
 
       // AUTOTEACH TOGGLE
@@ -115,147 +133,61 @@ ${formatted}`
       }
 
       // REMOVE / RM
-      if (["remove","rm"].includes(args[0])) {
+      if (["remove", "rm"].includes(args[0])) {
         const parts = query.replace(/^(remove|rm)\s+/i, "").split(" - ");
-        if (parts.length < 2) return message.reply("Use: baby remove question - answer");
+        if (parts.length < 2) return message.reply("Use: baby remove/rm question - answer");
 
         const [ask, ans] = parts.map(s => s.trim());
-        const res = await axios.get(`${simsim}/delete?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
+        const res = await axios.get(`${simsim}/remove?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
         return message.reply(res.data.message || "✅ Removed successfully!");
       }
 
-      // Normal chat
-      await typing(api, threadID, 500);
-      const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
-
-      let responses = Array.isArray(res.data.response) ? res.data.response : [res.data.response || "Hmm baby 😚"];
-      for (const r of responses) {
-        await new Promise(resolve => {
-          message.reply(r, (err, info) => {
-            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-            resolve();
-          });
-        });
-      }
+      // SIMSIMI API REPLY (Default)
+      const res = await axios.get(`${simsim}/simsimi?ask=${encodeURIComponent(query)}`, { timeout: 10000 });
+      return message.reply(res.data.reply);
 
     } catch (err) {
-      console.error("Baby command error:", err.message);
-      message.reply("❌ Error: " + (err.message.includes("404") ? "Feature not available (backend issue)" : err.message));
+      return message.reply("❌ Error connected to server!");
     }
   },
 
-  onReply: async function ({ api, event, message, usersData }) {
-    const text = event.body?.trim();
-    if (!text) return;
-    const senderName = await usersData.getName(event.senderID);
-
-    try {
-      await typing(api, event.threadID, 500);
-      
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes("akash kmn") || lowerText.includes("akash kemon") || lowerText.includes("আকাশ কেমন")) {
-        return message.reply("আমার ওনার আকাশ ভাইয়া তো এই দুনিয়ার অন্যতম সেরা মানুষ! 👑❤️");
-      }
-
-      const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
-
-      const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
-      for (const r of replies) {
-        await message.reply(r, (err, info) => {
-          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
-      }
-    } catch (err) {
-      console.error("onReply error:", err.message);
-    }
-  },
-
-  onChat: async function ({ api, event, message, usersData }) {
-    const raw = event.body ? event.body.toLowerCase().trim() : "";
-    if (!raw) return;
-
+  onReply: async function ({ api, event, Reply, message, usersData }) {
     const senderID = event.senderID;
     const senderName = await usersData.getName(senderID);
     const threadID = event.threadID;
+    const query = event.body.trim().toLowerCase();
 
     try {
-      // আকাশ কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
-      if (raw.includes("akash kmn") || raw.includes("akash kemon") || raw.includes("আকাশ কেমন")) {
-        await typing(api, threadID, 500);
+      // রিপ্লাইতেও রিয়া বা আকাশ/মালিক নিয়ে ট্রিক খাটবে
+      if (
+        query.includes("akash kmn") || 
+        query.includes("akash kemon") || 
+        query.includes("আকাশ কেমন") || 
+        query.includes("boter malik") || 
+        query.includes("বটের মালিক") || 
+        query.includes("owner")
+      ) {
         const akashReplies = [
           "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
-          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
           "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
         ];
-        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
-          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)]);
       }
 
-      // শুধু ট্র্রিগার বা নাম ধরে ডাকলে
-      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ"];
-      if (triggers.includes(raw)) {
-        await typing(api, threadID, 500);
-        
-        // আকাশ নাম ধরে ডাকলে বস-দের মতো সম্মানজনক ও মিষ্টি রেসপন্স
-        if (raw === "akash" || raw === "আকাশ") {
-          return message.reply("জ্বী বলুন! আকাশ ভাইয়া তো আমার ক্রিয়েটর আর আমার একমাত্র রেস্পেক্টেড বস! 🥰👑", (err, info) => {
-            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-          });
-        }
-
-        const funny = [
-          "কি হয়েছে জান বলো? শুনছি তো! 😿",
-          "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
-          "হুম বলো পাখি, শুনছি তো! 🫶🐤",
-          "ডাকছো কেন বাবু? সারাক্ষণ তো তোমার কথাই ভাবি! 😘",
-          "জ্বী জানু বলো, তোমার জন্য সব কাজ ফেলে চলে আসলাম! 🥰"
+      if (query.includes("riya") || query.includes("রিয়া")) {
+        const riyaReplies = [
+          "আরেহ্ রিয়া! চমৎকার একটি মিষ্টি নাম। শুনলেই মন ভালো হয়ে যায়! ✨🌸",
+          "রিয়া নামটা শুনলেই কেমন যেন একটা চমৎকার আর মায়াবী অনুভূতি হয়! 🥰"
         ];
-        return message.reply(funny[Math.floor(Math.random() * funny.length)], (err, info) => {
-          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)]);
       }
 
-      // prefixes
-      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ "];
-      const prefix = prefixes.find(p => raw.startsWith(p));
-      if (prefix) {
-        const q = raw.replace(prefix,"").trim();
-        if (!q) return;
-
-        await typing(api, threadID, 500);
-        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(q)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
-
-        const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
-        for (const r of replies) {
-          await message.reply(r, (err, info) => {
-            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-          });
-        }
-        return;
-      }
-
-      // AUTO-TEACH from reply
-      if (event.messageReply) {
-        try {
-          const setting = await axios.get(`${simsim}/setting`, { timeout: 8000 });
-          if (setting.data?.autoTeach) {
-            const ask = event.messageReply.body?.toLowerCase().trim();
-            const ans = raw.trim();
-            if (ask && ans && ask !== ans) {
-              setTimeout(async () => {
-                try {
-                  await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 10000 });
-                } catch {}
-              }, 500);
-            }
-          }
-        } catch {}
-      }
-
-    } catch (err) {
-      console.error("onChat error:", err.message);
+      const res = await axios.get(`${simsim}/simsimi?ask=${encodeURIComponent(query)}`, { timeout: 10000 });
+      return message.reply(res.data.reply, (err, info) => {
+        if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+      });
+    } catch {
+      return message.reply("❌ Server busy!");
     }
   }
 };
