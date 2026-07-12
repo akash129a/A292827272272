@@ -4,10 +4,9 @@ const simsim = "https://simsimi-api-tjb1.onrender.com";
 
 const typing = async (api, threadID, ms = 500) => {
   try {
-    if (typeof api.sendTypingIndicator === "function") {
+    if (api && typeof api.sendTypingIndicator === "function") {
       await api.sendTypingIndicator(threadID, true);
       await new Promise(resolve => setTimeout(resolve, ms));
-      await api.sendTypingIndicator(threadID, false);
     }
   } catch {}
 };
@@ -16,12 +15,16 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "5.1",
+    version: "5.2",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with New Akash Customization",
-    longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
+    shortDescription: {
+      en: "Full Mirai-style Baby AI with New Akash Customization"
+    },
+    longDescription: {
+      en: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing"
+    },
     category: "box chat",
     guide: {
       en: "{p}baby [message]\n{p}baby teach [q] - [a]\n{p}baby autoteach on/off\n{p}baby list\n{p}baby msg [trigger]\n{p}baby edit [q] - [old] - [new]\n{p}baby remove/rm [q] - [a]"
@@ -44,15 +47,19 @@ module.exports = {
     }
 
     try {
+      // নো কোয়েরি হ্যান্ডলিং
       if (!query) {
         await typing(api, threadID, 500);
         const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰", "হুম বলো আমার জান 🙈"];
-        return message.reply(ran[Math.floor(Math.random() * ran.length)], (err, info) => {
-          if (!err && global.GoatBot?.onReply) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        const resText = ran[Math.floor(Math.random() * ran.length)];
+        const info = await message.reply(resText);
+        if (global.GoatBot?.onReply) {
+          global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, messageID: info.messageID, author: senderID });
+        }
+        return;
       }
 
-      // 1. AUTOTEACH
+      // ১. AUTOTEACH
       if (args[0] === "autoteach") {
         const mode = args[1]?.toLowerCase();
         if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
@@ -61,13 +68,13 @@ module.exports = {
         return message.reply(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`);
       }
 
-      // 2. LIST
+      // ২. LIST
       if (args[0] === "list") {
         const res = await axios.get(`${simsim}/list`, { timeout: 15000 });
         return message.reply(`╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}\n╰─╼👤 𝐃eᴠ: Akash Chowdhury`);
       }
 
-      // 3. MSG
+      // ৩. MSG
       if (args[0] === "msg") {
         const trigger = args.slice(1).join(" ").trim();
         if (!trigger) return message.reply("Use: baby msg [trigger]");
@@ -77,7 +84,7 @@ module.exports = {
         return message.reply(`📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}\n📋 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}\n━━━━━━━━━━━━━━\n${formatted}`);
       }
 
-      // 4. TEACH
+      // ৪. TEACH
       if (args[0] === "teach") {
         const parts = args.slice(1).join(" ").split(" - ");
         if (parts.length < 2) return message.reply("Use: baby teach question - answer");
@@ -86,7 +93,7 @@ module.exports = {
         return message.reply(res.data.message || "✅ Taught successfully!");
       }
 
-      // 5. EDIT (নতুন যুক্ত করা হয়েছে)
+      // ৫. EDIT
       if (args[0] === "edit") {
         const parts = args.slice(1).join(" ").split(" - ");
         if (parts.length < 3) return message.reply("Use: baby edit question - old_answer - new_answer");
@@ -95,7 +102,7 @@ module.exports = {
         return message.reply(res.data.message || "✅ Edited successfully!");
       }
 
-      // 6. REMOVE (নতুন যুক্ত করা হয়েছে)
+      // ৬. REMOVE
       if (args[0] === "remove" || args[0] === "rm") {
         const parts = args.slice(1).join(" ").split(" - ");
         if (parts.length < 2) return message.reply("Use: baby remove question - answer");
@@ -125,20 +132,24 @@ module.exports = {
           "আরেহ্ রিয়া! চমৎকার একটি মিষ্টি নাম। শুনলেই মন ভালো হয়ে যায়! ✨🌸",
           "রিয়া তো একদম লক্ষ্মী একটা মেয়ে, যেমন সুন্দর নাম তেমন সুন্দর তার মন! 💖"
         ];
-        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)], (err, info) => {
-          if (!err && global.GoatBot?.onReply) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        const resText = riyaReplies[Math.floor(Math.random() * riyaReplies.length)];
+        const info = await message.reply(resText);
+        if (global.GoatBot?.onReply) {
+          global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, messageID: info.messageID, author: senderID });
+        }
+        return;
       }
 
-      // API Call
+      // মেইন API কল
       await typing(api, threadID, 500);
       try {
         const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
-        
         let replyText = res.data?.response || res.data?.reply || "Baby একটু বিজি আছে জানু, একটু পর বলো 🥺";
-        return message.reply(replyText, (err, info) => {
-          if (!err && global.GoatBot?.onReply) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        
+        const info = await message.reply(replyText);
+        if (global.GoatBot?.onReply) {
+          global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, messageID: info.messageID, author: senderID });
+        }
       } catch (e) {
         console.error("[BABY] API Error:", e.message);
         return message.reply("API ডাউন আছে বা রেসপন্স করছে না 🥲");
@@ -150,7 +161,7 @@ module.exports = {
     }
   },
 
-  onReply: async function ({ api, event, reply, message, usersData }) {
+  onReply: async function ({ api, event, Reply, message, usersData }) {
     const senderID = event.senderID;
     const threadID = event.threadID;
     const query = event.body.trim().toLowerCase();
@@ -180,9 +191,11 @@ module.exports = {
       try {
         const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
         let replyText = res.data?.response || res.data?.reply || "...";
-        return message.reply(replyText, (err, info) => {
-          if (!err && global.GoatBot?.onReply) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-        });
+        
+        const info = await message.reply(replyText);
+        if (global.GoatBot?.onReply) {
+          global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, messageID: info.messageID, author: senderID });
+        }
       } catch (e) {
         return message.reply("API ডাউন আছে 🥲");
       }
