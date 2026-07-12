@@ -16,7 +16,7 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "5.0",
+    version: "5.1",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
@@ -52,7 +52,7 @@ module.exports = {
         });
       }
 
-      // সাব-কমান্ড চেকিং
+      // 1. AUTOTEACH
       if (args[0] === "autoteach") {
         const mode = args[1]?.toLowerCase();
         if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
@@ -61,11 +61,13 @@ module.exports = {
         return message.reply(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`);
       }
 
+      // 2. LIST
       if (args[0] === "list") {
         const res = await axios.get(`${simsim}/list`, { timeout: 15000 });
         return message.reply(`╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}\n╰─╼👤 𝐃eᴠ: Akash Chowdhury`);
       }
 
+      // 3. MSG
       if (args[0] === "msg") {
         const trigger = args.slice(1).join(" ").trim();
         if (!trigger) return message.reply("Use: baby msg [trigger]");
@@ -75,12 +77,31 @@ module.exports = {
         return message.reply(`📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}\n📋 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}\n━━━━━━━━━━━━━━\n${formatted}`);
       }
 
+      // 4. TEACH
       if (args[0] === "teach") {
         const parts = args.slice(1).join(" ").split(" - ");
         if (parts.length < 2) return message.reply("Use: baby teach question - answer");
         const [ask, ans] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 15000 });
         return message.reply(res.data.message || "✅ Taught successfully!");
+      }
+
+      // 5. EDIT (নতুন যুক্ত করা হয়েছে)
+      if (args[0] === "edit") {
+        const parts = args.slice(1).join(" ").split(" - ");
+        if (parts.length < 3) return message.reply("Use: baby edit question - old_answer - new_answer");
+        const [ask, oldAns, newAns] = parts.map(s => s.trim());
+        const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&oldAns=${encodeURIComponent(oldAns)}&newAns=${encodeURIComponent(newAns)}`, { timeout: 15000 });
+        return message.reply(res.data.message || "✅ Edited successfully!");
+      }
+
+      // 6. REMOVE (নতুন যুক্ত করা হয়েছে)
+      if (args[0] === "remove" || args[0] === "rm") {
+        const parts = args.slice(1).join(" ").split(" - ");
+        if (parts.length < 2) return message.reply("Use: baby remove question - answer");
+        const [ask, ans] = parts.map(s => s.trim());
+        const res = await axios.get(`${simsim}/remove?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 15000 });
+        return message.reply(res.data.message || "✅ Removed successfully!");
       }
 
       // মালিক কন্ডিশন
