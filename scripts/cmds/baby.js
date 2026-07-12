@@ -16,12 +16,12 @@ const typing = async (api, threadID, ms = 500) => {
 module.exports = {
   config: {
     name: "baby",
-    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
-    version: "4.5",
-    author: "rX (customized by Akash Chowdhury)",
+    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya"],
+    version: "4.6",
+    author: "rX (customized by Akash & Riya)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with New Akash Customization",
+    shortDescription: "Full Mirai-style Baby AI with Akash & Riya Customization",
     longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
     category: "box chat",
     guide: {
@@ -45,7 +45,12 @@ module.exports = {
         });
       }
 
-      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে আকাশ কেমন জিজ্ঞেস করলে)
+      // বটের মালিক কে জিজ্ঞেস করলে
+      if (query.includes("owner") || query.includes("মালিক") || query.includes("malik") || query.includes("বটের মালিক কে")) {
+        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী' এবং ওনার কলিজার 'রিয়া'! ওনারাই আমার সব। 🥰❤️");
+      }
+
+      // কাস্টম টেক্সট সার্চ (আকাশ কেমন জিজ্ঞেস করলে)
       if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
         const akashReplies = [
           "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
@@ -54,6 +59,17 @@ module.exports = {
           "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
         ];
         return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)]);
+      }
+
+      // কাস্টম টেক্সট সার্চ (রিয়া কেমন জিজ্ঞেস করলে)
+      if (query.includes("riya kmn") || query.includes("riya kemon") || query.includes("রিয়া কেমন")) {
+        const riyaReplies = [
+          "রিয়া তো আমার কলিজার রানি! ওনার মনটা একদম ফুলের মতো পবিত্র। 🌸❤️",
+          "রিয়া আপু দেখতে যেমন কিউট, ওনার কথাগুলোও তেমনই মিষ্টি! 🥰✨",
+          "আমাদের রিয়া হলো এই বটের প্রাণ! ওনার মিষ্টি হাসিতেই তো বট চলে। 🙈👑",
+          "রিয়া আপুর মতো চমৎকার আর কেয়ারিং মানুষ সত্যিই খুব কম আছে! 🌷✨"
+        ];
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)]);
       }
 
       // AUTOTEACH TOGGLE
@@ -73,7 +89,7 @@ module.exports = {
 `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬
 ├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
 ├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}
-╰─╼👤 𝐃eᴠ: Akash Chowdhury`
+╰─╼👤 𝐃eᴠ: Akash & Riya`
         );
       }
 
@@ -153,8 +169,14 @@ ${formatted}`
       await typing(api, event.threadID, 500);
       
       const lowerText = text.toLowerCase();
+      if (lowerText.includes("owner") || lowerText.includes("মালিক") || lowerText.includes("malik") || lowerText.includes("বটের মালিক কে")) {
+        return message.reply("👑 আমার কিউট মালিক হলেন 'আকাশ চৌধুরী' আর ওনার কলিজার 'রিয়া'! 🥰❤️");
+      }
       if (lowerText.includes("akash kmn") || lowerText.includes("akash kemon") || lowerText.includes("আকাশ কেমন")) {
         return message.reply("আমার ওনার আকাশ ভাইয়া তো এই দুনিয়ার অন্যতম সেরা মানুষ! 👑❤️");
+      }
+      if (lowerText.includes("riya kmn") || lowerText.includes("riya kemon") || lowerText.includes("রিয়া কেমন")) {
+        return message.reply("আমার মিষ্টি রিয়া আপু তো একদম রাজকন্যার মতো কিউট আর ভালো মন বিশিষ্ট! 👑✨");
       }
 
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
@@ -179,7 +201,15 @@ ${formatted}`
     const threadID = event.threadID;
 
     try {
-      // আকাশ কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
+      // বটের মালিক কে জিজ্ঞেস করলে
+      if (raw.includes("owner") || raw.includes("মালিক") || raw.includes("malik") || raw.includes("বটের মালিক কে")) {
+        await typing(api, threadID, 500);
+        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী' এবং ওনার কলিজার 'রিয়া'! ওনারাই আমার সব। 🥰❤️", (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // আকাশ কেমন
       if (raw.includes("akash kmn") || raw.includes("akash kemon") || raw.includes("আকাশ কেমন")) {
         await typing(api, threadID, 500);
         const akashReplies = [
@@ -193,14 +223,35 @@ ${formatted}`
         });
       }
 
+      // রিয়া কেমন
+      if (raw.includes("riya kmn") || raw.includes("riya kemon") || raw.includes("রিয়া কেমন")) {
+        await typing(api, threadID, 500);
+        const riyaReplies = [
+          "রিয়া তো আমার কলিজার রানি! ওনার মনটা একদম ফুলের মতো পবিত্র। 🌸❤️",
+          "রিয়া আপু দেখতে যেমন কিউট, ওনার কথাগুলোও তেমনই মিষ্টি! 🥰✨",
+          "আমাদের রিয়া হলো এই বটের প্রাণ! ওনার মিষ্টি হাসিতেই তো বট চলে। 🙈👑",
+          "রিয়া আপুর মতো চমৎকার আর কেয়ারিং মানুষ সত্যিই খুব কম আছে! 🌷✨"
+        ];
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)], (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
       // শুধু ট্র্রিগার বা নাম ধরে ডাকলে
-      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ"];
+      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","riya","রিয়া"];
       if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
         
-        // আকাশ নাম ধরে ডাকলে বস-দের মতো সম্মানজনক ও মিষ্টি রেসপন্স
+        // আকাশ নাম ধরে ডাকলে
         if (raw === "akash" || raw === "আকাশ") {
           return message.reply("জ্বী বলুন! আকাশ ভাইয়া তো আমার ক্রিয়েটর আর আমার একমাত্র রেস্পেক্টেড বস! 🥰👑", (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        }
+
+        // রিয়া নাম ধরে ডাকলে
+        if (raw === "riya" || raw === "রিয়া") {
+          return message.reply("জ্বী রিয়া আপু/জানু বলুন! আপনি তো আমার কিউট ওনার, আপনার সব হুকুম মাথা পেতে নিলাম! 🥰👑✨", (err, info) => {
             if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
           });
         }
@@ -218,7 +269,7 @@ ${formatted}`
       }
 
       // prefixes
-      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ "];
+      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","riya ","রিয়া "];
       const prefix = prefixes.find(p => raw.startsWith(p));
       if (prefix) {
         const q = raw.replace(prefix,"").trim();
