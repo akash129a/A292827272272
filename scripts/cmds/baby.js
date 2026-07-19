@@ -2,10 +2,10 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড লজিক ফিক্সড
+// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড লজিক সম্পূর্ণ করা হলো
 const typing = async (api, threadID, ms = 500) => {
   return new Promise((resolve) => {
-    if (api && api.sendTypingIndicator) {
+    if (api && typeof api.sendTypingIndicator === "function") {
       api.sendTypingIndicator(threadID, (err) => {
         setTimeout(() => resolve(), ms);
       });
@@ -19,12 +19,12 @@ module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya", "nishu"],
-    version: "4.6",
+    version: "4.7",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
     shortDescription: "Full Mirai-style Baby AI with Akash, Riya & Nishu Customization",
-    longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing + Crush special replies",
+    longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
     category: "box chat",
     guide: {
       en: "{p}baby [message]\n{p}baby teach [q] - [a]\n{p}baby autoteach on/off\n{p}baby list\n{p}baby msg [trigger]\n{p}baby edit [q] - [old] - [new]\n{p}baby remove/rm [q] - [a]"
@@ -33,7 +33,7 @@ module.exports = {
 
   onStart: async function ({ api, event, args, message, usersData }) {
     const senderID = event.senderID;
-    const senderName = await usersData.getName(senderID) || "User";
+    const senderName = (await usersData.getName(senderID)) || "User";
     const threadID = event.threadID;
     const query = args.join(" ").trim().toLowerCase();
 
@@ -73,7 +73,7 @@ module.exports = {
 `╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬
 ├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
 ├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}
-╰─╼👤 𝐃eᴠ: Akash & Riya`
+╰─╼👤 𝐃eᴠ: Akash Chowdhury`
         );
       }
 
@@ -147,7 +147,7 @@ ${formatted}`
   onReply: async function ({ api, event, message, usersData }) {
     const text = event.body?.trim();
     if (!text) return;
-    const senderName = await usersData.getName(event.senderID) || "User";
+    const senderName = (await usersData.getName(event.senderID)) || "User";
 
     try {
       await typing(api, event.threadID, 500);
@@ -177,7 +177,7 @@ ${formatted}`
     if (!raw) return;
 
     const senderID = event.senderID;
-    const senderName = await usersData.getName(senderID) || "User";
+    const senderName = (await usersData.getName(senderID)) || "User";
     const threadID = event.threadID;
 
     try {
@@ -268,7 +268,7 @@ ${formatted}`
   }
 };
 
-// কাস্টম কিওয়ার্ড চেক করার কমন গ্লোবাল মেথড
+// কাস্টম কিওয়ার্ড চেক করার কমন গ্লোবাল মেথড (ফাইলটির একদম শেষ অংশ)
 function checkCustomKeywords(txt) {
   if (txt.includes("owner") || txt.includes("মালিক") || txt.includes("malik") || txt.includes("বটের মালিক কে")) {
     return "👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী' এবং ওনার কলিজার 'রিয়া'! ওনারাই আমার সব। 🥰❤️";
