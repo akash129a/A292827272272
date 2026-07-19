@@ -2,10 +2,10 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// GoatBot ফ্রেমওয়ার্ক ফ্রেন্ডলি রকেট গতি টাইপিং ইন্ডিকেটর
+// রকেট গতির জন্য টাইপিং ডিলে
 const typing = async (api, threadID, ms = 500) => {
   return new Promise((resolve) => {
-    if (api && typeof api.sendTypingIndicator === "function") {
+    if (api && api.sendTypingIndicator) {
       api.sendTypingIndicator(threadID, (err) => {
         setTimeout(() => resolve(), ms);
       });
@@ -15,22 +15,15 @@ const typing = async (api, threadID, ms = 500) => {
   });
 };
 
-// রিপ্লাই ডাটাবেজ সেভ করার গ্লোবাল সেফটি ফাংশন
-const saveReplyInfo = (info) => {
-  if (info && info.messageID && global.GoatBot && global.GoatBot.onReply) {
-    global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
-  }
-};
-
 module.exports = {
   config: {
     name: "baby",
     aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya", "nishu"],
-    version: "5.0",
+    version: "5.1",
     author: "rX (customized by Akash & Riya)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with Akash, Riya & Nishu Customization",
+    shortDescription: "Full GoatBot Baby AI with Akash, Riya & Nishu Customization",
     longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing + Crush special replies",
     category: "box chat",
     guide: {
@@ -49,66 +42,66 @@ module.exports = {
       if (!query) {
         await typing(api, threadID, 500);
         const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰", "হুম বলো আমার জান 🙈"];
-        return api.sendMessage(ran[Math.floor(Math.random() * ran.length)], threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        return message.reply(ran[Math.floor(Math.random() * ran.length)]);
       }
 
       // AUTOTEACH TOGGLE
       if (args[0] === "autoteach") {
         const mode = args[1]?.toLowerCase();
-        if (!["on","off"].includes(mode)) return api.sendMessage("Use: baby autoteach on/off", threadID, event.messageID);
+        if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
         const status = mode === "on";
         await axios.post(`${simsim}/setting`, { autoTeach: status }, { timeout: 10000 });
-        return api.sendMessage(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`, threadID, event.messageID);
+        return message.reply(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`);
       }
 
       // LIST
       if (args[0] === "list") {
         const res = await axios.get(`${simsim}/list`, { timeout: 10000 });
-        return api.sendMessage(`╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}\n╰─╼👤 𝐃eᴠ: Akash & Riya`, threadID, event.messageID);
+        return message.reply(`╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬\n├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}\n├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}\n╰─╼👤 𝐃eᴠ: Akash & Riya`);
       }
 
       // MSG
       if (args[0] === "msg") {
         const trigger = args.slice(1).join(" ").trim();
-        if (!trigger) return api.sendMessage("Use: baby msg [trigger]", threadID, event.messageID);
+        if (!trigger) return message.reply("Use: baby msg [trigger]");
         const res = await axios.get(`${simsim}/simsimi-list?ask=${encodeURIComponent(trigger)}`, { timeout: 10000 });
-        if (!res.data.replies?.length) return api.sendMessage("❌ No replies found for this trigger.", threadID, event.messageID);
+        if (!res.data.replies?.length) return message.reply("❌ No replies found for this trigger.");
         const formatted = res.data.replies.map((rep, i) => `➤ ${i+1}. ${rep}`).join("\n");
-        return api.sendMessage(`📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}\n📋 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}\n━━━━━━━━━━━━━━\n${formatted}`, threadID, event.messageID);
+        return message.reply(`📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}\n📋 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}\n━━━━━━━━━━━━━━\n${formatted}`);
       }
 
       // TEACH
       if (args[0] === "teach") {
         const parts = args.slice(1).join(" ").split(" - ");
-        if (parts.length < 2) return api.sendMessage("Use: baby teach question - answer", threadID, event.messageID);
+        if (parts.length < 2) return message.reply("Use: baby teach question - answer");
         const [ask, ans] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
-        return api.sendMessage(res.data.message || "✅ Taught successfully!", threadID, event.messageID);
+        return message.reply(res.data.message || "✅ Taught successfully!");
       }
 
       // EDIT
       if (args[0] === "edit") {
         const parts = args.slice(1).join(" ").split(" - ");
-        if (parts.length < 3) return api.sendMessage("Use: baby edit question - old reply - new reply", threadID, event.messageID);
+        if (parts.length < 3) return message.reply("Use: baby edit question - old reply - new reply");
         const [ask, oldR, newR] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&old=${encodeURIComponent(oldR)}&new=${encodeURIComponent(newR)}`, { timeout: 10000 });
-        return api.sendMessage(res.data.message || "✅ Edited successfully!", threadID, event.messageID);
+        return message.reply(res.data.message || "✅ Edited successfully!");
       }
 
       // REMOVE / RM
       if (["remove","rm"].includes(args[0])) {
         const parts = args.slice(1).join(" ").split(" - ");
-        if (parts.length < 2) return api.sendMessage("Use: baby remove question - answer", threadID, event.messageID);
+        if (parts.length < 2) return message.reply("Use: baby remove question - answer");
         const [ask, ans] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/delete?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
-        return api.sendMessage(res.data.message || "✅ Removed successfully!", threadID, event.messageID);
+        return message.reply(res.data.message || "✅ Removed successfully!");
       }
 
       // কাস্টম কিওয়ার্ড চেক (Akash, Riya, Nishu)
       const customReply = checkCustomKeywords(query);
       if (customReply) {
         await typing(api, threadID, 500);
-        return api.sendMessage(customReply, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        return message.reply(customReply);
       }
 
       // Normal SimSimi Chat API Request
@@ -116,11 +109,11 @@ module.exports = {
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
       let responses = Array.isArray(res.data.response) ? res.data.response : [res.data.response || "Hmm baby 😚"];
       for (const r of responses) {
-        api.sendMessage(r, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        message.reply(r);
       }
     } catch (err) {
       console.error("Baby command error:", err.message);
-      api.sendMessage("❌ Error: " + err.message, threadID, event.messageID);
+      message.reply("❌ Error: " + err.message);
     }
   },
 
@@ -134,13 +127,13 @@ module.exports = {
       await typing(api, threadID, 500);
       const customReply = checkCustomKeywords(text.toLowerCase());
       if (customReply) {
-        return api.sendMessage(customReply, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        return message.reply(customReply);
       }
 
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
       const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
       for (const r of replies) {
-        api.sendMessage(r, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        message.reply(r);
       }
     } catch (err) {
       console.error("onReply error:", err.message);
@@ -158,7 +151,7 @@ module.exports = {
       const customReply = checkCustomKeywords(raw);
       if (customReply) {
         await typing(api, threadID, 500);
-        return api.sendMessage(customReply, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+        return message.reply(customReply);
       }
 
       // প্রিফিক্স চ্যাট চেক (যেমন: baby hi)
@@ -171,7 +164,7 @@ module.exports = {
         const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(q)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
         const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
         for (const r of replies) {
-          api.sendMessage(r, threadID, (err, info) => saveReplyInfo(info), event.messageID);
+          message.reply(r);
         }
       }
     } catch (err) {
@@ -203,7 +196,7 @@ function checkCustomKeywords(txt) {
   }
   if (txt.includes("nafisa sultana nishu") || txt.includes("nishu kmn") || txt.includes("nishu kemon") || txt.includes("নিশু কেমন") || txt === "nishu" || txt === "নিশু" || txt === "nafisa sultana nishu") {
     const nishuReplies = [
-      "উফফ! নাфিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+      "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
       "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
       "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
       "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
