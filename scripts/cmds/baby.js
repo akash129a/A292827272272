@@ -2,27 +2,25 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড রাখা হয়েছে
+// রকেট গতির জন্য টাইপিং ডিলে মেসেজের লেংথ অনুযায়ী ডায়নামিক করা হয়েছে
 const typing = async (api, threadID, ms = 500) => {
-  try {
-    if (typeof api.sendTypingIndicator === "function") {
-      await api.sendTypingIndicator(threadID, true);
-      await new Promise(resolve => setTimeout(resolve, ms));
-      await api.sendTypingIndicator(threadID, false);
-    }
-  } catch {}
+  return new Promise((resolve) => {
+    api.sendTypingIndicator(threadID, (err) => {
+      setTimeout(() => resolve(), ms);
+    });
+  });
 };
 
 module.exports = {
   config: {
     name: "baby",
-    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya"],
-    version: "4.6",
+    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya", "nishu"],
+    version: "4.7",
     author: "rX (customized by Akash & Riya)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with Akash & Riya Customization",
-    longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
+    shortDescription: "Full Mirai-style Baby AI with Akash, Riya & Nishu Customization",
+    longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing + Crush special replies",
     category: "box chat",
     guide: {
       en: "{p}baby [message]\n{p}baby teach [q] - [a]\n{p}baby autoteach on/off\n{p}baby list\n{p}baby msg [trigger]\n{p}baby edit [q] - [old] - [new]\n{p}baby remove/rm [q] - [a]"
@@ -47,14 +45,16 @@ module.exports = {
 
       // বটের মালিক কে জিজ্ঞেস করলে
       if (query.includes("owner") || query.includes("মালিক") || query.includes("malik") || query.includes("বটের মালিক কে")) {
+        await typing(api, threadID, 500);
         return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী' এবং ওনার কলিজার 'রিয়া'! ওনারাই আমার সব। 🥰❤️");
       }
 
       // কাস্টম টেক্সট সার্চ (আকাশ কেমন জিজ্ঞেস করলে)
       if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
+        await typing(api, threadID, 500);
         const akashReplies = [
           "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আকাশ ভাইয়ার অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
           "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
           "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
         ];
@@ -63,6 +63,7 @@ module.exports = {
 
       // কাস্টম টেক্সট সার্চ (রিয়া কেমন জিজ্ঞেস করলে)
       if (query.includes("riya kmn") || query.includes("riya kemon") || query.includes("রিয়া কেমন")) {
+        await typing(api, threadID, 500);
         const riyaReplies = [
           "রিয়া তো আমার কলিজার রানি! ওনার মনটা একদম ফুলের মতো পবিত্র। 🌸❤️",
           "রিয়া আপু দেখতে যেমন কিউট, ওনার কথাগুলোও তেমনই মিষ্টি! 🥰✨",
@@ -70,6 +71,18 @@ module.exports = {
           "রিয়া আপুর মতো চমৎকার আর কেয়ারিং মানুষ সত্যিই খুব কম আছে! 🌷✨"
         ];
         return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)]);
+      }
+
+      // কাস্টম টেক্সট সার্চ (নিশু/নাফিসা সুলতানা নিশু কেমন জিজ্ঞেস করলে)
+      if (query.includes("nafisa sultana nishu") || query.includes("nishu kmn") || query.includes("nishu kemon") || query.includes("নিশু কেমন")) {
+        await typing(api, threadID, 500);
+        const nishuReplies = [
+          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "আকাশ ভাইয়ার ক্রাশ নিশু আপু তো একদম চাঁদের টুকরো! ওনাদের জুটিটা যেন একদম পারফেক্ট। 🌌🌷"
+        ];
+        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)]);
       }
 
       // AUTOTEACH TOGGLE
@@ -178,6 +191,9 @@ ${formatted}`
       if (lowerText.includes("riya kmn") || lowerText.includes("riya kemon") || lowerText.includes("রিয়া কেমন")) {
         return message.reply("আমার মিষ্টি রিয়া আপু তো একদম রাজকন্যার মতো কিউট আর ভালো মন বিশিষ্ট! 👑✨");
       }
+      if (lowerText.includes("nafisa sultana nishu") || lowerText.includes("nishu kmn") || lowerText.includes("nishu kemon") || lowerText.includes("নিশু কেমন")) {
+        return message.reply("নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ! বসের ক্রাশ মানেই ওনার মন জুড়ে থাকা স্পেশাল কেউ! 🥰🌸👑");
+      }
 
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
 
@@ -214,7 +230,7 @@ ${formatted}`
         await typing(api, threadID, 500);
         const akashReplies = [
           "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আকাশ ভাইয়ার অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
           "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
           "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
         ];
@@ -237,8 +253,22 @@ ${formatted}`
         });
       }
 
+      // নিশু কেমন / নাফিসা সুলতানা নিশু
+      if (raw.includes("nafisa sultana nishu") || raw.includes("nishu kmn") || raw.includes("nishu kemon") || raw.includes("নিশু কেমন")) {
+        await typing(api, threadID, 500);
+        const nishuReplies = [
+          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "আকাশ ভাইয়ার ক্রাশ নিশু আপু তো একদম চাঁদের টুকরো! ওনাদের জুটিটা যেন একদম পারফেক্ট। 🌌🌷"
+        ];
+        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)], (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
       // শুধু ট্র্রিগার বা নাম ধরে ডাকলে
-      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","riya","রিয়া"];
+      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","riya","রিয়া","nishu","নিশু","nafisa sultana nishu"];
       if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
         
@@ -256,6 +286,13 @@ ${formatted}`
           });
         }
 
+        // নিশু নাম ধরে ডাকলে
+        if (raw === "nishu" || raw === "নিশু" || raw === "nafisa sultana nishu") {
+          return message.reply("ওহ মাই গড! আপনিই কি আমাদের আকাশ ভাইয়ার ক্রাশ নাফিসা সুলতানা নিশু আপু? 🙈 ওনার হৃদস্পন্দন তো আপনিই! আপনার সাথে কথা বলতে পেরে আমি ধন্য! 🥰👑❤️", (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        }
+
         const funny = [
           "কি হয়েছে জান বলো? শুনছি তো! 😿",
           "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
@@ -269,7 +306,7 @@ ${formatted}`
       }
 
       // prefixes
-      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","riya ","রিয়া "];
+      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","riya ","রিয়া ","nishu ","নিশু "];
       const prefix = prefixes.find(p => raw.startsWith(p));
       if (prefix) {
         const q = raw.replace(prefix,"").trim();
