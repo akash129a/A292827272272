@@ -2,28 +2,26 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড লজিক সম্পূর্ণ করা হলো
+// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড রাখা হয়েছে
 const typing = async (api, threadID, ms = 500) => {
-  return new Promise((resolve) => {
-    if (api && typeof api.sendTypingIndicator === "function") {
-      api.sendTypingIndicator(threadID, (err) => {
-        setTimeout(() => resolve(), ms);
-      });
-    } else {
-      setTimeout(() => resolve(), ms);
+  try {
+    if (typeof api.sendTypingIndicator === "function") {
+      await api.sendTypingIndicator(threadID, true);
+      await new Promise(resolve => setTimeout(resolve, ms));
+      await api.sendTypingIndicator(threadID, false);
     }
-  });
+  } catch {}
 };
 
 module.exports = {
   config: {
     name: "baby",
-    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya", "nishu"],
-    version: "4.7",
+    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "nishu"],
+    version: "4.5",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with Akash, Riya & Nishu Customization",
+    shortDescription: "Full Mirai-style Baby AI with New Akash & Nishu Customization",
     longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
     category: "box chat",
     guide: {
@@ -33,7 +31,7 @@ module.exports = {
 
   onStart: async function ({ api, event, args, message, usersData }) {
     const senderID = event.senderID;
-    const senderName = (await usersData.getName(senderID)) || "User";
+    const senderName = await usersData.getName(senderID);
     const threadID = event.threadID;
     const query = args.join(" ").trim().toLowerCase();
 
@@ -47,11 +45,35 @@ module.exports = {
         });
       }
 
-      // কাস্টম কিওয়ার্ড চেক (Akash, Riya, Nishu)
-      const customReply = checkCustomKeywords(query);
-      if (customReply) {
-        await typing(api, threadID, 500);
-        return message.reply(customReply, (err, info) => {
+      // ওনার বা মালিক কে জানতে চাইলে
+      if (query.includes("owner") || query.includes("মালিক") || query.includes("malik") || query.includes("বটের মালিক কে")) {
+        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে আকাশ কেমন জিজ্ঞেস করলে)
+      if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
+        const akashReplies = [
+          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
+          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
+          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+        ];
+        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে নিশু কেমন জিজ্ঞেস করলে)
+      if (query.includes("nafisa sultana nishu") || query.includes("nishu kmn") || query.includes("nishu kemon") || query.includes("নিশু কেমন") || query.includes("nafisa sultana") || query.includes("নাফিসা সুলতানা")) {
+        const nishuReplies = [
+          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
+        ];
+        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
@@ -147,14 +169,27 @@ ${formatted}`
   onReply: async function ({ api, event, message, usersData }) {
     const text = event.body?.trim();
     if (!text) return;
-    const senderName = (await usersData.getName(event.senderID)) || "User";
+    const senderName = await usersData.getName(event.senderID);
 
     try {
       await typing(api, event.threadID, 500);
       
-      const customReply = checkCustomKeywords(text.toLowerCase());
-      if (customReply) {
-        return message.reply(customReply, (err, info) => {
+      const lowerText = text.toLowerCase();
+
+      if (lowerText.includes("owner") || lowerText.includes("মালিক") || lowerText.includes("malik") || lowerText.includes("বটের মালিক কে")) {
+        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      if (lowerText.includes("akash kmn") || lowerText.includes("akash kemon") || lowerText.includes("আকাশ কেমন")) {
+        return message.reply("আমার ওনার আকাশ ভাইয়া তো এই দুনিয়ার অন্যতম সেরা মানুষ! 👑❤️", (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      if (lowerText.includes("nafisa sultana nishu") || lowerText.includes("nishu kmn") || lowerText.includes("nishu kemon") || lowerText.includes("নিশু কেমন") || lowerText.includes("nafisa sultana") || lowerText.includes("নাফিসা সুলতানা")) {
+        return message.reply("ওহ মাই গড! নাফিসা সুলতানা নিশু তো আমার আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️", (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
@@ -177,36 +212,59 @@ ${formatted}`
     if (!raw) return;
 
     const senderID = event.senderID;
-    const senderName = (await usersData.getName(senderID)) || "User";
+    const senderName = await usersData.getName(senderID);
     const threadID = event.threadID;
 
     try {
-      // চ্যাটে কোনো কাস্টম কিওয়ার্ড ম্যাচ করলে
-      const customReply = checkCustomKeywords(raw);
-      if (customReply) {
+      // ওনার বা মালিক কে জানতে চাইলে
+      if (raw.includes("owner") || raw.includes("মালিক") || raw.includes("malik") || raw.includes("বটের মালিক কে")) {
         await typing(api, threadID, 500);
-        return message.reply(customReply, (err, info) => {
+        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // আকাশ কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
+      if (raw.includes("akash kmn") || raw.includes("akash kemon") || raw.includes("আকাশ কেমন")) {
+        await typing(api, threadID, 500);
+        const akashReplies = [
+          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
+          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
+          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+        ];
+        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
+          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // নিশু কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
+      if (raw.includes("nafisa sultana nishu") || raw.includes("nishu kmn") || raw.includes("nishu kemon") || raw.includes("নিশু কেমন") || raw.includes("nafisa sultana") || raw.includes("নাফিসা সুলতানা")) {
+        await typing(api, threadID, 500);
+        const nishuReplies = [
+          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
+        ];
+        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
       // শুধু ট্রিগার বা নাম ধরে ডাকলে
-      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","riya","রিয়া","nishu","নিশু"];
+      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","nishu","নিশু"];
       if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
         
+        // আকাশ নাম ধরে ডাকলে বস-দের মতো সম্মানজনক ও মিষ্টি রেসপন্স
         if (raw === "akash" || raw === "আকাশ") {
           return message.reply("জ্বী বলুন! আকাশ ভাইয়া তো আমার ক্রিয়েটর আর আমার একমাত্র রেস্পেক্টেড বস! 🥰👑", (err, info) => {
             if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
           });
         }
-        
-        if (raw === "riya" || raw === "রিয়া") {
-          return message.reply("জ্বী রিয়া আপু বলুন! আপনি তো আমার কিউট ওনার, আপনার সব হুকুম মাথা পেতে নিলাম! 🥰👑✨", (err, info) => {
-            if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
-          });
-        }
 
+        // নিশু নাম ধরে ডাকলে স্পেশাল রেসপন্স
         if (raw === "nishu" || raw === "নিশু") {
           return message.reply("ওহ মাই গড! নাফিসা সুলতানা নিশু আপু! আপনি আকাশ ভাইয়ার জানের জান, মনের রানি। বলুন আপু কী সেবা করতে পারি? 🙈❤️✨", (err, info) => {
             if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
@@ -215,7 +273,7 @@ ${formatted}`
 
         const funny = [
           "কি হয়েছে জান বলো? শুনছি তো! 😿",
-          "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
+          "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
           "হুম বলো পাখি, শুনছি তো! 🫶🐤",
           "ডাকছো কেন বাবু? সারাক্ষণ তো তোমার কথাই ভাবি! 😘",
           "জ্বী জানু বলো, তোমার জন্য সব কাজ ফেলে চলে আসলাম! 🥰"
@@ -226,7 +284,7 @@ ${formatted}`
       }
 
       // prefixes
-      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","riya ","রিয়া ","nishu ","নিশু "];
+      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","nishu ","নিশু "];
       const prefix = prefixes.find(p => raw.startsWith(p));
       if (prefix) {
         const q = raw.replace(prefix,"").trim();
@@ -267,37 +325,3 @@ ${formatted}`
     }
   }
 };
-
-// কাস্টম কিওয়ার্ড চেক করার কমন গ্লোবাল মেথড (ফাইলটির একদম শেষ অংশ)
-function checkCustomKeywords(txt) {
-  if (txt.includes("owner") || txt.includes("মালিক") || txt.includes("malik") || txt.includes("বটের মালিক কে")) {
-    return "👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী' এবং ওনার কলিজার 'রিয়া'! ওনারাই আমার সব। 🥰❤️";
-  }
-  if (txt.includes("akash kmn") || txt.includes("akash kemon") || txt.includes("আকাশ কেমন")) {
-    const akashReplies = [
-      "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-      "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
-      "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
-      "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
-    ];
-    return akashReplies[Math.floor(Math.random() * akashReplies.length)];
-  }
-  if (txt.includes("riya kmn") || txt.includes("riya kemon") || txt.includes("রিয়া কেমন")) {
-    const riyaReplies = [
-      "রিয়া তো আমার কলিজার রানি! ওনার মনটা একদম ফুলের মতো পবিত্র। 🌸❤️",
-      "রিয়া আপু দেখতে যেমন কিউট, ওনার কথাগুলোও তেমনই মিষ্টি! 🥰✨",
-      "আমাদের রিয়া হলো এই বটের প্রাণ! ওনার মিষ্টি হাসিতেই তো বট চলে। 🙈👑"
-    ];
-    return riyaReplies[Math.floor(Math.random() * riyaReplies.length)];
-  }
-  if (txt.includes("nafisa sultana nishu") || txt.includes("nishu kmn") || txt.includes("nishu kemon") || txt.includes("নিশু কেমন") || txt.includes("nafisa sultana")) {
-    const nishuReplies = [
-      "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
-      "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
-      "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
-      "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
-    ];
-    return nishuReplies[Math.floor(Math.random() * nishuReplies.length)];
-  }
-  return null;
-}
