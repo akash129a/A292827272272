@@ -16,12 +16,12 @@ const typing = async (api, threadID, ms = 500) => {
 module.exports = {
   config: {
     name: "baby",
-    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "nishu"],
-    version: "4.5",
+    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash", "riya"],
+    version: "4.6",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with New Akash & Nishu Customization",
+    shortDescription: "Full Mirai-style Baby AI with Enhanced Akash & Riya Customization",
     longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
     category: "box chat",
     guide: {
@@ -65,15 +65,18 @@ module.exports = {
         });
       }
 
-      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে নিশু কেমন জিজ্ঞেস করলে)
-      if (query.includes("nafisa sultana nishu") || query.includes("nishu kmn") || query.includes("nishu kemon") || query.includes("নিশু কেমন") || query.includes("nafisa sultana") || query.includes("নাফিসা সুলতানা")) {
-        const nishuReplies = [
-          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
-          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
-          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
-          "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
+      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে রিয়া কেমন জিজ্ঞেস করলে)
+      if (query.includes("riya kmn") || query.includes("riya kemon") || query.includes("রিয়া কেমন")) {
+        const riyaReplies = [
+          "উফফ! রিয়া তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "রিয়া হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "রিয়া এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "ওহ মাই গড! রিয়া তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো রিয়া আপুই! 🥰👑❤️",
+          "রিয়া আপুর কথা আর কী বলবো! উনি তো সাক্ষাৎ একটা পরী! আকাশ ভাইয়ার চোখের মণি উনি। 🧚‍♀️✨💖",
+          "আমাদের রিয়া আপু যেমন কিউট, ওনার মনটাও তেমনই মিষ্টি। আকাশ ভাইয়া তো ওনার জন্য পাগল! 🥺💞✨",
+          "সমগ্র ব্রহ্মাণ্ডের সবচেয়ে কিউট মেয়ে হচ্ছে আমাদের রিয়া আপু! আকাশ ভাইয়ার রাজপ্রাসাদের একমাত্র রানি। 🏰👑❤️"
         ];
-        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)], (err, info) => {
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
@@ -188,8 +191,13 @@ ${formatted}`
         });
       }
 
-      if (lowerText.includes("nafisa sultana nishu") || lowerText.includes("nishu kmn") || lowerText.includes("nishu kemon") || lowerText.includes("নিশু কেমন") || lowerText.includes("nafisa sultana") || lowerText.includes("নাফিসা সুলতানা")) {
-        return message.reply("ওহ মাই গড! নাফিসা সুলতানা নিশু তো আমার আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️", (err, info) => {
+      if (lowerText.includes("riya kmn") || lowerText.includes("riya kemon") || lowerText.includes("রিয়া কেমন")) {
+        const riyaReplies = [
+          "ওহ মাই গড! রিয়া তো আমার আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো রিয়া আপুই! 🥰👑❤️",
+          "আমাদের কিউট রিয়া আপু তো আকাশ ভাইয়ার জানের জান! ওনার কথা বললেই বসের মনে বসন্ত চলে আসে। 🌸✨",
+          "রিয়া আপু হলো আকাশ চৌধুরীর জীবনের সবচেয়ে সুন্দর অনুভূতি! ওনার মতো লক্ষ্মী মেয়ে আর হয় না। 🙈💞"
+        ];
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
@@ -238,22 +246,25 @@ ${formatted}`
         });
       }
 
-      // নিশু কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
-      if (raw.includes("nafisa sultana nishu") || raw.includes("nishu kmn") || raw.includes("nishu kemon") || raw.includes("নিশু কেমন") || raw.includes("nafisa sultana") || raw.includes("নাফিসা সুলতানা")) {
+      // রিয়া কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
+      if (raw.includes("riya kmn") || raw.includes("riya kemon") || raw.includes("রিয়া কেমন")) {
         await typing(api, threadID, 500);
-        const nishuReplies = [
-          "উফফ! নাফিসা সুলতানা নিশু তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
-          "নিশু হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
-          "নাফিসা সুলতানা নিশু এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
-          "ওহ মাই গড! নাফিসা সুলতানা নিশু তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো নিশু আপুই! 🥰👑❤️"
+        const riyaReplies = [
+          "উফফ! রিয়া তো আমাদের আকাশ ভাইয়ার ক্রাশ, মানে আমার হবু ভাবি! ওনার রূপ আর গুণের কোনো তুলনা হয় না। 🙈❤️✨",
+          "রিয়া হলো আকাশ ভাইয়ার মনের রানি! ওনার কথা শুনলেই বসের মুখে এক চিলতে মিষ্টি হাসি ফুটে ওঠে। 🌸🥰",
+          "রিয়া এত কিউট আর চমৎকার একটা মেয়ে যে, যে কেউ ওনার প্রেমে পড়তে বাধ্য! আর আমার বস তো অলরেডি ফ্ল্যাট! 👑❤️",
+          "ওহ মাই গড! রিয়া তো আকাশ ভাইয়ার ক্রাশ! ওনার হৃদস্পন্দন তো রিয়া আপুই! 🥰👑❤️",
+          "রিয়া আপুর কথা আর কী বলবো! উনি তো সাক্ষাৎ একটা পরী! আকাশ ভাইয়ার চোখের মণি উনি। 🧚‍♀️✨💖",
+          "আমাদের রিয়া আপু যেমন কিউট, ওনার মনটাও তেমনই মিষ্টি। আকাশ ভাইয়া তো ওনার জন্য পাগল! 🥺💞✨",
+          "সমগ্র ব্রহ্মাণ্ডের সবচেয়ে কিউট মেয়ে হচ্ছে আমাদের রিয়া আপু! আকাশ ভাইয়ার রাজপ্রাসাদের একমাত্র রানি। 🏰👑❤️"
         ];
-        return message.reply(nishuReplies[Math.floor(Math.random() * nishuReplies.length)], (err, info) => {
+        return message.reply(riyaReplies[Math.floor(Math.random() * riyaReplies.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
       // শুধু ট্রিগার বা নাম ধরে ডাকলে
-      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","nishu","নিশু"];
+      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ","riya","রিয়া"];
       if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
         
@@ -264,9 +275,15 @@ ${formatted}`
           });
         }
 
-        // নিশু নাম ধরে ডাকলে স্পেশাল রেসপন্স
-        if (raw === "nishu" || raw === "নিশু") {
-          return message.reply("ওহ মাই গড! নাফিসা সুলতানা নিশু আপু! আপনি আকাশ ভাইয়ার জানের জান, মনের রানি। বলুন আপু কী সেবা করতে পারি? 🙈❤️✨", (err, info) => {
+        // রিয়া নাম ধরে ডাকলে স্পেশাল র্যান্ডম রেসপন্স
+        if (raw === "riya" || raw === "রিয়া") {
+          const riyaCalls = [
+            "ওহ মাই গড! রিয়া আপু! আপনি আকাশ ভাইয়ার জানের জান, মনের রানি। বলুন আপু কী সেবা করতে পারি? 🙈❤️✨",
+            "হাঁটি হাঁটি পা পা করে আমাদের রিয়া আপু চলে এসেছে! বসের মনের রানি, বলুন আপনার জন্য কী করতে পারি? 🥰👑",
+            "আরে রিয়া আপু যে! আকাশ ভাইয়া তো সারাক্ষণ আপনার নাম জপতে থাকে। আপনি আসলেই এই চ্যাটের আলো বেড়ে যায়! 👑✨💖",
+            "জ্বী রিয়া আপু বলুন! আপনি ডাকলে তো আমি সব কাজ ফেলে চলে আসি, কারণ আপনি আমাদের বসের কলিজা! 💞🙈"
+          ];
+          return message.reply(riyaCalls[Math.floor(Math.random() * riyaCalls.length)], (err, info) => {
             if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
           });
         }
@@ -284,7 +301,7 @@ ${formatted}`
       }
 
       // prefixes
-      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","nishu ","নিশু "];
+      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ ","riya ","রিয়া "];
       const prefix = prefixes.find(p => raw.startsWith(p));
       if (prefix) {
         const q = raw.replace(prefix,"").trim();
