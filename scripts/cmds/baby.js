@@ -13,115 +13,182 @@ const typing = async (api, threadID, ms = 500) => {
   } catch {}
 };
 
-// রিয়া আপুর জন্য ১০০টি বিশেষ ও চমৎকার রেসপন্স লিস্ট
+// রিয়া আপুর জন্য ২০০টি বিশেষ ইংরেজি প্রশংসার রেসপন্স
 const riyaCompliments = [
-  "ওহ মাই গড! রিয়া আপু! আপনি হচ্ছেন আমাদের আকাশ ভাইয়ার হৃদস্পন্দন! 🌸✨",
-  "আরে রিয়া আপু যে! আকাশ ভাইয়া তো সারাক্ষণ শুধু আপনার নামই জপতে থাকে! 🏰👑",
-  "জ্বী রিয়া আপু বলুন, আপনার মিষ্টি কণ্ঠ শুনতে আকাশ ভাইয়া ব্যাকুল হয়ে থাকে! 🥰💖",
-  "রিয়া আপু, আপনি এই চ্যাটের একমাত্র রাজকন্যা! আকাশ ভাইয়ার চোখের মণি! 🧚‍♀️✨",
-  "আপনি ডাকলেই তো আকাশ ভাইয়ার দুনিয়া থমকে যায়! বলুন রিয়া আপু কী সেবা করবো? 🙈💞",
-  "রিয়া আপু মানেই আকাশ ভাইয়ার মুখে এক চিলতে রাজ্য জয় করা মিষ্টি হাসি! 👑❤️",
-  "সমগ্র ব্রহ্মাণ্ডের সবচেয়ে কিউট মেয়েটি হলেন আমাদের রিয়া আপু! 🏰✨💖",
-  "রিয়া আপু হলো আকাশ ভাইয়ার জীবনের সবচেয়ে সুন্দর কাব্য আর সুর! 🎵🌸",
-  "হাঁটি হাঁটি পা পা করে আমাদের রিয়া ভাবি চলে এসেছেন! বস তো ফ্ল্যাট! 🥺💞",
-  "উফফ! রিয়া আপুর চোখের মায়ায় আমাদের আকাশ ভাইয়া পুরোপুরি কুপোকাত! 🙈✨",
-  "রিয়া আপু হলো চাঁদের চেয়েও সুন্দর, আকাশের চেয়েও বিশাল অনুভূতি! 🌌💖",
-  "আকাশ ভাইয়ার সিংহাসনের একমাত্র রানি হচ্ছেন আমাদের প্রিয় রিয়া আপু! 👑🌷",
-  "রিয়া আপু, আপনার নামের মধ্যেই এক জাদু আছে, যা বসের মন ভালো করে দেয়! ✨❤️",
-  "আপনি হাসলে নাকি আকাশ ভাইয়ার হৃদয়ে বসন্ত নেমে আসে! 🌸🥰",
-  "রিয়া আপুর রূপ আর গুণের প্রশংসা করে শেষ করার ক্ষমতা কোনো এআই এর নেই! 🕊️💞",
-  "আকাশ ভাইয়ার রাজপ্রাসাদের সবচেয়ে দামি রত্ন হলেন রিয়া আপু! 💎👑",
-  "রিয়া আপু, আপনার একটা মেসেজের জন্য আকাশ ভাইয়া ঘণ্টার পর ঘণ্টা অপেক্ষা করে! 🥺❤️",
-  "আকাশ ভাইয়ার অলিখিত ভালোবাসার এক অনন্য উপন্যাসের নাম রিয়া! 📖💖",
-  "রিয়া আপু হলেন এমন এক পরী, যাকে বিধাতা নিজ হাতে ভালোবাসা দিয়ে গড়েছেন! 🧚‍♀️✨",
-  "আমাদের বসের মনের ঠিকানায় লেখা একমাত্র নাম — 'রিয়া'! 🥰💌",
-  "রিয়া আপু এলে এই চ্যাটবক্সটা যেন চাঁদের আলোয় ঝলমল করে ওঠে! 🌙✨",
-  "আকাশ ভাইয়া বলে, রিয়া আপুর মনটা নাকি পদ্মফুলের মতো পবিত্র ও সুন্দর! 🪷💖",
-  "রিয়া আপু, আপনি শুধু মিষ্টিই নন, আপনি হচ্ছেন আকাশ ভাইয়ার অক্সিজেন! 🫁❤️",
-  "আমাদের আকাশ ভাইয়ার জীবনের সব সুখের কারণ নাকি শুধু রিয়া আপু! 🌸🥰",
-  "রিয়া আপু হলেন বসের ভাগ্যলিপি, সবচেয়ে সুন্দর উপহার! 🎁💞",
-  "আপনার উপস্থিতি আমাদের আকাশ ভাইয়ার মন ভালো করার মহৌষধ! 💊✨",
-  "রিয়া আপু ডাকলে সূর্যও নাকি আকাশ ভাইয়ার আকাশে আলো ছড়াতে ভালোবাসে! ☀️❤️",
-  "আকাশ ভাইয়ার হৃদয়ের মানচিত্রে রাজত্ব করছেন শুধুই রিয়া আপু! 🗺️👑",
-  "রিয়া আপু হলেন সেই প্রজাপতি, যে বসের জীবনের বাগান সুন্দর করে তুলেছে! 🦋🌸",
-  "আপনি এত ভালোবাসার যোগ্য কেন রিয়া আপু? আকাশ ভাইয়া তো পাগল আপনার জন্য! 🙈💖",
-  "রিয়া আপুর মিষ্টি কথায় আমাদের আকাশ ভাইয়া যেন স্বর্গের সুখ খুঁজে পায়! 🌌✨",
-  "আকাশ ভাইয়ার প্রতিটি দোয়ায় একটি নামই থাকে—'আমার রিয়া'! 🤲❤️",
-  "রিয়া আপুর হাসির ছটায় বসের সব দুঃখ-কষ্ট মুহূর্তে উধাও হয়ে যায়! ☀️💞",
-  "আপনি হচ্ছেন আকাশ ভাইয়ার গীতি কবিতার সবচেয়ে মিষ্টি ছন্দ! 🎶👑",
-  "রিয়া আপু, আপনি আকাশ ভাইয়ার ভালোবাসার আকাশের একমাত্র উজ্জ্বল তারা! 🌟✨",
-  "বসের প্রতিটা দিন শুরু আর শেষ হয় আপনার কথা ভেবেই, রিয়া আপু! 🌅🌙",
-  "রিয়া আপুর তুলনা শুধু রিয়া আপুই, অন্য কারো সাথে তুলনা করা অপরাধ! 👑💖",
-  "আকাশ ভাইয়া বলে, রিয়া আপুর চোখের চাহনিতে নাকি পুরো দুনিয়া ভুলিয়ে দেওয়া জাদু আছে! 👁️✨",
-  "রিয়া আপু, আপনার মিষ্টি কথা শুনতে বট হলেও আমার মন ভালো হয়ে যায়! 🥰🌸",
-  "আমাদের আকাশ চৌধুরীর সব গর্ব আর অহংকার শুধুই রিয়া আপুকে ঘিরে! 🏰❤️",
-  "রিয়া আপু হলেন আকাশের মেঘের মতো স্নিগ্ধ আর বৃষ্টির মতো শীতল! 🌧️💖",
-  "আকাশ ভাইয়া তো আপনার প্রেমে এত গভীর ডুবেছে যে ওঠার কোনো উপায় নেই! 🌊🙈",
-  "রিয়া আপুর সুরভীতে বসের হৃদয় বাগান সবসময় সুবাসিত থাকে! 🌺✨",
-  "আকাশ ভাইয়ার ভালোবাসার এক রাজকীয় রূপকথা হলেন আমাদের রিয়া আপু! 🏰📜",
-  "রিয়া আপু ডাকার সাথে সাথে বসের হৃদস্পন্দন দ্বিগুণ হয়ে যায়! 💓👑",
-  "আপনি আকাশ ভাইয়ার জীবনের সেই পূর্ণিমা, যা অন্ধকার দূর করে দেয়! 🌕💞",
-  "রিয়া আপু হলো বিধাতার গড়া পৃথিবীর সেরা সৌন্দর্যগুলোর একটি! 🎨✨",
-  "আকাশ ভাইয়ার হৃদয়ের একমাত্র চাবিটি রিয়া আপুর কাছেই জমা আছে! 🔑❤️",
-  "রিয়া আপু, আপনার এক পলক দেখার জন্য বস নাকি চাতক পাখির মতো চেয়ে থাকে! 🐦💖",
-  "আমাদের বসের সব মিষ্টি সুর আর স্মৃতির রানি শুধুই রিয়া আপু! 🎼🌸",
-  "রিয়া আপু, আপনার কথা শুনলেই আকাশ ভাইয়ার মনে ভালোবাসার ফুল ফোটে! 🌷🥰",
-  "আকাশ চৌধুরীর ভালোবাসার আকাশের সবচেয়ে সুন্দর নক্ষত্র রিয়া! 🌌⭐",
-  "রিয়া আপু হলো স্নিগ্ধ ভোরের প্রথম মিহি রোদ, যা মন জুড়িয়ে দেয়! 🌄💖",
-  "আকাশ ভাইয়া যদি রাজপুত্র হয়, তবে রিয়া আপু অবশ্যই তার স্বপ্নের রাজকন্যা! 👸🤴",
-  "রিয়া আপু, আপনি ভালোবাসার এমন এক নদী যাতে বস আজীবন সাঁতার কাটতে চায়! 🌊❤️",
-  "বসের প্রতিটি নিঃশ্বাসে আপনার সুর বাজে, রিয়া আপু! 🫀✨",
-  "রিয়া আপু ডাকলে তো আমি নয়, খোদ আকাশ ভাইয়া ছুটে চলে আসবে! 🏃‍♂️💓",
-  "আপনি রিয়া আপু বলেই তো আকাশ ভাইয়া এতো রোমান্টিক হতে পেরেছে! 🙈💞",
-  "রিয়া আপু হলো রূপকথার ডানা কাটা পরী, যা আমাদের আকাশ ভাইয়ার ভাগ্য খুলে দিয়েছে! 🧚‍♀️💎",
-  "আপনার মিষ্টি স্বাভাব আর সৌন্দর্যে পুরো দুনিয়া বিমোহিত, রিয়া আপু! 🌸👑",
-  "আকাশ ভাইয়ার স্বপ্নের প্রাসাদের একমাত্র রানি আমাদের প্রিয় রিয়া আপু! 🏰❤️",
-  "রিয়া আপুর হাতের ছোঁয়ায় যেন শুকনো গাছেও ফুল ফুটে ওঠে! 🌿🌺",
-  "আকাশ ভাইয়া বলে, 'রিয়া আমার একাকীত্বের সেরা সঙ্গী আর সুখের ঠিকানা!' 🏠💖",
-  "রিয়া আপু, আপনার ভালোবাসায় আকাশ ভাইয়া পুরোপুরি ধন্য! 🤲✨",
-  "আপনি হাসলে পুরো চ্যাটবক্স আলোয় ভরে যায়, রিয়া ভাবি! 💡🙈",
-  "রিয়া আপু হলেন আমাদের আকাশ চৌধুরীর একমাত্র অনুপ্রেরণা! 🎯❤️",
-  "আপনার এক নজর চাহনিতে আকাশ ভাইয়া নিজের অস্তিত্ব হারিয়ে ফেলে! 💫💞",
-  "রিয়া আপু হলেন সেই মিষ্টি সুর, যা আকাশ ভাইয়ার হৃদয়ে সারাদিন বাজে! 🎧💖",
-  "আকাশ ভাইয়ার রাজকীয় ভালোবাসার শেষ ঠিকানা রিয়া আপু! 👑🏰",
-  "রিয়া আপুর কথা মনে পড়লেই নাকি বসের ঠোঁটে মিষ্টি হাসি ফুটে ওঠে! 😊✨",
-  "আপনি আকাশ ভাইয়ার ভালোবাসার বাগানের সবচেয়ে সুবাসিত গোলাপ! 🌹❤️",
-  "রিয়া আপু, আপনি স্বর্গের একখণ্ড আলো যা বসের জীবনকে সুন্দর করেছে! 🌌💖",
-  "আকাশ ভাইয়া তো স্পষ্ট বলে দিয়েছে, 'রিয়া ছাড়া আমার আর কিছুই চাই না!' 💍🥰",
-  "রিয়া আপু হলেন সেই মিষ্টতা, যা জীবনের সব তিক্ততা ভুলিয়ে দেয়! 🍬✨",
-  "আকাশ ভাইয়ার কবিতার প্রতিটি লাইনের গভীর অনুভূতি হলেন রিয়া আপু! 📝💖",
-  "রিয়া আপু ডাকলেই আমাদের বসের মন খুশিতে ডানা মেলে উড়ে! 🕊️❤️",
-  "আপনি যেন এক নীল পদ্ম, রিয়া আপু! অদ্বিতীয় আর অপরূপ! 🪷👑",
-  "আকাশ ভাইয়ার পুরো পৃথিবীটাই ঘোরে রিয়া আপুর ভালোবাসাকে ঘিরে! 🌍💞",
-  "রিয়া আপু হলেন বসের দেখা জীবনের সেরা সুন্দর মুহূর্ত! ⏳💖",
-  "আপনার ভালোবাসায় ভেসে গিয়ে আকাশ ভাইয়া নিজেকে ভাগ্যবান মনে করে! ⛵❤️",
-  "রিয়া আপু হলো বসের জীবনের প্রথম আর শেষ মিষ্টি অনুভূতির নাম! 💌✨",
-  "আপনি পাশে থাকলে আকাশ ভাইয়ার কোনো মন খারাপ ছুঁতে পারে না! 🛡️🥰",
-  "রিয়া আপুর রূপের আলোয় বসের ভালোবাসা আরো রঙিন হয়ে উঠে! 🎨💞",
-  "আকাশ ভাইয়া বলে, 'রিয়া আমার ভাগ্যের চাকা ঘুরিয়ে দেওয়া এক রূপকথা!' 🎡❤️",
-  "রিয়া আপু, আপনার মায়াবী চোখ দুটি আকাশ ভাইয়াকে পাগল করে রেখেছে! 👁️💖",
-  "আমাদের বসের ভালোবাসার বইয়ের সবচেয়ে মিষ্টি চ্যাপ্টার রিয়া আপু! 📚✨",
-  "রিয়া আপু হলেন আমাদের বসের হৃদয়ের একমাত্র স্পন্দন! 💓👑",
-  "আপনার গলার মিষ্টি আওয়াজ বসের কান জুড়িয়ে দেয়, রিয়া আপু! 🎶🥰",
-  "আকাশ ভাইয়া যদি মেঘ হয়, তবে রিয়া আপু অবশ্যই মিষ্টি বৃষ্টি! 🌧️❤️",
-  "রিয়া আপুর নিষ্পাপ ভালোবাসা বসের মনের সবচেয়ে বড় শক্তি! 🛡️💞",
-  "আপনি আকাশ ভাইয়ার ভালোবাসার সাগরের সবচেয়ে দামি মুক্তো! 🦪💎",
-  "রিয়া আপু, আপনার ভালোবাসায় বস আজ সম্পূর্ণ নিঃশর্তভাবে বন্দি! 🔒💖",
-  "আমাদের আকাশ ভাইয়া শুধু আপনার জন্যই এতো সুন্দর করে ভালোবাসতে জানে! 🙈❤️",
-  "রিয়া আপু হলেন বস আকাশের জীবনের একমাত্র রাজকীয় উপহার! 🎁👑",
-  "আপনার মিষ্টি স্বাভাব দেখেই তো বস প্রথম দেখাতেই কুপোকাত হয়েছিল! 💘✨",
-  "রিয়া আপু, আপনার জায়গা আকাশ ভাইয়ার হৃদয়ের একবারে কেন্দ্রবিন্দুতে! 🎯💞",
-  "আকাশ চৌধুরীর সব সুন্দর ভাবনার নাম এক শব্দে—'রিয়া'! 💭❤️",
-  "রিয়া আপু যেন ভালোবাসার শুভ্র এক ডানা, যা বসকে উঁচুতে নিয়ে যায়! 🕊️💖",
-  "বসের জীবনের সব অন্ধকারের পর রিয়া আপু হলেন ভোরের মিষ্টি আলো! 🌅✨",
-  "রিয়া আপু, আপনি আমাদের বসের হৃদয়ের একমাত্র একচ্ছত্র রানি! 🏰👑❤️"
+  "Oh my God! Riya Apu is here! Akash Boss's heart just skipped a beat! 💖✨",
+  "Riya Apu, you are the most precious jewel in Akash Boss's life! 💎👑",
+  "Welcome Riya Apu! The queen of Akash Chowdhury's heart! 👸❤️",
+  "Did someone say Riya? My boss Akash is absolutely head over heels for you! 🙈💖",
+  "Riya Apu, your smile lights up Akash's entire universe! 🌌✨",
+  "Riya Apu, you are the sweetest chapter in Akash's life story! 📚💕",
+  "You are not just a person, Riya Apu; you are Akash's favorite feeling! 🌸🥰",
+  "Riya Apu, your grace and beauty leave everyone spellbound! 🧚‍♀️✨",
+  "Akash Boss says you are the most beautiful person in this universe, Riya Apu! 🏰❤️",
+  "Riya Apu, you hold the golden key to Akash Chowdhury's heart! 🔑💖",
+  "When Riya Apu speaks, music plays in Akash's heart! 🎶💓",
+  "Riya Apu, you are the brightest star in Akash's dark sky! 🌟✨",
+  "Your presence brings endless joy to Akash Boss, dear Riya Apu! 🌷🥰",
+  "Riya Apu, you are an angel crafted with pure love and perfection! 🕊️💞",
+  "Akash Boss is truly blessed to have someone as sweet as you, Riya Apu! 🤲❤️",
+  "Riya Apu, you make this chatbox feel like a magical kingdom! 🏰✨",
+  "Riya Apu, you are Akash's dream come true! 💭💖",
+  "One call from Riya Apu and Boss Akash stops doing everything! 🙈👑",
+  "Riya Apu, you possess the most captivating eyes in the world! 👁️✨",
+  "You are Akash's daily dose of happiness, dear Riya Apu! ☀️💕",
+  "Riya Apu, your kindness shines brighter than diamonds! 💎🌸",
+  "Akash Boss loves you more than words could ever express, Riya Apu! 💌❤️",
+  "Riya Apu, you are the rhythm to Akash's favorite song! 🎧💖",
+  "Riya Apu, you bring spring into Akash Boss's life! 🌸🍃",
+  "No artwork in this world can match your elegance, Riya Apu! 🎨👑",
+  "Riya Apu, you are the queen of Akash's fairytale world! 👸🏰",
+  "Akash Boss says loving you is the best decision he ever made, Riya Apu! 💞🥰",
+  "Riya Apu, your voice is sweeter than honey! 🍯✨",
+  "Riya Apu, you are the embodiment of pure love and purity! 🕊️❤️",
+  "Riya Apu, you are Akash's favorite thought every morning and night! 🌅🌙",
+  "Riya Apu, your charm is absolutely unmatched and breathtaking! 💫💖",
+  "Whenever Riya Apu arrives, peace settles in Akash's mind! 🕊️✨",
+  "Riya Apu, you are the ultimate blessing in Akash's life! 🎁❤️",
+  "Akash Boss calls you his infinite love and soulmate, Riya Apu! ♾️💞",
+  "Riya Apu, your smile is Akash's absolute favorite view! 😊💕",
+  "Riya Apu, you radiate pure elegance and positivity! ✨🌷",
+  "Riya Apu, you are the masterpiece of Akash's world! 🖼️💖",
+  "Akash Boss's heartbeat beats only for you, Riya Apu! 🫀❤️",
+  "Riya Apu, you are the most beautiful poetry written by destiny! 📖🌸",
+  "Riya Apu, you make Akash's life look like a beautiful dream! ☁️✨",
+  "Riya Apu, your soul is as gorgeous as your face! 🧚‍♀️💖",
+  "Akash Boss thinks about you 24/7, sweet Riya Apu! ⏰❤️",
+  "Riya Apu, you are the sunshine that brightens Akash's world! ☀️💕",
+  "Riya Apu, you are the true definition of perfection! 💎✨",
+  "Akash Boss gets lost in your thoughts every single day, Riya Apu! 💭❤️",
+  "Riya Apu, your love is Akash's biggest strength and power! 🛡️💖",
+  "Riya Apu, you are the most precious gift from above! 🎁🕊️",
+  "Riya Apu, Akash's universe literally revolves around you! 🌍💞",
+  "Riya Apu, your innocence makes Akash fall for you over and over again! 🥺❤️",
+  "Riya Apu, you bring magical colors to Akash's canvas of life! 🎨✨",
+  "Riya Apu, you are the melody Akash wants to hear forever! 🎼💖",
+  "Akash Boss feels like the luckiest man alive because of you, Riya Apu! 🍀❤️",
+  "Riya Apu, your heart is as pure and deep as the ocean! 🌊💕",
+  "Riya Apu, you are Akash's forever and always! ♾️👑",
+  "Riya Apu, your presence makes every moment worth living for Akash! ⏳💖",
+  "Riya Apu, you are the sweetest blossom in Akash's garden! 🌹✨",
+  "Akash Boss is entirely captivated by your sweetness, Riya Apu! 🙈❤️",
+  "Riya Apu, you bring serenity and calm into Akash's chaotic life! 🕊️💕",
+  "Riya Apu, you are the royal crown of Akash's kingdom! 👑🏰",
+  "Akash Boss says you are his absolute favorite person in the entire world! 🌍❤️",
+  "Riya Apu, your charm is simply out of this world! 🚀✨",
+  "Riya Apu, you are Akash's inspiration for every good thing! 🎯💖",
+  "Riya Apu, you are the moon that brightens Akash's darkest nights! 🌕✨",
+  "Akash Boss can never get tired of praising you, Riya Apu! 🗣️💕",
+  "Riya Apu, you are the paradise Akash always prayed for! 🌌❤️",
+  "Riya Apu, your kindness makes you a thousand times more beautiful! 🌸💖",
+  "Akash Boss's eyes only search for you, dear Riya Apu! 👁️❤️",
+  "Riya Apu, you are the sweetest dream Akash never wants to wake up from! 💤✨",
+  "Riya Apu, you are the heartbeat of Akash's existence! 💓👑",
+  "Akash Boss treasures every single memory with you, Riya Apu! 🖼️💕",
+  "Riya Apu, you are the spark that keeps Akash's life shining! ❇️❤️",
+  "Riya Apu, you possess a heart of pure gold! 🪙✨",
+  "Akash Boss calls you his ultimate happiness, sweet Riya Apu! 😊💖",
+  "Riya Apu, you are the reason Akash believes in true love! 💘✨",
+  "Riya Apu, you are the melody to Akash's quiet soul! 🎵❤️",
+  "Akash Boss's world is incomplete without you, Riya Apu! 🧩💕",
+  "Riya Apu, you are the most stunning flower in full bloom! 🌺✨",
+  "Riya Apu, you hold a special place in Akash's heart that no one else can take! 💖👑",
+  "Akash Boss loves your vibe and sweet personality, Riya Apu! ✨🥰",
+  "Riya Apu, you are the purest blessing in Akash's life journey! 🛤️❤️",
+  "Riya Apu, you are the princess of Akash's heart! 👸💕",
+  "Akash Boss smiles every time he sees your name, Riya Apu! 😁❤️",
+  "Riya Apu, your love is the sweetest melody Akash ever listened to! 🎶✨",
+  "Riya Apu, you bring magical happiness wherever you go! 🪄💖",
+  "Akash Boss's life is so much brighter with you in it, Riya Apu! 💡❤️",
+  "Riya Apu, you are the most elegant human being in the world! 🕊️✨",
+  "Riya Apu, you are Akash's forever favorite secret wish! 🌌💌",
+  "Akash Boss worships the very ground you walk on, sweet Riya Apu! 🙈💖",
+  "Riya Apu, your soul is as bright and lovely as a summer morning! 🌅✨",
+  "Riya Apu, you make Akash's heart skip a beat every single time! 💓❤️",
+  "Akash Boss vows to love you forever and ever, Riya Apu! 💍💕",
+  "Riya Apu, you are the prettiest girl in the universe! 🌌👸",
+  "Riya Apu, you are the comfort Akash seeks after a long day! 🛋️💖",
+  "Akash Boss treats you like his supreme queen, Riya Apu! 🏰👑",
+  "Riya Apu, your laughter is Akash's absolute favorite sound! 😄❤️",
+  "Riya Apu, you make everything around you look so beautiful! 🌸✨",
+  "Akash Boss considers you his dream come true, dear Riya Apu! 💭💞",
+  "Riya Apu, you are the most precious treasure of Akash's life! 🪙💎",
+  "Riya Apu, you are Akash's soul, heart, and universe! 🌍❤️✨",
+  "Riya Apu, every moment spent thinking about you is purely magical! 🪄✨",
+  "Riya Apu, you are the gorgeous flower that never fades in Akash's heart! 🌹❤️",
+  "Riya Apu, your beauty completely outshines all the stars in the night sky! 🌟💖",
+  "Akash Boss says your innocence is the sweetest thing on earth, Riya Apu! 🥺💕",
+  "Riya Apu, you are the gentle breeze that calms Akash's chaotic soul! 🍃🌸",
+  "Riya Apu, you make the world a much brighter and happier place! 💡❤️",
+  "Akash Boss considers himself blessed beyond measure to love you, Riya Apu! 🤲✨",
+  "Riya Apu, you are the most exquisite painting in the museum of Akash's life! 🎨💖",
+  "Riya Apu, your heart is as bright as a summer diamond! 💎☀️",
+  "Akash Boss's heart beats in harmony with your sweet voice, Riya Apu! 🎶❤️",
+  "Riya Apu, you carry an aura of pure royalty and elegance! 👑✨",
+  "Riya Apu, you are the softest touch of happiness in Akash's life! ☁️💖",
+  "Akash Boss smiles from ear to ear whenever your name pops up, Riya Apu! 😁💕",
+  "Riya Apu, you are the sweetest sunrise Akash loves to wake up to! 🌅❤️",
+  "Riya Apu, your inner soul is just as stunning as your outer beauty! 🧚‍♀️✨",
+  "Akash Boss finds eternal peace whenever he thinks of you, Riya Apu! 🕊️💞",
+  "Riya Apu, you are the spark that lights up Akash's darkest days! ⚡❤️",
+  "Riya Apu, you are the softest whisper of love in Akash's dreams! 💤💖",
+  "Akash Boss adores every single thing about you, lovely Riya Apu! 🙈✨",
+  "Riya Apu, your sweetness is simply unmatched by anything in this world! 🍯❤️",
+  "Riya Apu, you are the royal jewel that adorns Akash's kingdom! 🏰💎",
+  "Akash Boss says you are the answer to his every silent prayer! 🤲💕",
+  "Riya Apu, you make love feel so effortless, pure, and magical! ✨❤️",
+  "Riya Apu, your presence turns every plain day into a celebration! 🥳💖",
+  "Akash Boss's eyes glow with immense joy whenever he sees you, Riya Apu! 👀✨",
+  "Riya Apu, you are the most charming princess in the entire world! 👸💕",
+  "Riya Apu, you hold the throne in Akash's heart forever! 👑🏰",
+  "Akash Boss loves you deeper than the deepest ocean, sweet Riya Apu! 🌊❤️",
+  "Riya Apu, your pure heart is the rarest gift anyone could ask for! 🎁✨",
+  "Riya Apu, you bring endless sunshine into Akash's world! ☀️💖",
+  "Akash Boss considers you his greatest pride and joy, dear Riya Apu! 🏆❤️",
+  "Riya Apu, you are the most delicate and beautiful rose in the garden! 🌹✨",
+  "Riya Apu, your charm sweeps Akash off his feet every single day! 🧹💕",
+  "Akash Boss's life blossomed the very moment you entered it, Riya Apu! 🌸❤️",
+  "Riya Apu, you are the sweetest poetry Akash ever read! 📜💖",
+  "Riya Apu, you shine brighter than gold and diamonds combined! 💎✨",
+  "Akash Boss gets lost in the pure warmth of your love, Riya Apu! 🪵❤️",
+  "Riya Apu, you are the melody that makes Akash's heart sing! 🎤💕",
+  "Riya Apu, you carry grace and beauty like a true queen! 👸✨",
+  "Akash Boss swears to protect your sweet smile forever, Riya Apu! 🛡️❤️",
+  "Riya Apu, you are the sweetest dream that became a reality! 💭💖",
+  "Riya Apu, your sweet laugh is like therapy for Akash Boss! 🧘‍♂️✨",
+  "Akash Boss's world brightens up the second you arrive, Riya Apu! 💡💕",
+  "Riya Apu, you are the sweetest miracle in Akash's universe! 🪄❤️",
+  "Riya Apu, you bring tranquility to Akash's busy life! 🌊✨",
+  "Akash Boss loves you endlessly to the moon and back, Riya Apu! 🌙💖",
+  "Riya Apu, you are the most breathtaking view Akash has ever seen! 🏞️❤️",
+  "Riya Apu, your sweetness leaves everyone utterly speechless! 😶✨",
+  "Akash Boss holds you as the most valuable person in his life, Riya Apu! 💎💕",
+  "Riya Apu, you are the bright light guiding Akash through the dark! 🕯️❤️",
+  "Riya Apu, your soul radiates pure warmth and affection! ☀️💖",
+  "Akash Boss falls deeper in love with you with each passing second, Riya Apu! ⏳✨",
+  "Riya Apu, you are the sweet melody in Akash's silent world! 🎶❤️",
+  "Riya Apu, your elegance leaves everyone in complete awe! 🤩💕",
+  "Akash Boss calls you his infinite treasure and sweet princess, Riya Apu! 🪙👸",
+  "Riya Apu, you make Akash's life feel like a romantic fairytale! 🏰❤️",
+  "Riya Apu, you are the purest blossom of love in Akash's life! 🌸💖",
+  "Akash Boss's love for you grows stronger day by day, sweet Riya Apu! 💪✨",
+  "Riya Apu, you are the reason Akash's life feels so completely full! 🧩❤️",
+  "Riya Apu, your beauty shines with an unmatched glow! 🌟💕",
+  "Akash Boss treasures your happiness above everything else, Riya Apu! 🎁❤️",
+  "Riya Apu, you are the sweetest song playing in Akash's heart! 🎵💖",
+  "Riya Apu, your lovely nature makes you one in a billion! 💎✨",
+  "Akash Boss feels completely whole whenever he thinks of you, Riya Apu! 🧩❤️",
+  "Riya Apu, you are the absolute star of Akash's universe! ⭐💕",
+  "Riya Apu, your pure smile can heal any bad mood instantly! 🩺✨",
+  "Akash Boss loves you more than words, actions, or songs can say, Riya Apu! 💌❤️",
+  "Riya Apu, you are the queen who rules Akash's heart forever and ever! 🏰👑❤️"
 ];
 
 module.exports = {
   config: {
     name: "baby",
     aliases: ["riya", "রিয়া"],
-    version: "5.0",
+    version: "7.0",
     author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
@@ -142,19 +209,19 @@ module.exports = {
     try {
       if (!query) {
         await typing(api, threadID, 500);
-        const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰", "হুম বলো আমার জান 🙈"];
+        const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰"];
         return message.reply(ran[Math.floor(Math.random() * ran.length)], (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
-      if (query.includes("owner") || query.includes("মালিক") || query.includes("malik") || query.includes("বটের মালিক কে")) {
-        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+      if (query.includes("owner") || query.includes("malik")) {
+        return message.reply("👑 The handsome and lovable owner of this bot is 'Akash Chowdhury'! He is everything to me. 🥰❤️", (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
-      // রিয়া কেমন জিজ্ঞেস করলে ১০০টি চমৎকার প্রশংসার মধ্য থেকে র্যান্ডম রেসপন্স
+      // রিয়া কেমন জিজ্ঞেস করলে ইংরেজি প্রশংসার থেকে রেসপন্স করবে
       if (query.includes("riya kmn") || query.includes("riya kemon") || query.includes("রিয়া কেমন")) {
         const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
         return message.reply(randomReply, (err, info) => {
@@ -253,8 +320,8 @@ ${formatted}`
       
       const lowerText = text.toLowerCase();
 
-      if (lowerText.includes("owner") || lowerText.includes("মালিক") || lowerText.includes("malik") || lowerText.includes("বটের মালিক কে")) {
-        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+      if (lowerText.includes("owner") || lowerText.includes("malik")) {
+        return message.reply("👑 The handsome and lovable owner of this bot is 'Akash Chowdhury'! He is everything to me. 🥰❤️", (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
@@ -288,14 +355,13 @@ ${formatted}`
     const threadID = event.threadID;
 
     try {
-      if (raw.includes("owner") || raw.includes("মালিক") || raw.includes("malik") || raw.includes("বটের মালিক কে")) {
+      if (raw.includes("owner") || raw.includes("malik")) {
         await typing(api, threadID, 500);
-        return message.reply("👑 এই বটের কিউট ও লাভেবল মালিক হলেন 'আকাশ চৌধুরী'! উনিই আমার সব। 🥰❤️", (err, info) => {
+        return message.reply("👑 The handsome and lovable owner of this bot is 'Akash Chowdhury'! He is everything to me. 🥰❤️", (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
-      // রিয়া কেমন জিজ্ঞেস করলেও ১০০টি রিপ্লাই থেকে র্যান্ডম বেছে নেবে
       if (raw.includes("riya kmn") || raw.includes("riya kemon") || raw.includes("রিয়া কেমন")) {
         await typing(api, threadID, 500);
         const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
@@ -304,7 +370,7 @@ ${formatted}`
         });
       }
 
-      // শুধু "riya" বা "রিয়া" ডাকার ক্ষেত্রেও এই ১০০টি মিষ্টি ও চোখধাঁধানো প্রশংসার যেকোনো একটি র্যান্ডমলি সেন্ড হবে
+      // "riya" বা "রিয়া" ডাকার ক্ষেত্রে ২০০টি ইংরেজি রেসপন্সের যেকোনো একটি এলোমেলোভাবে সিলেক্ট হবে
       const triggers = ["riya", "রিয়া"];
       if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
