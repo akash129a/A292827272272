@@ -200,11 +200,27 @@ const riyaCompliments = [
   "Riya Apu, you are the ultimate icon of elegance and beauty! 👑👸❤️"
 ];
 
+// রিয়া সম্পর্কিত যেকোনো কিওয়ার্ড চেক করার হেলপার ফাংশন
+const isRiyaMentioned = (text) => {
+  const lower = text.toLowerCase();
+  return (
+    lower === "riya" ||
+    lower === "রিয়া" ||
+    lower.includes("riya kmn") ||
+    lower.includes("riya kemon") ||
+    lower.includes("রিয়া কেমন") ||
+    lower.includes("কেমন আছো") ||
+    lower.includes("kemon acho") ||
+    lower.includes("kmn acho") ||
+    lower.includes("kemon achen")
+  );
+};
+
 module.exports = {
   config: {
     name: "baby",
     aliases: ["riya", "রিয়া"],
-    version: "8.0",
+    version: "8.1",
     author: "rX (customized for Riya Apu)",
     countDown: 0,
     role: 0,
@@ -237,7 +253,7 @@ module.exports = {
         });
       }
 
-      if (query.includes("riya kmn") || query.includes("riya kemon") || query.includes("রিয়া কেমন")) {
+      if (isRiyaMentioned(query)) {
         const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
         return message.reply(randomReply, (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
@@ -332,22 +348,24 @@ ${formatted}`
 
     try {
       await typing(api, event.threadID, 500);
-      
       const lowerText = text.toLowerCase();
 
+      // ১. ওনার চেক
       if (lowerText.includes("owner") || lowerText.includes("malik")) {
         return message.reply("👑 The queen and absolute star of this bot is 'Riya Apu'! She is everything to us. 🥰❤️", (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
-      if (lowerText.includes("riya kmn") || lowerText.includes("riya kemon") || lowerText.includes("রিয়া কেমন")) {
+      // ২. রিয়া বা কেমন আছো চেক (রিপ্লাই থ্রেডে বারবার কাজ করার জন্য)
+      if (isRiyaMentioned(lowerText)) {
         const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
         return message.reply(randomReply, (err, info) => {
           if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
         });
       }
 
+      // ৩. সাধারণ মেসেজের জন্য এপিআই কল
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
 
       const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
@@ -378,8 +396,8 @@ ${formatted}`
         });
       }
 
-      // রিয়া কেমন জিজ্ঞেস করা ডিটেকশন
-      if (raw.includes("riya kmn") || raw.includes("riya kemon") || raw.includes("রিয়া কেমন")) {
+      // রিয়া অথবা কেমন আছো ডিটেকশন
+      if (isRiyaMentioned(raw)) {
         await typing(api, threadID, 500);
         const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
         return message.reply(randomReply, (err, info) => {
@@ -387,16 +405,7 @@ ${formatted}`
         });
       }
 
-      // ১. শুধু "riya" বা "রিয়া" লিখলে
-      if (raw === "riya" || raw === "রিয়া") {
-        await typing(api, threadID, 500);
-        const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
-        return message.reply(randomReply, (err, info) => {
-          if (!err && global.GoatBot && global.GoatBot.reply) global.GoatBot.reply.set(info.messageID, { commandName: "baby" });
-        });
-      }
-
-      // ২. "riya <অন্য বার্তা>" বা "রিয়া <অন্য বার্তা>" লিখলে
+      // "riya <অন্য বার্তা>" বা "রিয়া <অন্য বার্তা>" লিখলে
       const isRiyaTrigger = raw.startsWith("riya ") || raw.startsWith("রিয়া ");
       if (isRiyaTrigger) {
         const cleanQuery = raw.replace(/^(riya|রিয়া)\s+/i, "").trim();
