@@ -3,154 +3,458 @@ const axios = require("axios");
 const fs = require("fs-extra");
 const path = require("path");
 
-const cacheDir = path.join(__dirname, "cache");
-const configPath = path.join(cacheDir, "autotimer_config.json");
+module.exports.config = {
+  name: "autoTimer",
+  version: "1.0.0",
+  hasPermssion: 2, // 0: all, 1: admin box, 2: admin bot
+  credits: "Akash Chowdhury",
+  description: "প্রতি ঘন্টায় ইসলামিক রিমাইন্ডার ও ভিডিও অটো পাঠায়",
+  commandCategory: "system",
+  usages: "[on/off]",
+  cooldowns: 5,
+};
 
-if (!fs.existsSync(cacheDir)) {
+// ---------------- Runtime state ----------------
+const runtime = {
+  enabledThreads: new Map(),
+  sentMap: new Map(),
+};
+
+let interval = null;
+let started = false;
+
+// ---------------- 24-hour timer data ----------------
+const timerData = {
+  "12:00 AM": {
+    text: `╭━━━〔 🌙 গভীর রাত 〕━━━╮
+
+🌌 রাতের এই নীরবতা আল্লাহর এক অপূর্ব নিয়ামত।
+🤲 একটু জিকির করুন, দোয়া করুন এবং শান্তিতে বিশ্রাম নিন।
+
+﴾ سُبْحَانَ اللّٰهِ وَبِحَمْدِهِ ﴿
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/7ch5ym.mp4",
+  },
+
+  "01:00 AM": {
+    text: `╭━━━〔 🌌 রাত ১টা 〕━━━╮
+
+✨ তারাভরা আকাশ সাক্ষী—আল্লাহর সৃষ্টি কত নিখুঁত!
+😴 সুস্থ থাকার জন্য এখন বিশ্রাম নিন।
+
+﴾ الْحَمْدُ لِلّٰهِ ﴿
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/rqnlpt.mp4",
+  },
+
+  "02:00 AM": {
+    text: `╭━━━〔 🌠 রাত ২টা 〕━━━╮
+
+🍃 প্রকৃতির নীরবতা আমাদের শেখায়,
+সব নিয়ামতই মহান আল্লাহর পক্ষ থেকে।
+
+🤲 আলহামদুলিল্লাহ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/ev7guv.mp4",
+  },
+
+  "03:00 AM": {
+    text: `╭━━━〔 🌃 রাত ৩টা 〕━━━╮
+
+🌙 রাতের শেষ প্রহর—
+আল্লাহকে স্মরণ করার এক সুন্দর সময়।
+
+﴾ أَسْتَغْفِرُ اللّٰهَ ﴿
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/rijx8m.mp4",
+  },
+
+  "04:30 AM": {
+    text: `╭━━━〔 🌅 𝐅𝐀𝐉𝐑 • ফজরের সময় 〕━━━╮
+
+﴾ ﷽ ﴿
+
+اَلصَّلَاةُ خَيْرٌ مِّنَ النَّوْمِ
+
+🤲 আর কিছুক্ষণ পর ফজরের নামাজের সময় হবে।
+🕌 সবাই অজু করে নামাজের জন্য প্রস্তুতি নিন।
+
+اللَّهُمَّ اجْعَلْنَا مِنَ الْمُقِيمِينَ لِلصَّلَاةِ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/ee9khu.mp4",
+  },
+
+  "06:00 AM": {
+    text: `╭━━━〔 ☀️ শুভ সকাল 〕━━━╮
+
+🌿 নতুন সূর্যের আলো আল্লাহর অশেষ রহমতের নিদর্শন।
+✨ আলহামদুলিল্লাহ বলে দিনটি শুরু হোক।
+
+🤍 আল্লাহ সবাইকে হেফাজত করুন।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/otdztt.mp4",
+  },
+
+  "07:00 AM": {
+    text: `╭━━━〔 🌸 সকাল ৭টা 〕━━━╮
+
+🍀 সকালের নির্মল বাতাস,
+সবুজ প্রকৃতি আর আল্লাহর অশেষ নিয়ামত।
+
+💚 হাসিমুখে দিন শুরু করুন।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/q6b7fo.mp4",
+  },
+
+  "08:00 AM": {
+    text: `╭━━━〔 🌤️ সকাল ৮টা 〕━━━╮
+
+🌱 প্রতিটি নতুন সকাল
+আল্লাহর দেওয়া একটি নতুন সুযোগ।
+
+✨ নেক আমলে কাটুক আজকের দিন।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/jxa3ka.mp4",
+  },
+
+  "09:00 AM": {
+    text: `╭━━━〔 🌞 সকাল ৯টা 〕━━━╮
+
+🌳 প্রকৃতির সৌন্দর্য দেখুন,
+আল্লাহর সৃষ্টি নিয়ে চিন্তা করুন।
+
+🤲 আলহামদুলিল্লাহ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/wtu9vw.mp4",
+  },
+
+  "10:00 AM": {
+    text: `╭━━━〔 🌼 সকাল ১০টা 〕━━━╮
+
+🌺 ফুল, আকাশ আর সবুজ পৃথিবী—
+সবই মহান আল্লাহর সৃষ্টি।
+
+🤍 শুকরিয়া আল্লাহ।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/guv0tc.mp4",
+  },
+
+  "11:00 AM": {
+    text: `╭━━━〔 🌿 সকাল ১১টা 〕━━━╮
+
+🍃 ব্যস্ততার মাঝেও
+আল্লাহর অগণিত নিয়ামতের জন্য
+শুকরিয়া আদায় করুন।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/aecxiz.mp4",
+  },
+
+  "12:00 PM": {
+    text: `╭━━━〔 ☀️ দুপুর ১২টা 〕━━━╮
+
+🌏 সুন্দর এই পৃথিবী
+মহান আল্লাহর এক অসীম নিয়ামত।
+
+💚 সবার জন্য দোয়া রইল।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/wrc15v.mp4",
+  },
+
+  "01:00 PM": {
+    text: `╭━━━〔 🕌 𝐙𝐔𝐇𝐑 • যোহরের সময় 〕━━━╮
+
+﴾ ﷽ ﴿
+
+حَيَّ عَلَى الصَّلَاةِ
+
+🤲 আর কিছুক্ষণ পর যোহরের নামাজের সময় হবে।
+🕌 সবাই নামাজের জন্য প্রস্তুতি নিন।
+
+رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/c5qbek.mp4",
+  },
+
+  "02:00 PM": {
+    text: `╭━━━〔 🌳 দুপুর ২টা 〕━━━╮
+
+🍃 প্রকৃতির মাঝে কিছুটা সময় কাটান।
+🤲 সর্বদা আল্লাহর ওপর ভরসা রাখুন।
+
+﴾ حَسْبُنَا اللَّهُ ﴿
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/vgecfk.mp4",
+  },
+
+  "03:00 PM": {
+    text: `╭━━━〔 🌅 বিকেল ৩টা 〕━━━╮
+
+🍂 বিকেলের মৃদু হাওয়া
+মনে করিয়ে দেয়—
+আল্লাহর প্রতিটি সৃষ্টি সৌন্দর্যময়।
+
+🤍 আলহামদুলিল্লাহ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/iddna6.mp4",
+  },
+
+  "04:30 PM": {
+    text: `╭━━━〔 🕌 𝐀𝐒𝐑 • আসরের সময় 〕━━━╮
+
+﴾ ﷽ ﴿
+
+إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَوْقُوتًا
+
+🤲 আর কিছুক্ষণ পর আসরের নামাজের সময় হবে।
+🕌 সবাই নামাজের জন্য প্রস্তুতি নিন।
+
+اللَّهُمَّ تَقَبَّلْ مِنَّا
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/vcgbxq.mp4",
+  },
+
+  "06:30 PM": {
+    text: `╭━━━〔 🌇 𝐌𝐀𝐆𝐇𝐑𝐈𝐁 • মাগরিবের সময় 〕━━━╮
+
+﴾ ﷽ ﴿
+
+الله أكبر، الله أكبر
+
+🤲 আর কিছুক্ষণ পর মাগরিবের নামাজের সময় হবে।
+🕌 সবাই অজু করে নামাজের জন্য প্রস্তুতি নিন।
+
+اللَّهُمَّ تَقَبَّلْ مِنَّا
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/y8pnz7.mp4",
+  },
+
+  "08:00 PM": {
+    text: `╭━━━〔 🌙 𝐈𝐒𝐇𝐀 • এশার সময় 〕━━━╮
+
+﴾ ﷽ ﴿
+
+بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+
+🤲 আর কিছুক্ষণ পর এশার নামাজের সময় হবে।
+🕌 সবাই নামাজের জন্য প্রস্তুতি নিন।
+
+آمِين يَا رَبَّ الْعَالَمِينَ
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/rpnut9.mp4",
+  },
+
+  "09:00 PM": {
+    text: `╭━━━〔 🌙 রাত ৯টা 〕━━━╮
+
+✨ রাতের শান্ত আকাশ
+আল্লাহর অসীম মহিমার সাক্ষী।
+
+🤲 আজকের সকল নিয়ামতের জন্য
+শুকরিয়া আদায় করুন।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/fpac7y.mp4",
+  },
+
+  "10:00 PM": {
+    text: `╭━━━〔 🌌 রাত ১০টা 〕━━━╮
+
+🌠 আল্লাহর হেফাজতের দোয়া করে
+শান্তিতে বিশ্রাম নিন।
+
+🤍 শুভ রাত্রি।
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/e7v8en.mp4",
+  },
+
+  "11:00 PM": {
+    text: `╭━━━〔 🌃 রাত ১১টা 〕━━━╮
+
+🌙 নীরব রাত, শীতল বাতাস
+আর আল্লাহর রহমত।
+
+🤲 আগামী দিনটি হোক
+কল্যাণময় ও বরকতময়।
+
+✨ آمين يا رب العالمين ✨
+
+╰━━━━━━━━━━━━━━━━━━━━╯`,
+    video: "https://files.catbox.moe/7bas7j.mp4",
+  },
+};
+
+// ---------------- Cache folder ----------------
+const cacheDir = path.join(__dirname, "cache", "autoTimer");
+
+function ensureCache() {
   fs.ensureDirSync(cacheDir);
 }
 
-function getStatusMap() {
-  try {
-    if (fs.existsSync(configPath)) {
-      return fs.readJsonSync(configPath);
-    }
-  } catch (err) {
-    console.error("[AUTOTIMER] Config read error:", err);
-  }
-  return {};
+function setThreadStatus(threadID, status) {
+  runtime.enabledThreads.set(String(threadID), !!status);
 }
 
-function saveStatusMap(map) {
-  try {
-    fs.outputJsonSync(configPath, map, { spaces: 2 });
-  } catch (err) {
-    console.error("[AUTOTIMER] Config save error:", err);
-  }
+function getThreadStatus(threadID) {
+  if (!runtime.enabledThreads.has(String(threadID))) return true; // default ON
+  return runtime.enabledThreads.get(String(threadID));
 }
 
-module.exports.config = {
-  name: "autotimer",
-  version: "11.1",
-  role: 0,
-  author: "Akash Chowdhury",
-  description: "⏰ ঢাকা সময় অনুযায়ী শুধুমাত্র নামাজের সময়ে কাস্টম ডিজাইন ও ভিডিও সহ অটো মেসেজ পাঠাবে।",
-  category: "AutoTime",
-  countDown: 3,
-  hasPermssion: 0
-};
+async function checkAndSend(api, threadsData) {
+  if (!api) return;
 
-// On/Off কমান্ড
-module.exports.onStart = async function({ api, event, args }) {
-  const threadID = event.threadID;
-  const statusMap = getStatusMap();
-  const key = threadID.toString();
+  try {
+    const now = moment().tz("Asia/Dhaka").format("hh:mm A");
+    const today = moment().tz("Asia/Dhaka").format("DD-MM-YYYY");
 
-  if (args[0] === "on") {
-    statusMap[key] = true;
-    saveStatusMap(statusMap);
-    return api.sendMessage("⏰ [AUTOTIMER] चालू হলো! এখন থেকে শুধুমাত্র নামাজের সময়ে মেসেজ যাবে।\n👤 Owner: Akash Chowdhury", threadID);
-  }
+    const data = timerData[now];
+    if (!data) return;
 
-  if (args[0] === "off") {
-    statusMap[key] = false;
-    saveStatusMap(statusMap);
-    return api.sendMessage("⏰ [AUTOTIMER] বন্ধ করা হলো।", threadID);
-  }
+    const sentKey = `${today}_${now}`;
+    if (runtime.sentMap.has(sentKey)) return;
+    runtime.sentMap.set(sentKey, true);
 
-  return api.sendMessage("ব্যবহার করতে লিখুন: autotimer on অথবা autotimer off", threadID);
-};
+    if (runtime.sentMap.size > 100) runtime.sentMap.clear();
 
-// ব্যাকগ্রাউন্ড লুপ
-module.exports.onLoad = async function ({ api }) {
-  if (module.exports.config.author !== "Akash Chowdhury") {
-    console.error("❌ Author name has been changed!");
-    return process.exit(1);
-  }
+    const videoFile = path.join(cacheDir, now.replace(/[: ]/g, "_") + ".mp4");
 
-  console.log("[AUTOTIMER] সফলভাবে লোড হয়েছে এবং প্রতি সেকেন্ডে নামাজের সময় চেক করছে...");
-
-  const timeZone = "Asia/Dhaka";
-  const videoUrl = "https://files.catbox.moe/ikk7f9.mp4";
-  
-  // নামাজের সময়সূচী
-  const prayerTimes = {
-    "05:00 AM": { name: "ফজর", dua: "رَبِّ زِدْنِي عِلْمًا\nহে আমার রব, আমার জ্ঞান বৃদ্ধি করুন" },
-    "01:00 PM": { name: "যোহর", dua: "رَبِّ زِدْنِي عِلْمًا\nহে আমার রব, আমার জ্ঞান বৃদ্ধি করুন" },
-    "04:30 PM": { name: "আসর", dua: "رَبِّ زِدْنِي عِلْمًا\nহে আমার রব, আমার জ্ঞান বৃদ্ধি করুন" },
-    "06:30 PM": { name: "মাগরিব", dua: "رَبِّ زِدْنِي عِلْمًا\nহে আমার রব, আমার জ্ঞান বৃদ্ধি করুন" },
-    "08:00 PM": { name: "এশা", dua: "رَبِّ زِدْنِي عِلْمًا\nহে আমার রব, আমার জ্ঞান বৃদ্ধি করুন" }
-  };
-
-  let lastSentTime = "";
-
-  setInterval(async () => {
-    const now = moment().tz(timeZone);
-    const currentTimeStr = now.format("hh:mm A"); // উদা: "04:30 PM"
-    const currentDateStr = now.format("DD-MM-YYYY");
-
-    // সঠিক মিনিট ক্যাচ করা এবং ডাবল সেন্ডিং আটকানো
-    if (prayerTimes[currentTimeStr] && lastSentTime !== currentTimeStr) {
-      lastSentTime = currentTimeStr; // তৎক্ষণাৎ লক করা হলো যেন এই মিনিটে আর লুপ না চলে
-      
-      const prayer = prayerTimes[currentTimeStr];
-      const statusMap = getStatusMap();
-      const activeThreads = Object.keys(statusMap).filter(key => statusMap[key] === true);
-
-      if (activeThreads.length === 0) return;
-
-      const msgText = `━━━━━━━━━━━━━━━━━━\n🕌 ${prayer.name} নামাজের সময় হয়েছে\n🕒 সময়: ${currentTimeStr}\n📅 তারিখ: ${currentDateStr}\n━━━━━━━━━━━━━━━━━━\n\n📿 দোয়া:\n🤲 ${prayer.dua}\n\n◢◤━━━━━━━━━━━━━━━━◥◣\n🤖 ʙᴏᴛ ᴏᴡɴᴇʀ:- Akash Chowdhury\n🤲 সবাই নামাজ আদায় করুন\n◥◣━━━━━━━━━━━━━━━━◢◤`;
-      const videoPath = path.join(cacheDir, `prayer_${Date.now()}.mp4`); // ইউনিক নাম যেন কলিশন না হয়
-
+    if (!fs.existsSync(videoFile)) {
       try {
-        // ভিডিও ডাউনলোড
-        const response = await axios({
-          method: "GET",
-          url: videoUrl,
-          responseType: "stream"
+        const response = await axios.get(data.video, {
+          responseType: "arraybuffer",
+          timeout: 30000,
         });
-        
-        const writer = fs.createWriteStream(videoPath);
-        response.data.pipe(writer);
-
-        writer.on("finish", async () => {
-          // সব থ্রেডে পাঠানোর প্রমিজ অ্যারে তৈরি
-          const sendPromises = activeThreads.map(threadID => {
-            return new Promise((resolve) => {
-              api.sendMessage({
-                body: msgText,
-                attachment: fs.createReadStream(videoPath)
-              }, threadID, (err) => {
-                if (err) console.error(`[AUTOTIMER] Error sending to ${threadID}:`, err);
-                resolve(); // এরর আসলেও প্রমিজ রিজলভ করব যাতে পরের গুলো আটকে না থাকে
-              });
-            });
-          });
-
-          // সব গ্রুপে পাঠানো শেষ হওয়া পর্যন্ত অপেক্ষা করবে
-          await Promise.all(sendPromises);
-
-          // সবার শেষে ফাইল ডিলিট
-          try {
-            if (fs.existsSync(videoPath)) {
-              fs.unlinkSync(videoPath);
-            }
-          } catch (e) {
-            console.error("[AUTOTIMER] File delete error:", e);
-          }
-        });
-
-        writer.on("error", (err) => {
-          console.error("[AUTOTIMER] Video write error:", err);
-        });
-
-      } catch (error) {
-        console.error("[AUTOTIMER] Video download error:", error);
-        // ভিডিও ডাউনলোড ফেইল করলে ব্যাকআপ হিসেবে শুধু টেক্সট পাঠানো
-        activeThreads.forEach(threadID => {
-          api.sendMessage(msgText, threadID);
-        });
+        fs.ensureDirSync(path.dirname(videoFile));
+        fs.writeFileSync(videoFile, Buffer.from(response.data));
+      } catch (err) {
+        console.error("[AutoTimer] Video download failed:", err.message);
+        return;
       }
     }
-  }, 1000); // ১ সেকেন্ড পর পর নিখুঁতভাবে চেক করবে
+
+    const messageBody =
+`╔══════════════════╗
+        ⏰ 𝐀𝐔𝐓𝐎 𝐓𝐈𝐌𝐄𝐑⏰
+╠══════════════════╣
+
+🕒 𝐓𝐈𝐌𝐄 ➜ ${now}
+📅 𝐃𝐀𝐓𝐄 ➜ ${today}
+
+┏━━━━━━━━━━━━━━━━━━┓
+${data.text}
+┗━━━━━━━━━━━━━━━━━━┛
+
+     _—_⚡𝐀𝐊𝐀𝐒𝐇 𝐂𝐇𝐎𝐖𝐃𝐇𝐔𝐑𝐘 𝐁𝐎𝐓⚡_—_
+╚═══════════════════╝`;
+
+    // GoatBot stores thread list via threadsData; fall back to api if needed
+    let allThreads = [];
+    try {
+      allThreads = threadsData
+        ? await threadsData.getAll()
+        : typeof api.getThreadList === "function"
+        ? await api.getThreadList(1000, null, ["INBOX"])
+        : [];
+    } catch (err) {
+      console.error("[AutoTimer] Failed to fetch thread list:", err.message);
+      return;
+    }
+
+    if (!Array.isArray(allThreads)) return;
+
+    const groups = allThreads.filter((t) => {
+      // Support both goatbot threadsData objects and raw fca thread objects
+      if (t.isGroup !== undefined) return t.isGroup;
+      return true;
+    });
+
+    for (const thread of groups) {
+      const threadID = String(thread.threadID);
+      if (!getThreadStatus(threadID)) continue;
+
+      try {
+        const info = await api.sendMessage(
+          {
+            body: messageBody,
+            attachment: fs.createReadStream(videoFile),
+          },
+          threadID
+        );
+
+        console.log("[AUTOTIMER MESSAGE]", info);
+      } catch (err) {
+        console.error(`[AutoTimer] Failed to send message to ${threadID}:`, err.message);
+      }
+    }
+  } catch (err) {
+    console.error("[AutoTimer]", err);
+  }
+}
+
+function start(api, threadsData) {
+  if (started) return;
+  started = true;
+  ensureCache();
+
+  interval = setInterval(() => checkAndSend(api, threadsData), 30 * 1000);
+  console.log("[AutoTimer] Service started successfully. (by Akash Chowdhury)");
+}
+
+function stop() {
+  if (interval) {
+    clearInterval(interval);
+    interval = null;
+    started = false;
+  }
+}
+
+// ---------------- GoatBot hooks ----------------
+
+// Runs once automatically when the bot loads this script (after login)
+module.exports.onLoad = function ({ api, threadsData }) {
+  start(api, threadsData);
 };
+
+// Command: autotimer on/off  (per-thread toggle, admin only per config.hasPermssion)
+module.exports.onStart = async function ({ api, event, args }) {
+  const threadID = event.threadID;
+  const sub = (args[0] || "").toLowerCase();
+
+  if (sub === "off") {
+    setThreadStatus(threadID, false);
+    return api.sendMessage("🔕 এই থ্রেডে AutoTimer বন্ধ করা হয়েছে।", threadID, event.messageID);
+  }
+
+  if (sub === "on") {
+    setThreadStatus(threadID, true);
+    return api.sendMessage("🔔 এই থ্রেডে AutoTimer চালু করা হয়েছে।", threadID, event.messageID);
+  }
+
+  return api.sendMessage(
+    `⏰ AutoTimer বর্তমানে এই থ্রেডে ${getThreadStatus(threadID) ? "চালু ✅" : "বন্ধ ❌"} আছে।\n\nব্যবহার:\n${module.exports.config.usages}`,
+    threadID,
+    event.messageID
+  );
+};
+
+module.exports.setThreadStatus = setThreadStatus;
+module.exports.getThreadStatus = getThreadStatus;
+module.exports.stop = stop;
