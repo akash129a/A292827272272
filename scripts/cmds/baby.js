@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// টাইপিং ইন্ডিকেটর
+// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড রাখা হয়েছে
 const typing = async (api, threadID, ms = 500) => {
   try {
     if (typeof api.sendTypingIndicator === "function") {
@@ -13,78 +13,19 @@ const typing = async (api, threadID, ms = 500) => {
   } catch {}
 };
 
-// প্রশংসামূলক রেসপন্স
-const riyaCompliments = [
-  "Oh my God! Riya Apu is here! You light up this chatbox! 💖✨",
-  "Riya Apu, you are the most precious jewel in the world! 💎👑",
-  "Welcome Riya Apu! You are the ultimate queen! 👸❤️",
-  "Did someone say Riya? You are absolutely gorgeous! 🙈💖",
-  "Riya Apu, your smile lights up the entire universe! 🌌✨",
-  "Riya Apu, your charm and grace leave everyone spellbound! 🧚‍♀️✨",
-  "You are truly an angel crafted with pure love and perfection! 🕊️💞",
-  "Riya Apu, you make every moment feel so magical! 🏰✨",
-  "You possess the most captivating and beautiful eyes in the world! 👁️✨",
-  "Riya Apu, you are a daily dose of pure happiness! ☀️💕",
-  "Your kindness and elegance shine brighter than diamonds! 💎🌸",
-  "No artwork in this world can match your elegance, Riya Apu! 🎨👑",
-  "Riya Apu, you are the queen of a fairytale world! 👸🏰",
-  "Your voice is sweeter than honey, dear Riya Apu! 🍯✨",
-  "Riya Apu, you are the embodiment of beauty and purity! 🕊️❤️",
-  "Your charm is absolutely unmatched and breathtaking! 💫💖",
-  "Riya Apu, you are the ultimate blessing! 🎁❤️",
-  "Your smile is everyone's absolute favorite view! 😊💕",
-  "Riya Apu, you radiate pure elegance and positivity! ✨🌷",
-  "Riya Apu, you are a true masterpiece! 🖼️💖",
-  "Your soul is as gorgeous as your face, dear Riya Apu! 🧚‍♀️💖",
-  "Riya Apu, you are the sunshine that brightens the world! ☀️💕",
-  "Riya Apu, you are the true definition of perfection! 💎✨",
-  "Riya Apu, tu ekdm angel er moto shundor! 🕊️✨",
-  "Apnar moto shundor ar cute manush ar ekta-o nei Riya Apu! 🥰💖",
-  "Riya Apu, apnar hashita jeno shorgo theke asha kono aalo! 😊🌸",
-  "Tumi shotyi khub shundor ar khub mishi Riya Apu! 💕👑",
-  "Riya Apu apnar shob kichui khub perfect ar stylish! ✨💎",
-  "Shobai toh shundor hoy, kintu Riya Apu hocche shobcheye shundor! 🌹👸",
-  "Riya Apu, apnar mon ta apnar chehara-r motoi shundor! 🌸💖",
-  "Apni jei khane jaan, sheikhani aalo choriyen Riya Apu! 🌟✨",
-  "Riya Apu er moto cute ar innocent keu hotei pare na! 🥺❤️"
-];
-
-// কিওয়ার্ড চেক করার ফাংশন
-const isRiyaTrigger = (text) => {
-  if (!text) return false;
-  const t = text.toLowerCase();
-  return (
-    t.includes("riya") ||
-    t.includes("রিয়া") ||
-    t.includes("kemon") ||
-    t.includes("kmn") ||
-    t.includes("কেমন")
-  );
-};
-
-// রিপ্লাই ডাটা রেজিস্টার করার ফাংশন
-const setReplyData = (info) => {
-  if (info && info.messageID && global.GoatBot && global.GoatBot.reply) {
-    global.GoatBot.reply.set(info.messageID, {
-      commandName: "baby",
-      author: info.senderID
-    });
-  }
-};
-
 module.exports = {
   config: {
     name: "baby",
-    aliases: ["riya", "রিয়া"],
-    version: "9.0",
-    author: "rX (customized for Riya Apu)",
+    aliases: ["mari", "maria", "hippi", "xan", "bby", "bbz", "akash"],
+    version: "4.5",
+    author: "rX (customized by Akash Chowdhury)",
     countDown: 0,
     role: 0,
-    shortDescription: "Full Mirai-style Baby AI with Exclusive Riya Customization",
+    shortDescription: "Full Mirai-style Baby AI with New Akash Customization",
     longDescription: "Teachable AI + autoteach + list/msg/edit/remove + ultra fast typing",
     category: "box chat",
     guide: {
-      en: "{p}baby [message]\n{p}baby teach [q] - [a]"
+      en: "{p}baby [message]\n{p}baby teach [q] - [a]\n{p}baby autoteach on/off\n{p}baby list\n{p}baby msg [trigger]\n{p}baby edit [q] - [old] - [new]\n{p}baby remove/rm [q] - [a]"
     }
   },
 
@@ -95,31 +36,111 @@ module.exports = {
     const query = args.join(" ").trim().toLowerCase();
 
     try {
+      // text না দিলে র্যান্ডম মিষ্টি মেসেজ
       if (!query) {
         await typing(api, threadID, 500);
-        const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰"];
-        return message.reply(ran[Math.floor(Math.random() * ran.length)], (err, info) => setReplyData(info));
+        const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰", "হুম বলো আমার জান 🙈"];
+        return message.reply(ran[Math.floor(Math.random() * ran.length)], (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
       }
 
-      if (query.includes("owner") || query.includes("malik")) {
-        return message.reply("👑 The queen and absolute star of this bot is 'Riya Apu'! She is everything to us. 🥰❤️", (err, info) => setReplyData(info));
+      // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে আকাশ কেমন জিজ্ঞেস করলে)
+      if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
+        const akashReplies = [
+          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
+          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
+          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+        ];
+        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)]);
       }
 
-      if (isRiyaTrigger(query)) {
-        const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
-        return message.reply(randomReply, (err, info) => setReplyData(info));
+      // AUTOTEACH TOGGLE
+      if (args[0] === "autoteach") {
+        const mode = args[1]?.toLowerCase();
+        if (!["on","off"].includes(mode)) return message.reply("Use: baby autoteach on/off");
+
+        const status = mode === "on";
+        await axios.post(`${simsim}/setting`, { autoTeach: status }, { timeout: 10000 });
+        return message.reply(`✅ Auto teach now ${status ? "ON 🟢" : "OFF 🔴"}`);
       }
 
+      // LIST
+      if (args[0] === "list") {
+        const res = await axios.get(`${simsim}/list`, { timeout: 10000 });
+        return message.reply(
+`╭─╼🌟 𝐁𝐚𝐛𝐲 𝐀𝐈 𝐒𝐭𝐚𝐭𝐮𝐬
+├ 📝 𝐓𝐞𝐚𝐜𝐡𝐞𝐝 𝐐𝐮𝐞𝐬𝐭𝐢𝐨𝐧𝐬: ${res.data.totalQuestions || 0}
+├ 📦 𝐒𝐭𝐨𝐫𝐞𝐝 𝐑𝐞𝐩𝐥𝐢𝐞𝐬: ${res.data.totalReplies || 0}
+╰─╼👤 𝐃eᴠ: Akash Chowdhury`
+        );
+      }
+
+      // MSG
+      if (args[0] === "msg") {
+        const trigger = args.slice(1).join(" ").trim();
+        if (!trigger) return message.reply("Use: baby msg [trigger]");
+
+        const res = await axios.get(`${simsim}/simsimi-list?ask=${encodeURIComponent(trigger)}`, { timeout: 10000 });
+        if (!res.data.replies?.length) return message.reply("❌ No replies found for this trigger.");
+
+        const formatted = res.data.replies.map((rep, i) => `➤ ${i+1}. ${rep}`).join("\n");
+        return message.reply(
+`📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}
+📋 𝗧𝗼𝘁𝗮𝗹 延𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}
+━━━━━━━━━━━━━━
+${formatted}`
+        );
+      }
+
+      // TEACH
+      if (args[0] === "teach") {
+        const parts = query.replace(/^teach\s+/i, "").split(" - ");
+        if (parts.length < 2) return message.reply("Use: baby teach question - answer");
+
+        const [ask, ans] = parts.map(s => s.trim());
+        const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
+        return message.reply(res.data.message || "✅ Taught successfully!");
+      }
+
+      // EDIT
+      if (args[0] === "edit") {
+        const parts = query.replace(/^edit\s+/i, "").split(" - ");
+        if (parts.length < 3) return message.reply("Use: baby edit question - old reply - new reply");
+
+        const [ask, oldR, newR] = parts.map(s => s.trim());
+        const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&old=${encodeURIComponent(oldR)}&new=${encodeURIComponent(newR)}`, { timeout: 10000 });
+        return message.reply(res.data.message || "✅ Edited successfully!");
+      }
+
+      // REMOVE / RM
+      if (["remove","rm"].includes(args[0])) {
+        const parts = query.replace(/^(remove|rm)\s+/i, "").split(" - ");
+        if (parts.length < 2) return message.reply("Use: baby remove question - answer");
+
+        const [ask, ans] = parts.map(s => s.trim());
+        const res = await axios.get(`${simsim}/delete?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
+        return message.reply(res.data.message || "✅ Removed successfully!");
+      }
+
+      // Normal chat
       await typing(api, threadID, 500);
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(query)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
+
       let responses = Array.isArray(res.data.response) ? res.data.response : [res.data.response || "Hmm baby 😚"];
-      
       for (const r of responses) {
-        message.reply(r, (err, info) => setReplyData(info));
+        await new Promise(resolve => {
+          message.reply(r, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+            resolve();
+          });
+        });
       }
 
     } catch (err) {
       console.error("Baby command error:", err.message);
+      message.reply("❌ Error: " + (err.message.includes("404") ? "Feature not available (backend issue)" : err.message));
     }
   },
 
@@ -130,23 +151,19 @@ module.exports = {
 
     try {
       await typing(api, event.threadID, 500);
-
-      // ১. ওনার চেক
-      if (text.toLowerCase().includes("owner") || text.toLowerCase().includes("malik")) {
-        return message.reply("👑 The queen and absolute star of this bot is 'Riya Apu'! She is everything to us. 🥰❤️", (err, info) => setReplyData(info));
+      
+      const lowerText = text.toLowerCase();
+      if (lowerText.includes("akash kmn") || lowerText.includes("akash kemon") || lowerText.includes("আকাশ কেমন")) {
+        return message.reply("আমার ওনার আকাশ ভাইয়া তো এই দুনিয়ার অন্যতম সেরা মানুষ! 👑❤️");
       }
 
-      // ২. ২য় বার রিপ্লাই করার সময় রিয়া/কেমন আছো চেক
-      if (isRiyaTrigger(text)) {
-        const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
-        return message.reply(randomReply, (err, info) => setReplyData(info));
-      }
-
-      // ৩. সাধারণ উত্তর
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
+
       const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
       for (const r of replies) {
-        message.reply(r, (err, info) => setReplyData(info));
+        await message.reply(r, (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
       }
     } catch (err) {
       console.error("onReply error:", err.message);
@@ -154,25 +171,87 @@ module.exports = {
   },
 
   onChat: async function ({ api, event, message, usersData }) {
-    const raw = event.body ? event.body.trim() : "";
+    const raw = event.body ? event.body.toLowerCase().trim() : "";
     if (!raw) return;
 
-    // মেসেজ রিপ্লাই দিয়ে পাঠানো হলে অন-চ্যাট এড়িয়ে অন-রিপ্লাই কাজ করবে
-    if (event.messageReply) return;
-
-    const senderName = await usersData.getName(event.senderID);
+    const senderID = event.senderID;
+    const senderName = await usersData.getName(senderID);
     const threadID = event.threadID;
 
     try {
-      if (raw.toLowerCase().includes("owner") || raw.toLowerCase().includes("malik")) {
+      // আকাশ কেমন - এই রিলেটেড সব মেসেজের নতুন মিষ্টি রিপ্লাই
+      if (raw.includes("akash kmn") || raw.includes("akash kemon") || raw.includes("আকাশ কেমন")) {
         await typing(api, threadID, 500);
-        return message.reply("👑 The queen and absolute star of this bot is 'Riya Apu'! She is everything to us. 🥰❤️", (err, info) => setReplyData(info));
+        const akashReplies = [
+          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
+          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
+          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
+          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+        ];
+        return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
       }
 
-      if (isRiyaTrigger(raw)) {
+      // শুধু ট্র্রিগার বা নাম ধরে ডাকলে
+      const triggers = ["baby","bby","xan","bbz","mari","মারিয়া","bot","akash","আকাশ"];
+      if (triggers.includes(raw)) {
         await typing(api, threadID, 500);
-        const randomReply = riyaCompliments[Math.floor(Math.random() * riyaCompliments.length)];
-        return message.reply(randomReply, (err, info) => setReplyData(info));
+        
+        // আকাশ নাম ধরে ডাকলে বস-দের মতো সম্মানজনক ও মিষ্টি রেসপন্স
+        if (raw === "akash" || raw === "আকাশ") {
+          return message.reply("জ্বী বলুন! আকাশ ভাইয়া তো আমার ক্রিয়েটর আর আমার একমাত্র রেস্পেক্টেড বস! 🥰👑", (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        }
+
+        const funny = [
+          "কি হয়েছে জান বলো? শুনছি তো! 😿",
+          "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
+          "হুম বলো পাখি, শুনছি তো! 🫶🐤",
+          "ডাকছো কেন বাবু? সারাক্ষণ তো তোমার কথাই ভাবি! 😘",
+          "জ্বী জানু বলো, তোমার জন্য সব কাজ ফেলে চলে আসলাম! 🥰"
+        ];
+        return message.reply(funny[Math.floor(Math.random() * funny.length)], (err, info) => {
+          if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+        });
+      }
+
+      // prefixes
+      const prefixes = ["baby ","bby ","xan ","bbz ","mari ","মারিয়া ","bot ","akash ","আকাশ "];
+      const prefix = prefixes.find(p => raw.startsWith(p));
+      if (prefix) {
+        const q = raw.replace(prefix,"").trim();
+        if (!q) return;
+
+        await typing(api, threadID, 500);
+        const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(q)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
+
+        const replies = Array.isArray(res.data.response) ? res.data.response : [res.data.response];
+        for (const r of replies) {
+          await message.reply(r, (err, info) => {
+            if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
+          });
+        }
+        return;
+      }
+
+      // AUTO-TEACH from reply
+      if (event.messageReply) {
+        try {
+          const setting = await axios.get(`${simsim}/setting`, { timeout: 8000 });
+          if (setting.data?.autoTeach) {
+            const ask = event.messageReply.body?.toLowerCase().trim();
+            const ans = raw.trim();
+            if (ask && ans && ask !== ans) {
+              setTimeout(async () => {
+                try {
+                  await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 10000 });
+                } catch {}
+              }, 500);
+            }
+          }
+        } catch {}
       }
 
     } catch (err) {
