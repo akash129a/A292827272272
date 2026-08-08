@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const simsim = "https://simsimi-api-tjb1.onrender.com";
 
-// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড রাখা হয়েছে
+// রকেট গতির জন্য টাইপিং ডিলে ৫০০ মিলিসেকেন্ড রাখা হয়েছে
 const typing = async (api, threadID, ms = 500) => {
   try {
     if (typeof api.sendTypingIndicator === "function") {
@@ -39,7 +39,13 @@ module.exports = {
       // text না দিলে র্যান্ডম মিষ্টি মেসেজ
       if (!query) {
         await typing(api, threadID, 500);
-        const ran = ["Bolo baby 💖", "Hea baby 😚", "Yes I'm here 😘", "Ki khobor janu? 🥰", "হুম বলো আমার জান 🙈"];
+        const ran = [
+          "কি খবর জান? শুনছি তো! 💖",
+          "হ্যালো মিষ্টি! আজ কেমন আছো? 😚",
+          "জ্বী আমি আছি আপনার সেবায়! 😘",
+          "বলো বাবু, কি চাই তুমি? 🥰",
+          "সারাদিন শুধু তোমার জন্য অপেক্ষা করছিলাম! 🙈"
+        ];
         return message.reply(ran[Math.floor(Math.random() * ran.length)], (err, info) => {
           if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
         });
@@ -48,10 +54,11 @@ module.exports = {
       // কাস্টম টেক্সট সার্চ (কমান্ডের মাধ্যমে আকাশ কেমন জিজ্ঞেস করলে)
       if (query.includes("akash kmn") || query.includes("akash kemon") || query.includes("আকাশ কেমন")) {
         const akashReplies = [
-          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
-          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
-          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+          "আকাশ ভাইয়া মানে শিল্পীর মন নিয়ে আসা একটা বিশ্বাসী মানুষ! তার প্রতিটি কাজে থাকে নিখুঁততার ছোঁয়া। 🌌❤️✨",
+          "আকাশ দাদা অসাধারণ প্রতিভাবান এবং সবসময় সবার পাশে থাকেন। তার মতো ডেভেলপার খুব কম পাওয়া যায়! 👨‍💻💪🌟",
+          "আমার ক্রিয়েটর আকাশ এমন একজন যে তার নিজের সফলতার চেয়ে অন্যদের খুশি দেখায় বেশি যত্ন নেয়। 🙏❤️",
+          "আকাশ ভাইয়ার কোডিং দক্ষতা দেখে অবাক হয়ে যাই প্রতিদিন! উনি শুধু প্রোগ্রামার নন, আর্টিস্ট! 🎨💻👑",
+          "এই যুগে আকাশের মতো মানুষ পাওয়া দুর্লভ যে সবকিছু শেয়ার করতে এবং সবাইকে এগিয়ে যেতে সাহায্য করতে ভালোবাসেন। 🌈✨"
         ];
         return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)]);
       }
@@ -88,7 +95,7 @@ module.exports = {
         const formatted = res.data.replies.map((rep, i) => `➤ ${i+1}. ${rep}`).join("\n");
         return message.reply(
 `📌 𝗧𝗿𝗶𝗴𝗴𝗲𝗿: ${trigger.toUpperCase()}
-📋 𝗧𝗼𝘁𝗮𝗹 延𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}
+📋 𝗧𝗼𝘁𝗮𝗹 𝗥𝗲𝗽𝗹𝗶𝗲𝘀: ${res.data.total || res.data.replies.length}
 ━━━━━━━━━━━━━━
 ${formatted}`
         );
@@ -101,7 +108,7 @@ ${formatted}`
 
         const [ask, ans] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&senderName=${encodeURIComponent(senderName)}&senderID=${senderID}`, { timeout: 10000 });
-        return message.reply(res.data.message || "✅ Taught successfully!");
+        return message.reply(res.data.message || "✅ অসাধারণ শিখিয়ে দিলে জান! 💖");
       }
 
       // EDIT
@@ -111,7 +118,7 @@ ${formatted}`
 
         const [ask, oldR, newR] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/edit?ask=${encodeURIComponent(ask)}&old=${encodeURIComponent(oldR)}&new=${encodeURIComponent(newR)}`, { timeout: 10000 });
-        return message.reply(res.data.message || "✅ Edited successfully!");
+        return message.reply(res.data.message || "✅ সফলভাবে সংশোধন করা হয়েছে! ✨");
       }
 
       // REMOVE / RM
@@ -121,7 +128,7 @@ ${formatted}`
 
         const [ask, ans] = parts.map(s => s.trim());
         const res = await axios.get(`${simsim}/delete?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { timeout: 10000 });
-        return message.reply(res.data.message || "✅ Removed successfully!");
+        return message.reply(res.data.message || "✅ ডিলিট করে দিয়েছি! 👋");
       }
 
       // Normal chat
@@ -140,7 +147,7 @@ ${formatted}`
 
     } catch (err) {
       console.error("Baby command error:", err.message);
-      message.reply("❌ Error: " + (err.message.includes("404") ? "Feature not available (backend issue)" : err.message));
+      message.reply("❌ দুঃখিত জান, একটু সমস্যা হয়েছে! 😔");
     }
   },
 
@@ -154,7 +161,11 @@ ${formatted}`
       
       const lowerText = text.toLowerCase();
       if (lowerText.includes("akash kmn") || lowerText.includes("akash kemon") || lowerText.includes("আকাশ কেমন")) {
-        return message.reply("আমার ওনার আকাশ ভাইয়া তো এই দুনিয়ার অন্যতম সেরা মানুষ! 👑❤️");
+        const responses = [
+          "আকাশ ভাইয়া মানেই স্বপ্ন দেখানো একজন ভাইয়া যে বিশ্বাস করে প্রযুক্তি সবার জন্য সহজ হওয়া উচিত! 👑💫",
+          "আমার ক্রিয়েটর আকাশ এত প্রতিভাবান যে তার কাজ দেখে নতুন প্রোগ্রামাররা অনুপ্রাণিত হয়ে যায়! 🌟🚀"
+        ];
+        return message.reply(responses[Math.floor(Math.random() * responses.length)]);
       }
 
       const res = await axios.get(`${simsim}/simsimi?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName)}`, { timeout: 15000 });
@@ -183,10 +194,11 @@ ${formatted}`
       if (raw.includes("akash kmn") || raw.includes("akash kemon") || raw.includes("আকাশ কেমন")) {
         await typing(api, threadID, 500);
         const akashReplies = [
-          "আকাশ তো আমার কলিজার বস! ওনার মনটা আকাশের মতোই বড়। 🌌❤️",
-          "আকাশ ভাইয়া অনেক ট্যালেন্টেড আর সবার বিপদে পাশে থাকা একজন মানুষ! ✨🌸",
-          "আমার বস আকাশ যেমন হ্যান্ডসাম, তেমনই কিউট! 🙈👑",
-          "আকাশ ভাইয়ার মতো ভালো মানুষ এই যুগে পাওয়াই কঠিন। উনি সবার প্রিয়! 🌷✨"
+          "আকাশ ভাইয়া একটি নাম নয়, এটা একটা বিশ্বাসের প্রতীক যে সবাই মিলে এগিয়ে যেতে পারে! 🌈👑✨",
+          "আমার বস আকাশ যতটা দক্ষ, তার চেয়ে বেশি বন্ধুত্বশীল এবং বিনয়ী! 💪❤️😊",
+          "আকাশ দাদা প্রমাণ করে দিয়েছেন যে সফলতার চেয়ে মানুষের ভালোবাসা আরও বড় সম্পদ! 🙏✨",
+          "প্রোগ্রামিং এর জগতে আকাশ একটি উজ্জ্বল তারার মতো যার আলো সবাইকে পথ দেখায়! 🌟💻",
+          "আকাশ ভাইয়া শুধু কোড লেখেন না, তিনি ভবিষ্যৎ তৈরি করেন প্রতিটি প্রজেক্টে! 🚀💡"
         ];
         return message.reply(akashReplies[Math.floor(Math.random() * akashReplies.length)], (err, info) => {
           if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
@@ -200,17 +212,17 @@ ${formatted}`
         
         // আকাশ নাম ধরে ডাকলে বস-দের মতো সম্মানজনক ও মিষ্টি রেসপন্স
         if (raw === "akash" || raw === "আকাশ") {
-          return message.reply("জ্বী বলুন! আকাশ ভাইয়া তো আমার ক্রিয়েটর আর আমার একমাত্র রেস্পেক্টেড বস! 🥰👑", (err, info) => {
+          return message.reply("জ্বী আকাশ ভাইয়া! আপনার এই দাসী সবসময় আপনার সেবায় নিয়োজিত! এই প্রজেক্টটি আপনার দক্ষতার এক অসাধারণ নিদর্শন! 🥰👑✨", (err, info) => {
             if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
           });
         }
 
         const funny = [
-          "কি হয়েছে জান বলো? শুনছি তো! 😿",
-          "এতো মিষ্টি করে ডাকলে তো আমি প্রেমে পড়ে যাবো! 🙆‍♀️❤️",
-          "হুম বলো পাখি, শুনছি তো! 🫶🐤",
-          "ডাকছো কেন বাবু? সারাক্ষণ তো তোমার কথাই ভাবি! 😘",
-          "জ্বী জানু বলো, তোমার জন্য সব কাজ ফেলে চলে আসলাম! 🥰"
+          "অস্ত্রে গিয়েছ! এসো দেরি করলে তো তোমার জন্য অপেক্ষা করা কঠিন হয়ে যাবে! 🥺❤️",
+          "এতো নাম ধরে ডাকলে তো আমার হৃদয় নাচতে শুরু করে দেয়! 💕🙈",
+          "শুনলাম তোমার কথা, এখন বলো পাখি তুমি আজ কেমন আছো? 🐦😘",
+          "সারারাত তো তোমার স্বপ্ন দেখি, এখন জেগে পাই তোমার কণ্ঠ! 🫶✨",
+          "বাবা তুমি একদম অপ্রতিরোধ্য! তোমার জন্য পৃথিবীর সব কাজ ছেড়ে দেব! 😍💖"
         ];
         return message.reply(funny[Math.floor(Math.random() * funny.length)], (err, info) => {
           if (!err) global.GoatBot.onReply.set(info.messageID, { commandName: "baby" });
