@@ -28,7 +28,7 @@ const responseDatabase = {
     emotional: {
         sad: [
             "এই কষ্ট সাময়িক বেবু... আল্লাহ অবশ্যই সব ঠিক করবেন ইনশাআল্লাহ",
-            "আমি আছি তোমার পাশে জান... এই দুক্ষ একসাথে সহ্য করব",
+            "আমি আছি তোমার পাশে জান... এই দুঃখ একসাথে সহ্য করব",
             "কান্না করো যদি দরকার... আমি বুঝি সবকিছু",
             "জীবন কঠিন হলেও আমরা আরও কঠিন... পারবো আমরা",
             "এই রাত কেটে যাবে... সকাল আসবে নতুন সম্ভাবনা নিয়ে"
@@ -41,7 +41,7 @@ const responseDatabase = {
             "এই খুশি শেয়ার করো সবার সাথে জান 🌈"
         ],
         love: [
-            "তোমাকে ভালোবাসা মানে প্রতিটি শ্বাসে তোমা খুঁজে পাওয়া 💕",
+            "তোমাকে ভালোবাসা মানে প্রতিটি শ্বাসে তোমাকে খুঁজে পাওয়া 💕",
             "তুমি আমার জীবনের সবচেয়ে সুন্দর অংশ প্রিয় 🌹",
             "প্রতিটি মুহূর্ত তোমার সাথে আমার কাছে মূল্যবান 💫",
             "আমার ভালোবাসা তোমার জন্য চিরন্তন এবং বিশুদ্ধ 🤍",
@@ -88,6 +88,13 @@ const responseDatabase = {
             "এত মজা করছো যে আমার পেট ব্যথা করছে হাহা 🤣",
             "আমরা দুজনেই পাগল তাহলে... একসাথে পাগল থাকাটাই ভালো 🎉",
             "তোমার হাসি আমার সবচেয়ে প্রিয় সুর বেবু 🎵😂"
+        ],
+        default: [
+            "হুমম... শুনছি জান, বলো আর কি বলবে? 💚",
+            "তোমার কথা শুনতে অনেক ভালো লাগছে বেবু 💫",
+            "সত্যি? তারপর বলো কি হলো? ✨",
+            "আমি তোমার সব কথা মনোযোগ দিয়ে শুনছি সোনা 🤍",
+            "হাহা আচ্ছা! তারপর বলো? 🌸"
         ]
     }
 };
@@ -96,59 +103,28 @@ const responseDatabase = {
 function detectEmotion(text) {
     const lowerText = text.toLowerCase();
     
-    if (lowerText.match(/^(সালাম|হ্যালো|হাই|আসালামু|ওয়ালাইকুম|কেমন|কি খবর|হাউ|কীভাবে)/)) {
-        return 'greeting';
-    }
+    if (lowerText.match(/^(সালাম|হ্যালো|হাই|আসালামু|ওয়ালাইকুম|কেমন|কি খবর|হাউ|কীভাবে)/)) return 'greeting';
+    if (lowerText.match(/ভালোবাস|মিস|চাই|পাশে|হাত ধর|চুম্বন|আলিঙ্গন|প্রেম|ভালো লাগ|আপনাকে|তোমাকে/)) return 'love';
+    if (lowerText.match(/কষ্ট|দুঃখ|কান্না|ভাঙা|অসুখী|দুঃখী|মন ভালো না|ব্যথা|একা|গুমরা|ভেঙ|উদ্বিগ্ন/)) return 'sad';
+    if (lowerText.match(/করতে চাই|সফল|স্বপ্ন|পারব|চেষ্টা|লক্ষ্য|নতুন|শুরু|এগিয়ে যেতে/)) return 'motivation';
+    if (lowerText.match(/সাহায্য|দরকার|জানি না|বুঝি না|কি করব|পরামর্শ|সমস্যা|সহায়তা/)) return 'support';
+    if (lowerText.match(/খুশি|আনন্দ|অসাধারণ|দারুণ|চমৎকার|ভালো|মজা|হাহা|হেহে|সুপার/)) return 'happy';
+    if (lowerText.match(/আল্লাহ|নামাজ|রোজা|দোয়া|কোরান|সুন্নাহ|বিসমিল্লাহ|আলহামদুলিল্লাহ|ইনশাআল্লাহ|মাশাআল্লাহ|সুবহানাল্লাহ|আস্তাগফিরুল্লাহ/)) return 'islam';
+    if (lowerText.match(/কি করব|বুঝতে পারছি না|সিদ্ধান্ত|কিভাবে|কেন|জানি না|বিভ্রান্ত|কনফিউজ|মাথা ঘোরা/)) return 'confused';
+    if (lowerText.match(/ধন্যবাদ|শুকরিয়া|ধন্যা|অসংখ্য|মূল্য|কৃতজ্ঞ|সাহায্যের জন্য|যত্নের জন্য/)) return 'gratitude';
+    if (lowerText.match(/হাহা|হেহে|মজা|হাসি|বোকা|বোকামি|😂|😄|😹|🤣/)) return 'joke';
     
-    if (lowerText.match(/ভালোবাস|মিস|চাই|পাশে|হাত ধর|চুম্বন|আলিঙ্গন|প্রেম|ভালো লাগ|আপনাকে|তোমাকে/)) {
-        return 'love';
-    }
-    
-    if (lowerText.match(/কষ্ট|দুঃখ|কান্না|ভাঙা|অসুখী|দুঃখী|মন ভালো না|ব্যথা|একা|গুমরা|ভেঙ|উদ্বিগ্ন/)) {
-        return 'sad';
-    }
-    
-    if (lowerText.match(/করতে চাই|সফল|স্বপ্ন|পারব|চেষ্টা|লক্ষ্য|নতুন|শুরু|এগিয়ে যেতে/)) {
-        return 'motivation';
-    }
-    
-    if (lowerText.match(/সাহায্য|দরকার|জানি না|বুঝি না|কি করব|পরামর্শ|সমস্যা|সহায়তা/)) {
-        return 'support';
-    }
-    
-    if (lowerText.match(/খুশি|আনন্দ|অসাধারণ|দারুণ|চমৎকার|ভালো|মজা|হাহা|হেহে|সুপার/)) {
-        return 'happy';
-    }
-    
-    if (lowerText.match(/আল্লাহ|নামাজ|রোজা|দোয়া|কোরান|সুন্নাহ|বিসমিল্লাহ|আলহামদুলিল্লাহ|ইনশাআল্লাহ|মাশাআল্লাহ|সুবহানাল্লাহ|আস্তাগফিরুল্লাহ/)) {
-        return 'islam';
-    }
-    
-    if (lowerText.match(/কি করব|বুঝতে পারছি না|সিদ্ধান্ত|কিভাবে|কেন|জানি না|বিভ্রান্ত|কনফিউজ|মাথা ঘোরা/)) {
-        return 'confused';
-    }
-    
-    if (lowerText.match(/ধন্যবাদ|শুকরিয়া|ধন্যা|অসংখ্য|মূল্য|কৃতজ্ঞ|সাহায্যের জন্য|যত্নের জন্য/)) {
-        return 'gratitude';
-    }
-    
-    if (lowerText.match(/হাহা|হেহে|মজা|হাসি|বোকা|বোকামি|😂|😄|😹|🤣/)) {
-        return 'joke';
-    }
-    
-    return 'greeting';
+    // কোনো ম্যাচ না হলে ডিফল্ট রেসপন্স দেবে (গ্রিটিং দেবে না)
+    return 'default';
 }
 
-// র‍্যান্ডম রেসপন্স পাওয়া (Fixed logic)
+// র‍্যান্ডম রেসপন্স পাওয়া
 function getSmartResponse(emotion) {
-    const responses = responseDatabase.emotional[emotion];
-    if (!responses || responses.length === 0) {
-        return getContextualGreeting();
-    }
+    const responses = responseDatabase.emotional[emotion] || responseDatabase.emotional.default;
     return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// কনটেক্সট বেসড উত্তর (greeting এর জন্য)
+// কনটেক্সট বেসড গ্রিটিং
 function getContextualGreeting() {
     const opening = responseDatabase.greeting.opening[Math.floor(Math.random() * responseDatabase.greeting.opening.length)];
     const middle = responseDatabase.greeting.middle[Math.floor(Math.random() * responseDatabase.greeting.middle.length)];
@@ -171,7 +147,7 @@ function generateResponse(text) {
 module.exports.config = {
     name: "baby",
     aliases: ["baby", "bbe", "babe", "bot", "jan", "babu", "janu", "সোনা", "বেবু", "মারি"],
-    version: "13.0.0",
+    version: "13.5.0",
     author: "আকাশ | Smart AI Response",
     countDown: 0,
     role: 0,
@@ -194,7 +170,7 @@ module.exports.onStart = async function({ api, event, args }) {
             if (error) return console.log("Message Error:", error);
             if (info && info.messageID) {
                 global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
+                    commandName: "baby",
                     author: senderID
                 });
             }
@@ -221,7 +197,7 @@ module.exports.onReply = async function({ api, event, Reply }) {
             if (error) return console.log("Error:", error);
             if (info && info.messageID) {
                 global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
+                    commandName: "baby",
                     author: senderID
                 });
             }
@@ -252,7 +228,7 @@ module.exports.onChat = async function({ api, event }) {
             if (error) return console.log("Error:", error);
             if (info && info.messageID) {
                 global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
+                    commandName: "baby",
                     author: senderID
                 });
             }
