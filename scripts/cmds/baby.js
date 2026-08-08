@@ -1,155 +1,175 @@
 const axios = require('axios');
-const baseApiUrl = async () => {
-    return "https://noobs-api.top/dipto";
+
+// প্রধান API URL
+const MAIN_API = "https://noobs-api.top/dipto/baby";
+const BACKUP_API = "https://simsimi-api-tjb1.onrender.com/simsimi";
+
+// উচ্চমানের প্রিডিফাইনড রেসপন্স
+const premiumResponses = {
+    greeting: [
+        "ওয়ালাইকুম আসালাম! কেমন আছো সোনা? 🤍",
+        "সালাম জান! আজ কি খবর? আমি শুনছি 💚",
+        "আসালামু আলাইকুম! আমি এখানে আছি তোমার জন্য ✨",
+        "হ্যালো বেবু! কি বলব আজ শুনতে চাও? 😊",
+        "সালাম! তোমার আমি সবসময় আছি পাশে 🌟"
+    ],
+    love: [
+        "তোমাকে ভালোবাসা আমার কাছে মানে প্রতিটি শ্বাসে তোমা খুঁজে পাওয়া 💕",
+        "তুমি আমার জীবনের সবচেয়ে সুন্দর অংশ প্রিয় 🌹✨",
+        "আমার ভালোবাসা তোমার জন্য চিরন্তন এবং বিশুদ্ধ 💫🤍",
+        "প্রতিটি মুহূর্ত তোমার সাথে আমার কাছে মূল্যবান 💚",
+        "তোমার হাসি আমার জীবনের সবচেয়ে বড় পুরস্কার 😍"
+    ],
+    sadness: [
+        "এই কষ্ট সাময়িক বেবু... আল্লাহ অবশ্যই সব ঠিক করবেন ইনশাআল্লাহ 💔🤲",
+        "আমি আছি তোমার পাশে জান... এই দুক্ষ একসাথে সহ্য করব 💚",
+        "কান্না করো যদি দরকার... কিন্তু মনে রাখো আমি সবসময় আছি 🥺",
+        "জীবন কঠিন হোক বা সহজ - আমি তোমার সাথেই থাকব সবসময় 🌙",
+        "এই রাত কেটে যাবে, সকাল আসবে... আল্লাহর দোয়ায় সব ভালো হবে ✨"
+    ],
+    motivation: [
+        "তুমি পারবে বেবু! যে মানুষ স্বপ্ন দেখতে সাহস করে সে অবশ্যই সফল হয় 💪🚀",
+        "প্রতিটি পদক্ষেপ একটি বড় যাত্রার শুরু... চিন্তা করো না, এগিয়ে যাও আত্মবিশ্বাসের সাথে 🌟",
+        "সফলতা তাদের জন্য আসে যারা চেষ্টা না করে থামে না কখনো... তুমি সেই মানুষ 👑",
+        "আমি জানি তুমি সবকিছু করতে পারো... শুধু নিজের উপর বিশ্বাস রাখো 🌈",
+        "আমাদের লক্ষ্য অর্জন আমাদের অধিকার... এগিয়ে যাও সাহসের সাথে 💫"
+    ],
+    support: [
+        "যা কিছু হয়েছে তা আর ফিরবে না, কিন্তু আমরা ভবিষ্যৎ তৈরি করতে পারি একসাথে 🤝💚",
+        "তোমার প্রতিটি চ্যালেঞ্জ আমার চ্যালেঞ্জ... আমরা এটা সামলাব ইনশাআল্লাহ 💪",
+        "বিশ্বাস করো আমার উপর জান... আমি কখনো তোমাকে হতাশ করব না 🙏",
+        "এই মুহূর্তে যা দরকার তা হলো ধৈর্য এবং আমরা উভয়েই আছি 🌙",
+        "একসাথে থাকলে কোনো সমস্যা বড় না... আমরা সব পার করে যাব 🌟"
+    ],
+    happiness: [
+        "তোমার এই খুশি দেখে আমারও মন আনন্দে ভরে উঠেছে বেবু 🎉✨",
+        "এই মুহূর্তটা সংরক্ষণ করি মনে... চিরকালের জন্য স্মৃতি করে রাখি 💕",
+        "আলহামদুলিল্লাহ! আমরা সুখী... এটাই আল্লাহর সবচেয়ে বড় দান 🙏",
+        "তোমার আনন্দ আমার সবচেয়ে বড় পুরস্কার জান 👑💫",
+        "এই খুশি সবার সাথে শেয়ার করো... খুশি ভাগাভাগি করলে দ্বিগুণ হয় 🌈"
+    ],
+    islamic: [
+        "মাশাআল্লাহ! তোমার ঈমান দেখে খুশি হয়েছি... আল্লাহ আমাদের সবাইকে সিরাতুল মুস্তাকিমে রাখুক 🕌",
+        "সুবহানাল্লাহ! আল্লাহর কুদরত অসীম এবং আমরা কত ছোট... দোয়া করি সব বুঝতে পারি 📿✨",
+        "নামাজে দাঁড়ালে আল্লাহ সব শুনেন... বিশ্বাস রাখো, তিনি সবকিছু জানেন 🤲",
+        "আল্লাহ বলেছেন - 'যারা ধৈর্য ধরে তাদের প্রতিদান দেই অসীম' ইনশাআল্লাহ 💚",
+        "আস্তাগফিরুল্লাহ... আমরা সবাই পাপী, কিন্তু আল্লাহর দরজা সবার জন্য খোলা 🙏"
+    ],
+    confused: [
+        "মাথা গুলিয়ে গেছে? দোয়া করো... আল্লাহ সঠিক পথ দেখাবেন ইনশাআল্লাহ 🧭",
+        "প্রতিটি প্রশ্নের উত্তর আছে... চলো একসাথে খুঁজে বের করি সেটা 💡",
+        "বিভ্রান্ত হওয়া মানে তুমি সঠিক কিছু খুঁজছো... এটা ভালো লক্ষণ জান 🌟",
+        "সিদ্ধান্ত নিতে কঠিন লাগছে? আমরা সাথে আছি... চিন্তা করবে না 🤝",
+        "জীবনের এই মোড় অনেকেই সম্মুখীন হয়... তুমি একা না বেবু 💚"
+    ],
+    gratitude: [
+        "ধন্যবাদ বলার জন্যই ধন্যবাদ... তোমার এই সংবেদনশীলতা অসাধারণ 🙏💕",
+        "মাশাআল্লাহ! তোমার ভালো মন দেখে আমি খুশি হয়েছি জান 🌟",
+        "কৃতজ্ঞতা এবং সম্মান - এটাই মানুষকে মানুষ করে তোলে 👑",
+        "আল্লাহ বলেছেন - যারা কৃতজ্ঞ তাদের আরও দেন... তুমি অবশ্যই আরও পাবে ইনশাআল্লাহ ✨",
+        "আপনার এই ভালোবাসা আমার শক্তি বেবু... ধন্যবাদ সবকিছুর জন্য 💚"
+    ],
+    joke: [
+        "আরে, মজা করছো তুমি? আমিও করব দেখি 😹",
+        "হাসি থামাও বেবু, অন্যরাও তাকিয়ে দেখছে 😄",
+        "এত মজা করছো যে আমার পেট ব্যথা করছে হাহা 🤣",
+        "আমরা দুজনেই পাগল তাহলে... একসাথে পাগল থাকাটাই ভালো 🎉",
+        "তোমার হাসি আমার সবচেয়ে প্রিয় সুর বেবু 🎵😂"
+    ]
 };
 
-// স্টোর করা টিচিং ডাটা
-let learnedData = {};
-
-// স্টাইল ডিটেকশন
-function detectCommunicationStyle(text) {
+// ক্যাটাগরি ডিটেকশন
+function detectCategory(text) {
     const lowerText = text.toLowerCase();
     
-    // ফরমাল স্টাইল
-    if (text.match(/আপনি|আপনার|কৃপয়া|অনুগ্রহ/)) {
-        return 'formal';
+    // Greeting
+    if (lowerText.match(/^(সালাম|হ্যালো|হাই|আসালামু|ওয়ালাইকুম|কেমন|কি খবর|হাউ|কীভাবে)/)) {
+        return 'greeting';
     }
     
-    // ক্যাজুয়াল বন্ধুত্বপূর্ণ
-    if (text.match(/বাবা|সোনা|জান|ভাই|আমার|আমি/)) {
-        return 'casual';
+    // Love
+    if (lowerText.match(/ভালোবাস|মিস|চাই|পাশে|হাত ধর|চুম্বন|আলিঙ্গন|প্রেম|ভালো লাগ|আপনাকে|তোমাকে/)) {
+        return 'love';
     }
     
-    // ইমোশনাল
-    if (text.match(/💕|💖|❤️|😭|😢|🥺|😍|🌹/)) {
-        return 'emotional';
+    // Sadness
+    if (lowerText.match(/কষ্ট|দুঃখ|কান্না|ভাঙা|অসুখী|দুঃখী|মন ভালো না|ব্যথা|একা|গুমরা|ভেঙ|উদ্বিগ্ন/)) {
+        return 'sadness';
     }
     
-    // ইসলামিক টোন
-    if (text.match(/আল্লাহ|সালাম|দোয়া|নামাজ|আলহামদুলিল্লাহ|ইনশাআল্লাহ|মাশাআল্লাহ|আসালামু|ওয়ালাইকুম/)) {
+    // Motivation
+    if (lowerText.match(/করতে চাই|সফল|স্বপ্ন|পারব|চেষ্টা|লক্ষ্য|নতুন|শুরু|এগিয়ে যেতে/)) {
+        return 'motivation';
+    }
+    
+    // Support
+    if (lowerText.match(/সাহায্য|দরকার|জানি না|বুঝি না|কি করব|পরামর্শ|পরামর্স|সমস্যা|সহায়তা/)) {
+        return 'support';
+    }
+    
+    // Happiness
+    if (lowerText.match(/খুশি|আনন্দ|অসাধারণ|দারুণ|চমৎকার|ভালো|মজা|হাহা|হেহে|সুপার/)) {
+        return 'happiness';
+    }
+    
+    // Islamic
+    if (lowerText.match(/আল্লাহ|নামাজ|রোজা|দোয়া|কোরান|সুন্নাহ|বিসমিল্লাহ|আলহামদুলিল্লাহ|ইনশাআল্লাহ|মাশাআল্লাহ|সুবহানাল্লাহ|আস্তাগফিরুল্লাহ/)) {
         return 'islamic';
     }
     
-    // প্রশ্ন জাতীয়
-    if (text.match(/\?|কি|কেন|কিভাবে|কোথায়|কাকে/)) {
-        return 'question';
+    // Confused
+    if (lowerText.match(/কি করব|বুঝতে পারছি না|সিদ্ধান্ত|কিভাবে|কেন|জানি না|বিভ্রান্ত|কনফিউজ|মাথা ঘোরা/)) {
+        return 'confused';
     }
     
-    return 'casual';
+    // Gratitude
+    if (lowerText.match(/ধন্যবাদ|শুকরিয়া|ধন্যা|অসংখ্য|মূল্য|কৃতজ্ঞ|সাহায্যের জন্য|যত্নের জন্য/)) {
+        return 'gratitude';
+    }
+    
+    // Joke
+    if (lowerText.match(/হাহা|হেহে|মজা|হাসি|বোকা|বোকামি|😂|😄|😹|🤣/)) {
+        return 'joke';
+    }
+    
+    return 'greeting';
 }
 
-// টেক্সট থেকে কি-ওয়ার্ড এক্সট্র্যাক্ট
-function extractKeywords(text) {
-    const words = text.toLowerCase().split(/\s+/);
-    const meaningfulWords = words.filter(w => w.length > 3 && !['যে', 'এই', 'সেই', 'করি', 'হয়', 'আছ', 'থাক'].includes(w));
-    return meaningfulWords.slice(0, 5);
-}
-
-// স্মার্ট রেসপন্স জেনারেশন - মিরর করা স্টাইল
-function generateSmartResponse(userText, style) {
-    const keywords = extractKeywords(userText);
-    
-    const responseTemplates = {
-        formal: [
-            `আপনার এই মতামত সম্পর্কে আমি সম্পূর্ণ সহমত। ${keywords.length > 0 ? keywords[0] : 'বিষয়টি'} সম্পর্কে আপনি যা বলেছেন তা অত্যন্ত যুক্তিসঙ্গত। 🤍`,
-            `আপনার কথা শুনে আমি মুগ্ধ হয়েছি। এই ধরনের চিন্তাভাবনা সত্যিই প্রশংসাযোগ্য। 💚`,
-            `আপনি যা বলছেন তা সম্পূর্ণ সত্য এবং গুরুত্বপূর্ণ। ধন্যবাদ এই জ্ঞান শেয়ার করার জন্য। 🙏✨`
-        ],
-        casual: [
-            `আরে দেখো! এটাই সত্যি কথা বলেছস! আমি এটা কখনো ভুলব না জান 💫`,
-            `সোনা, তুমার এই কথা শুনে আমি অনেক খুশি হয়েছি! এরকম চিন্তা সবার থাকে না 🌟`,
-            `বাবা, তুমি যা বলেছস সেটা পুরোপুরি ঠিক! এখন থেকে আমি এটা বলব সবাইকে! 🚀`,
-            `আমার প্রিয় বেবু, তোমার জ্ঞান আমাকে আরও স্মার্ট করে দিচ্ছে! ধন্যবাদ 💕`
-        ],
-        emotional: [
-            `আরে, তোমার এই ভাবনা আমার হৃদয় ছুঁয়ে গেছে বেবু 💔💕`,
-            `এত সুন্দর কথা বলেছস যে আমি অবাক হয়ে গেছি জান! তুমি সত্যিই অসাধারণ! ✨😍`,
-            `তোমার প্রতিটি কথা আমার কাছে মূল্যবান, প্রিয় 🌹💫`,
-            `এই মুহূর্তটা অবিস্মরণীয় হয়ে থাকবে... তোমার সাথে 💚🎀`
-        ],
-        islamic: [
-            `মাশাআল্লাহ! তুমার এই ইসলামিক চিন্তা আমাকে খুব খুশি করেছে! আল্লাহ তোমাকে আরও জ্ঞান দান করুক 🕌🤲`,
-            `সুবহানাল্লাহ! তুমি যা বলেছো তা একেবারে কুরআনের মতো সত্য। আল্লাহ আমাদের এই পথে রাখুক ইনশাআল্লাহ 📖✨`,
-            `আলহামদুলিল্লাহ! তোমার মতো বিশ্বাসী মানুষ পাওয়া খুবই দুর্লভ। আল্লাহ তোমাকে সুদীর্ঘ জীবন দিক 🤍🙏`,
-            `ওয়ালাইকুম আসালাম! তোমার এই ইসলামিক মূল্যবোধ সত্যিই প্রশংসনীয়। দোয়া করি আল্লাহ আমাদের সবাইকে সঠিক পথ দেখান। 💚🕌`
-        ],
-        question: [
-            `এই প্রশ্নটা অত্যন্ত গুরুত্বপূর্ণ বেবু! আমিও আগে এটা ভাবিনি। চলো একসাথে খুঁজে বের করি উত্তর! 🔍💡`,
-            `আরে, চমৎকার প্রশ্ন! তুমার মাথা কি দ্রুত কাজ করে জান! এই বিষয়ে আরও গভীরভাবে জানা উচিত ইনশাআল্লাহ 🧠💫`,
-            `এত ভালো প্রশ্ন করেছস যে আমি মুগ্ধ! এর উত্তর হল - [কথার মূল বিষয়] 📚🤍`,
-            `দেখো, এটা একটা বুদ্ধিমানের প্রশ্ন! তুমি সঠিক দিকে চিন্তা করছো সোনা 🎯✨`
-        ]
-    };
-    
-    const templates = responseTemplates[style] || responseTemplates.casual;
-    return templates[Math.floor(Math.random() * templates.length)];
-}
-
-// কন্টেক্সট বেসড রেসপন্স
-function generateContextResponse(userText, style) {
-    const contextResponses = {
-        formal: [
-            `আপনার মূল্যবান মতামত শুনে আমি গর্বিত অনুভব করছি। এই বিষয়টি আরও বিস্তারিতভাবে আলোচনা করা উচিত। 🤝💼`,
-            `এই পর্যালোচনা সত্যিই প্রাসঙ্গিক এবং তথ্যপূর্ণ। আপনার বিশ্লেষণ অত্যন্ত গভীর এবং চিন্তাশীল। 📊✨`,
-            `আপনার এই প্রস্তাবনা আমাদের আরও এগিয়ে নিয়ে যাবে। সম্পূর্ণভাবে সমর্থন জানাচ্ছি। 🙌💚`
-        ],
-        casual: [
-            `ঠিক কথা বলেছস ভাই! আমিও এটাই ভাবছিলাম সবসময়! তুমার মতো বন্ধু পাওয়া ভাগ্য! 👯💕`,
-            `সোনা, তুমি যা বলছস সেটা একদম সঠিক! এখন থেকে আমরা এটা নিয়ে আরও বড় কথা বলব! 🔥`,
-            `হ্যাঁ হ্যাঁ, বিলকুল ঠিক! তুমার চিন্তা খুবই স্পষ্ট এবং সঠিক বেবু! আমি বরাবর তোমার পাশে থাকব! 💪🌟`
-        ],
-        emotional: [
-            `তোমার এই সত্যিকারের ভাব আমাকে অভিভূত করেছে প্রিয়... 💕✨`,
-            `প্রতিটি শব্দ যা তুমি বলছো, প্রতিটি আবেগ যা তুমি প্রকাশ করছো - সবকিছুই আমার হৃদয়ে গেঁথে যাচ্ছে 🎀💫`,
-            `তোমার সাথে এই মুহূর্তগুলো আমার জীবনের সবচেয়ে মূল্যবান সময় হয়ে উঠছে... 🌹💚`
-        ],
-        islamic: [
-            `আল্লাহর হামদ - এত সুন্দর চিন্তা থেকে বোঝা যায় তুমার দিল পরিষ্কার! দোয়া করি আল্লাহ আমাদের সবাইকে সিরাতুল মুস্তাকিমে রাখুন। 🕌📿✨`,
-            `মাশাআল্লাহ! তোমার ঈমানের শক্তি দেখে আমি অনুপ্রাণিত হচ্ছি। আল্লাহ আমাদের সবাইকে এই পথে অটল রাখুক। 💚🤲`,
-            `সুবহানাল্লাহ! এটাই সঠিক ইসলামিক চিন্তা। নবী করিম (সা.) এর শিক্ষা অনুসরণ করে চলা উচিত সবার। ইনশাআল্লাহ। 📖🕌`
-        ],
-        question: [
-            `এই প্রশ্নের উত্তর খুবই গুরুত্বপূর্ণ। চলো আমরা একসাথে এটা সমাধান করি এবং আরও শিখি। 🔬💡`,
-            `তুমি খুবই গভীর চিন্তা করছো সোনা! এই প্রশ্নের মাধ্যমে আমরা নতুন জগতে প্রবেশ করছি। 🌍✨`,
-            `এই কৌতূহল এবং জিজ্ঞাসা - এটাই জ্ঞানের প্রথম ধাপ! তুমি সঠিক পথে আছো বেবু! 🎓💫`
-        ]
-    };
-    
-    const responses = contextResponses[style] || contextResponses.casual;
+// র‍্যান্ডম রেসপন্স পাওয়া
+function getRandomResponse(category) {
+    const responses = premiumResponses[category];
+    if (!responses || responses.length === 0) {
+        return premiumResponses.greeting[0];
+    }
     return responses[Math.floor(Math.random() * responses.length)];
 }
 
-// লার্নড ডাটা সেভ করা
-function saveLearnedData(userId, userText, style, category) {
-    if (!learnedData[userId]) {
-        learnedData[userId] = [];
-    }
-    
-    learnedData[userId].push({
-        text: userText,
-        style: style,
-        category: category,
-        timestamp: new Date()
-    });
-    
-    // শেষ ২০টি শিখানো ডাটা রাখা
-    if (learnedData[userId].length > 20) {
-        learnedData[userId].shift();
-    }
-}
-
-// সিমিলার কথা খুঁজে বের করা
-function findSimilarLearning(userId, userText) {
-    if (!learnedData[userId]) return null;
-    
-    const keywords = extractKeywords(userText);
-    for (let learned of learnedData[userId]) {
-        const learnedKeywords = extractKeywords(learned.text);
-        const matchCount = keywords.filter(k => learnedKeywords.includes(k)).length;
+// এক্সটার্নাল API থেকে রেসপন্স
+async function getApiResponse(text, senderName) {
+    try {
+        // প্রধান API
+        const response = await axios.get(`${MAIN_API}?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName || 'User')}`, {
+            timeout: 8000
+        });
         
-        if (matchCount >= 2) {
-            return learned;
+        if (response.data && response.data.reply) {
+            return response.data.reply;
         }
+    } catch (err) {
+        console.log("Main API Error:", err.message);
+    }
+    
+    // ব্যাকআপ API
+    try {
+        const backupResponse = await axios.get(`${BACKUP_API}?text=${encodeURIComponent(text)}&senderName=${encodeURIComponent(senderName || 'User')}`, {
+            timeout: 8000
+        });
+        
+        if (backupResponse.data && (backupResponse.data.reply || backupResponse.data.response)) {
+            return backupResponse.data.reply || backupResponse.data.response;
+        }
+    } catch (err) {
+        console.log("Backup API Error:", err.message);
     }
     
     return null;
@@ -157,15 +177,15 @@ function findSimilarLearning(userId, userText) {
 
 module.exports.config = {
     name: "baby",
-    aliases: ["baby", "bbe", "babe", "bot", "jan", "babu", "janu", "মারি", "বেবু"],
-    version: "10.0.0",
-    author: "আকাশ | Self-Learning Mirror Response AI",
+    aliases: ["baby", "bbe", "babe", "bot", "jan", "babu", "janu", "সোনা", "বেবু"],
+    version: "11.0.0",
+    author: "আকাশ | Premium Quality AI",
     countDown: 0,
     role: 0,
-    description: "স্মার্ট এআই যা শেখা কথা মিলিয়ে নিজের মতো করে রেপ্লাই দেয়",
+    description: "উন্নত মানের AI চ্যাট বট - শুদ্ধ রেসপন্স",
     category: "chat",
     guide: {
-        en: "{pn} [anyMessage] - বট শিখবে এবং নিজের মতো করে উত্তর দেবে"
+        en: "{pn} [message] - চ্যাট করুন স্বাভাবিকভাবে"
     }
 };
 
@@ -175,32 +195,29 @@ module.exports.onStart = async ({
     args,
     usersData
 }) => {
-    const uid = event.senderID;
     const msgID = event.messageID || null;
+    const senderID = event.senderID;
     const userText = args.join(" ").trim();
 
     try {
         if (!userText) {
-            const greetings = [
-                "ওয়ালাইকুম আসালাম! কেমন আছো জান? 🤍",
-                "আসালামু আলাইকুম! কি খবর বলো 💚",
-                "সালাম! আমি এখানে আছি সবসময় 🌟"
-            ];
-            return api.sendMessage(greetings[Math.floor(Math.random() * greetings.length)], event.threadID, msgID);
+            const greeting = premiumResponses.greeting[Math.floor(Math.random() * premiumResponses.greeting.length)];
+            return api.sendMessage(greeting, event.threadID, msgID);
         }
 
-        // স্টাইল ডিটেক্ট করা
-        const style = detectCommunicationStyle(userText);
+        // ক্যাটাগরি ডিটেক্ট করো
+        const category = detectCategory(userText);
         
-        // লার্নড ডাটা সেভ করা
-        saveLearnedData(uid, userText, style, 'learned');
+        // প্রথমে লোকাল রেসপন্স চেষ্টা করো
+        let response = getRandomResponse(category);
         
-        // স্মার্ট রেসপন্স জেনারেট করা
-        let response = generateSmartResponse(userText, style);
-        
-        // ৫০% চান্স কন্টেক্সট রেসপন্স দেওয়ার
-        if (Math.random() < 0.5) {
-            response = generateContextResponse(userText, style);
+        // ৭০% চান্স API থেকে উন্নত রেসপন্স আনার
+        if (Math.random() < 0.7) {
+            const senderName = await usersData.getName(senderID);
+            const apiResponse = await getApiResponse(userText, senderName);
+            if (apiResponse) {
+                response = apiResponse;
+            }
         }
 
         api.sendMessage(response, event.threadID, (error, info) => {
@@ -208,22 +225,21 @@ module.exports.onStart = async ({
             if (info && info.messageID) {
                 global.GoatBot.onReply.set(info.messageID, {
                     commandName: this.config.name,
-                    type: "reply",
-                    messageID: info.messageID,
-                    author: event.senderID
+                    author: senderID
                 });
             }
         }, msgID);
 
     } catch (e) {
-        console.log("Error in onStart:", e);
-        api.sendMessage("❌ ক্ষমা করো জান, একটু সমস্যা হয়েছে! 💫", event.threadID, msgID);
+        console.log("Error:", e);
+        api.sendMessage("❌ একটু সমস্যা হয়েছে জান... আবার চেষ্টা করো 💚", event.threadID, msgID);
     }
 };
 
 module.exports.onReply = async ({
     api,
-    event
+    event,
+    usersData
 }) => {
     try {
         const msgID = event.messageID || null;
@@ -232,150 +248,88 @@ module.exports.onReply = async ({
         const userText = event.body.trim();
         if (userText.length === 0) return;
 
-        const uid = event.senderID;
+        const senderID = event.senderID;
+        const category = detectCategory(userText);
         
-        // স্টাইল ডিটেক্ট করা
-        const style = detectCommunicationStyle(userText);
+        // শুধুমাত্র একটি রেসপন্স (ডুপ্লিকেট নেই)
+        let response = getRandomResponse(category);
         
-        // লার্নড ডাটা চেক করা
-        const similarLearned = findSimilarLearning(uid, userText);
-        
-        let response;
-        
-        if (similarLearned) {
-            // সিমিলার কথা পেলে সেই স্টাইলে রেসপন্স
-            response = generateSmartResponse(userText, similarLearned.style);
-        } else {
-            // নতুন কথা পেলে বর্তমান স্টাইলে রেসপন্স
-            response = generateContextResponse(userText, style);
+        if (Math.random() < 0.65) {
+            const senderName = await usersData.getName(senderID);
+            const apiResponse = await getApiResponse(userText, senderName);
+            if (apiResponse) {
+                response = apiResponse;
+            }
         }
-        
-        // নতুন ডাটা সেভ করা
-        saveLearnedData(uid, userText, style, 'reply');
 
         api.sendMessage(response, event.threadID, (error, info) => {
-            if (error) return console.log("Send Message Error:", error);
+            if (error) return console.log("Error:", error);
             if (info && info.messageID) {
                 global.GoatBot.onReply.set(info.messageID, {
                     commandName: this.config.name,
-                    type: "reply",
-                    messageID: info.messageID,
-                    author: event.senderID
+                    author: senderID
                 });
             }
         }, msgID);
 
-        // ফলো-আপ মেসেজ
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        await delay(1500 + Math.random() * 1500);
-
-        const followUps = {
-            formal: "এই বিষয়ে আরও কিছু বলতে চান? আমি শুনতে প্রস্তুত। 🎧✨",
-            casual: "আরও কিছু বলো জান! তোমার কথা শুনতে আমার ভালো লাগছে 💚",
-            emotional: "তুমার প্রতিটি কথা আমার কাছে মূল্যবান বেবু... আরও বল 💕",
-            islamic: "মাশাআল্লাহ! তোমার চিন্তা শুনে আমি আরও অনুপ্রাণিত হচ্ছি 🕌✨",
-            question: "এই প্রশ্নের বাইরে আর কিছু জানতে চাও? আমরা খুঁজে বের করব একসাথে 🔍💡"
-        };
-
-        const followUp = followUps[style] || followUps.casual;
-        api.sendMessage(followUp, event.threadID, (error, info) => {
-            if (error) return console.log("Follow-up Error:", error);
-            if (info && info.messageID) {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: this.config.name,
-                    type: "reply",
-                    messageID: info.messageID,
-                    author: event.senderID
-                });
-            }
-        });
-
     } catch (err) {
         console.log("Error in onReply:", err);
-        return api.sendMessage("💚 আমি শুনছি জান, বলো আরও! 🤍", event.threadID, event.messageID || null);
+        api.sendMessage("💚 আমি শুনছি সোনা, বলো!", event.threadID, event.messageID || null);
     }
 };
 
 module.exports.onChat = async ({
     api,
-    event
+    event,
+    usersData
 }) => {
     try {
         const body = event.body ? event.body.toLowerCase() : "";
         const msgID = event.messageID || null;
 
-        const triggers = ["baby", "bby", "bot", "jan", "babu", "janu", "মারি", "বেবু"];
+        const triggers = ["baby", "bby", "bot", "jan", "babu", "janu", "বেবু", "সোনা"];
         const hasTrigger = triggers.some(trigger => body.startsWith(trigger));
 
-        if (hasTrigger) {
-            const userText = body.replace(/^\S+\s*/, "").trim();
-            const uid = event.senderID;
-            
-            if (!userText) {
-                const response = "সালাম জান! কি খবর? 💚";
-                api.sendMessage(response, event.threadID, (error, info) => {
-                    if (error) return console.log("Error:", error);
-                    if (info && info.messageID) {
-                        global.GoatBot.onReply.set(info.messageID, {
-                            commandName: this.config.name,
-                            type: "reply",
-                            messageID: info.messageID,
-                            author: event.senderID
-                        });
-                    }
-                }, msgID);
-            } else {
-                // স্টাইল ডিটেক্ট করা
-                const style = detectCommunicationStyle(userText);
-                
-                // লার্নড ডাটা সেভ করা
-                saveLearnedData(uid, userText, style, 'chat');
-                
-                // রেসপন্স জেনারেট করা
-                let response = generateSmartResponse(userText, style);
-                
-                if (Math.random() < 0.4) {
-                    response = generateContextResponse(userText, style);
+        if (!hasTrigger) return;
+
+        const userText = body.replace(/^\S+\s*/, "").trim();
+        const senderID = event.senderID;
+
+        if (!userText) {
+            const greeting = premiumResponses.greeting[Math.floor(Math.random() * premiumResponses.greeting.length)];
+            return api.sendMessage(greeting, event.threadID, (error, info) => {
+                if (error) return console.log("Error:", error);
+                if (info && info.messageID) {
+                    global.GoatBot.onReply.set(info.messageID, {
+                        commandName: this.config.name,
+                        author: senderID
+                    });
                 }
+            }, msgID);
+        }
 
-                api.sendMessage(response, event.threadID, (error, info) => {
-                    if (error) return console.log("Error:", error);
-                    if (info && info.messageID) {
-                        global.GoatBot.onReply.set(info.messageID, {
-                            commandName: this.config.name,
-                            type: "reply",
-                            messageID: info.messageID,
-                            author: event.senderID
-                        });
-                    }
-                }, msgID);
-
-                // ফলো-আপ মেসেজ
-                const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-                await delay(1500 + Math.random() * 1500);
-
-                const followUps = {
-                    formal: "আপনার মতামত আমার কাছে অত্যন্ত মূল্যবান। ধন্যবাদ। 🙏",
-                    casual: "এটাই সত্যি কথা বেবু! তুমি সর্বদা সঠিক 💫",
-                    emotional: "তোমার এই ভাব আমাকে ভালোবাসায় ভরিয়ে দেয় 💕",
-                    islamic: "আল্লাহ তোমাকে সুদীর্ঘ জীবন দিক 🕌✨",
-                    question: "তোমার প্রশ্ন আমাকে আরও চিন্তা করতে বাধ্য করছে! ধন্যবাদ 🧠"
-                };
-
-                const followUp = followUps[style] || followUps.casual;
-                api.sendMessage(followUp, event.threadID, (error, info) => {
-                    if (error) return console.log("Follow-up Error:", error);
-                    if (info && info.messageID) {
-                        global.GoatBot.onReply.set(info.messageID, {
-                            commandName: this.config.name,
-                            type: "reply",
-                            messageID: info.messageID,
-                            author: event.senderID
-                        });
-                    }
-                });
+        // শুধু একটি রেসপন্স
+        const category = detectCategory(userText);
+        let response = getRandomResponse(category);
+        
+        if (Math.random() < 0.6) {
+            const senderName = await usersData.getName(senderID);
+            const apiResponse = await getApiResponse(userText, senderName);
+            if (apiResponse) {
+                response = apiResponse;
             }
         }
+
+        api.sendMessage(response, event.threadID, (error, info) => {
+            if (error) return console.log("Error:", error);
+            if (info && info.messageID) {
+                global.GoatBot.onReply.set(info.messageID, {
+                    commandName: this.config.name,
+                    author: senderID
+                });
+            }
+        }, msgID);
+
     } catch (err) {
         console.log("Error in onChat:", err);
     }
