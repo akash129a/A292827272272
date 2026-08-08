@@ -139,11 +139,11 @@ function detectEmotion(text) {
     return 'greeting';
 }
 
-// র‍্যান্ডম রেসপন্স পাওয়া
+// র‍্যান্ডম রেসপন্স পাওয়া (Fixed logic)
 function getSmartResponse(emotion) {
     const responses = responseDatabase.emotional[emotion];
     if (!responses || responses.length === 0) {
-        return responseDatabase.emotional.greeting[0];
+        return getContextualGreeting();
     }
     return responses[Math.floor(Math.random() * responses.length)];
 }
@@ -182,32 +182,13 @@ module.exports.config = {
     }
 };
 
-module.exports.onStart = async ({
-    api,
-    event,
-    args,
-    usersData
-}) => {
+module.exports.onStart = async function({ api, event, args }) {
     const msgID = event.messageID || null;
     const senderID = event.senderID;
     const userText = args.join(" ").trim();
 
     try {
-        if (!userText) {
-            const greeting = getContextualGreeting();
-            return api.sendMessage(greeting, event.threadID, (error, info) => {
-                if (error) return console.log("Message Error:", error);
-                if (info && info.messageID) {
-                    global.GoatBot.onReply.set(info.messageID, {
-                        commandName: this.config.name,
-                        author: senderID
-                    });
-                }
-            }, msgID);
-        }
-
-        // স্মার্ট রেসপন্স জেনারেট করো
-        const reply = generateResponse(userText);
+        const reply = !userText ? getContextualGreeting() : generateResponse(userText);
 
         api.sendMessage(reply, event.threadID, (error, info) => {
             if (error) return console.log("Message Error:", error);
@@ -225,11 +206,7 @@ module.exports.onStart = async ({
     }
 };
 
-module.exports.onReply = async ({
-    api,
-    event,
-    usersData
-}) => {
+module.exports.onReply = async function({ api, event, Reply }) {
     try {
         const msgID = event.messageID || null;
         if (!event.body) return;
@@ -238,8 +215,6 @@ module.exports.onReply = async ({
         if (userText.length === 0) return;
 
         const senderID = event.senderID;
-
-        // স্মার্ট রেসপন্স জেনারেট করো
         const reply = generateResponse(userText);
 
         api.sendMessage(reply, event.threadID, (error, info) => {
@@ -258,11 +233,7 @@ module.exports.onReply = async ({
     }
 };
 
-module.exports.onChat = async ({
-    api,
-    event,
-    usersData
-}) => {
+module.exports.onChat = async function({ api, event }) {
     try {
         const body = event.body ? event.body.toLowerCase() : "";
         const msgID = event.messageID || null;
@@ -275,13 +246,7 @@ module.exports.onChat = async ({
         const userText = body.replace(/^\S+\s*/, "").trim();
         const senderID = event.senderID;
 
-        let reply;
-        
-        if (!userText) {
-            reply = getContextualGreeting();
-        } else {
-            reply = generateResponse(userText);
-        }
+        const reply = !userText ? getContextualGreeting() : generateResponse(userText);
 
         api.sendMessage(reply, event.threadID, (error, info) => {
             if (error) return console.log("Error:", error);
