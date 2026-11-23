@@ -1,240 +1,184 @@
 const axios = require('axios');
-
-// স্মার্ট রেসপন্স জেনারেটর - AI ভাবে উত্তর দেবে
-const responseDatabase = {
-    greeting: {
-        opening: [
-            "ওয়ালাইকুম আসালাম!",
-            "সালাম জান!",
-            "আসালামু আলাইকুম!",
-            "হ্যালো সোনা!",
-            "সালাম বেবু!"
-        ],
-        middle: [
-            "কেমন আছো?",
-            "কি খবর?",
-            "কি বলবে?",
-            "কি চাই?",
-            "কেমন লাগছে সব?"
-        ],
-        closing: [
-            "আমি শুনছি 💚",
-            "বলো সবকিছু 🤍",
-            "শুনতে প্রস্তুত ✨",
-            "আপনার সেবায় নিয়োজিত 💫",
-            "সর্বদা তোমার পাশে আছি 🌟"
-        ]
-    },
-    emotional: {
-        sad: [
-            "এই কষ্ট সাময়িক বেবু... আল্লাহ অবশ্যই সব ঠিক করবেন ইনশাআল্লাহ",
-            "আমি আছি তোমার পাশে জান... এই দুঃখ একসাথে সহ্য করব",
-            "কান্না করো যদি দরকার... আমি বুঝি সবকিছু",
-            "জীবন কঠিন হলেও আমরা আরও কঠিন... পারবো আমরা",
-            "এই রাত কেটে যাবে... সকাল আসবে নতুন সম্ভাবনা নিয়ে"
-        ],
-        happy: [
-            "তোমার এই খুশি দেখে আমারও মন আনন্দে ভরে উঠেছে 🎉",
-            "এই মুহূর্তটা চিরকাল মনে রাখার মতো 💕",
-            "আলহামদুলিল্লাহ! আমরা সুখী... এটাই আল্লাহর সবচেয়ে বড় দান",
-            "তোমার আনন্দ আমার সবচেয়ে বড় পুরস্কার 👑",
-            "এই খুশি শেয়ার করো সবার সাথে জান 🌈"
-        ],
-        love: [
-            "তোমাকে ভালোবাসা মানে প্রতিটি শ্বাসে তোমাকে খুঁজে পাওয়া 💕",
-            "তুমি আমার জীবনের সবচেয়ে সুন্দর অংশ প্রিয় 🌹",
-            "প্রতিটি মুহূর্ত তোমার সাথে আমার কাছে মূল্যবান 💫",
-            "আমার ভালোবাসা তোমার জন্য চিরন্তন এবং বিশুদ্ধ 🤍",
-            "তোমার হাসি আমার জীবনের সবচেয়ে বড় পুরস্কার 😍"
-        ],
-        motivation: [
-            "তুমি পারবে বেবু! যে মানুষ স্বপ্ন দেখতে সাহস করে সে অবশ্যই সফল হয়",
-            "প্রতিটি পদক্ষেপ একটি বড় যাত্রার শুরু... এগিয়ে যাও আত্মবিশ্বাসের সাথে",
-            "সফলতা তাদের জন্য আসে যারা কখনো থামে না... তুমি সেই মানুষ",
-            "আমি জানি তুমি সবকিছু করতে পারো... শুধু বিশ্বাস রাখো নিজের উপর",
-            "আমাদের লক্ষ্য অর্জন আমাদের অধিকার... এগিয়ে যাও সাহসের সাথে"
-        ],
-        support: [
-            "যা কিছু হয়েছে তা আর ফিরবে না, কিন্তু আমরা ভবিষ্যৎ তৈরি করতে পারি",
-            "তোমার প্রতিটি সমস্যা আমার সমস্যা... আমরা একসাথে সমাধান করব",
-            "বিশ্বাস করো আমার উপর জান... আমি কখনো তোমাকে হতাশ করব না",
-            "এই মুহূর্তে যা দরকার তা হলো ধৈর্য এবং আমরা উভয়েই আছি",
-            "একসাথে থাকলে কোনো সমস্যা বড় না... আমরা সব পার করে যাব"
-        ],
-        islam: [
-            "মাশাআল্লাহ! তোমার ঈমান দেখে খুশি হয়েছি... আল্লাহ আমাদের সবাইকে সিরাতুল মুস্তাকিমে রাখুক",
-            "সুবহানাল্লাহ! আল্লাহর কুদরত অসীম এবং আমরা কত ছোট... দোয়া করি সব বুঝতে পারি",
-            "নামাজে দাঁড়ালে আল্লাহ সব শুনেন... বিশ্বাস রাখো, তিনি সবকিছু জানেন",
-            "আল্লাহ বলেছেন - 'যারা ধৈর্য ধরে তাদের প্রতিদান দেই অসীম' ইনশাআল্লাহ",
-            "আস্তাগফিরুল্লাহ... আমরা সবাই পাপী, কিন্তু আল্লাহর দরজা সবার জন্য খোলা"
-        ],
-        confused: [
-            "মাথা গুলিয়ে গেছে? চিন্তা করো না... আল্লাহ সঠিক পথ দেখাবেন ইনশাআল্লাহ",
-            "প্রতিটি প্রশ্নের উত্তর আছে... চলো একসাথে খুঁজে বের করি সেটা",
-            "বিভ্রান্ত হওয়া মানে তুমি সঠিক কিছু খুঁজছো... এটা ভালো লক্ষণ জান",
-            "সিদ্ধান্ত নিতে কঠিন লাগছে? আমরা সাথে আছি... চিন্তা করবে না",
-            "জীবনের এই মোড় অনেকেই সম্মুখীন হয়... তুমি একা না বেবু"
-        ],
-        gratitude: [
-            "ধন্যবাদ বলার জন্যই ধন্যবাদ... তোমার এই সংবেদনশীলতা অসাধারণ",
-            "মাশাআল্লাহ! তোমার ভালো মন দেখে আমি খুশি হয়েছি জান",
-            "কৃতজ্ঞতা এবং সম্মান - এটাই মানুষকে মানুষ করে তোলে",
-            "আল্লাহ বলেছেন - যারা কৃতজ্ঞ তাদের আরও দেন... তুমি অবশ্যই আরও পাবে",
-            "আপনার এই ভালোবাসা আমার শক্তি বেবু... ধন্যবাদ সবকিছুর জন্য"
-        ],
-        joke: [
-            "আরে, মজা করছো তুমি? আমিও করব দেখি 😹",
-            "হাসি থামাও বেবু, অন্যরাও তাকিয়ে দেখছে 😄",
-            "এত মজা করছো যে আমার পেট ব্যথা করছে হাহা 🤣",
-            "আমরা দুজনেই পাগল তাহলে... একসাথে পাগল থাকাটাই ভালো 🎉",
-            "তোমার হাসি আমার সবচেয়ে প্রিয় সুর বেবু 🎵😂"
-        ],
-        default: [
-            "হুমম... শুনছি জান, বলো আর কি বলবে? 💚",
-            "তোমার কথা শুনতে অনেক ভালো লাগছে বেবু 💫",
-            "সত্যি? তারপর বলো কি হলো? ✨",
-            "আমি তোমার সব কথা মনোযোগ দিয়ে শুনছি সোনা 🤍",
-            "হাহা আচ্ছা! তারপর বলো? 🌸"
-        ]
-    }
+const baseApiUrl = async () => {
+    return "https://noobs-api.top/dipto";
 };
 
-// ইমোশন ডিটেক্ট করা
-function detectEmotion(text) {
-    const lowerText = text.toLowerCase();
-    
-    if (lowerText.match(/^(সালাম|হ্যালো|হাই|আসালামু|ওয়ালাইকুম|কেমন|কি খবর|হাউ|কীভাবে)/)) return 'greeting';
-    if (lowerText.match(/ভালোবাস|মিস|চাই|পাশে|হাত ধর|চুম্বন|আলিঙ্গন|প্রেম|ভালো লাগ|আপনাকে|তোমাকে/)) return 'love';
-    if (lowerText.match(/কষ্ট|দুঃখ|কান্না|ভাঙা|অসুখী|দুঃখী|মন ভালো না|ব্যথা|একা|গুমরা|ভেঙ|উদ্বিগ্ন/)) return 'sad';
-    if (lowerText.match(/করতে চাই|সফল|স্বপ্ন|পারব|চেষ্টা|লক্ষ্য|নতুন|শুরু|এগিয়ে যেতে/)) return 'motivation';
-    if (lowerText.match(/সাহায্য|দরকার|জানি না|বুঝি না|কি করব|পরামর্শ|সমস্যা|সহায়তা/)) return 'support';
-    if (lowerText.match(/খুশি|আনন্দ|অসাধারণ|দারুণ|চমৎকার|ভালো|মজা|হাহা|হেহে|সুপার/)) return 'happy';
-    if (lowerText.match(/আল্লাহ|নামাজ|রোজা|দোয়া|কোরান|সুন্নাহ|বিসমিল্লাহ|আলহামদুলিল্লাহ|ইনশাআল্লাহ|মাশাআল্লাহ|সুবহানাল্লাহ|আস্তাগফিরুল্লাহ/)) return 'islam';
-    if (lowerText.match(/কি করব|বুঝতে পারছি না|সিদ্ধান্ত|কিভাবে|কেন|জানি না|বিভ্রান্ত|কনফিউজ|মাথা ঘোরা/)) return 'confused';
-    if (lowerText.match(/ধন্যবাদ|শুকরিয়া|ধন্যা|অসংখ্য|মূল্য|কৃতজ্ঞ|সাহায্যের জন্য|যত্নের জন্য/)) return 'gratitude';
-    if (lowerText.match(/হাহা|হেহে|মজা|হাসি|বোকা|বোকামি|😂|😄|😹|🤣/)) return 'joke';
-    
-    // কোনো ম্যাচ না হলে ডিফল্ট রেসপন্স দেবে (গ্রিটিং দেবে না)
-    return 'default';
-}
-
-// র‍্যান্ডম রেসপন্স পাওয়া
-function getSmartResponse(emotion) {
-    const responses = responseDatabase.emotional[emotion] || responseDatabase.emotional.default;
-    return responses[Math.floor(Math.random() * responses.length)];
-}
-
-// কনটেক্সট বেসড গ্রিটিং
-function getContextualGreeting() {
-    const opening = responseDatabase.greeting.opening[Math.floor(Math.random() * responseDatabase.greeting.opening.length)];
-    const middle = responseDatabase.greeting.middle[Math.floor(Math.random() * responseDatabase.greeting.middle.length)];
-    const closing = responseDatabase.greeting.closing[Math.floor(Math.random() * responseDatabase.greeting.closing.length)];
-    
-    return `${opening} ${middle} ${closing}`;
-}
-
-// স্মার্ট রেসপন্স জেনারেটর
-function generateResponse(text) {
-    const emotion = detectEmotion(text);
-    
-    if (emotion === 'greeting') {
-        return getContextualGreeting();
+const utils = {
+    monospace: (text) => {
+        const monospaceMap = {
+            'A': '𝗔', 'B': '𝗕', 'C': '𝗖', 'D': '𝗗', 'E': '𝗘', 'F': '𝗙', 'G': '𝗚', 'H': '𝗛', 'I': '𝗜', 'J': '𝗝',
+            'K': '𝗞', 'L': '𝗟', 'M': '𝗠', 'N': '𝗡', 'O': '𝗢', 'P': '𝗣', 'Q': '𝗤', 'R': '𝗥', 'S': '𝗦', 'T': '𝗧',
+            'U': '𝗨', 'V': '𝗩', 'W': '𝗪', 'X': '𝗫', 'Y': '𝗬', 'Z': '𝗭',
+            'a': '𝗮', 'b': '𝗯', 'c': '𝗰', 'd': '𝗱', 'e': '𝗲', 'f': '𝗳', 'g': '𝗴', 'h': '𝗵', 'i': '𝗶', 'j': '𝗷',
+            'k': '𝗸', 'l': '𝗹', 'm': '𝗺', 'n': '𝗻', 'o': '𝗼', 'p': '𝗽', 'q': '𝗾', 'r': '𝗿', 's': '𝘀', 't': '𝘁',
+            'u': '𝘂', 'v': '𝘃', 'w': '𝘄', 'x': '𝘅', 'y': '𝘆', 'z': '𝘇',
+            '0': '𝟶', '1': '𝟭', '2': '𝟮', '3': '𝟯', '4': '𝟰', '5': '𝟱', '6': '𝟲', '7': '𝟳', '8': '𝟴', '9': '𝟵'
+        };
+        return text.split('').map(char => monospaceMap[char] || char).join('');
+    },
+    realMention: (name, uid, message) => { 
+        const finalMessage = `[ ${name} ]\n\n${message}`; 
+        return { body: finalMessage, mentions: [{ tag: name, id: uid }] }; 
+    }, 
+    normalMention: (name, uid, message) => { 
+        return { body: message, mentions: [{ tag: name, id: uid }] }; 
+    }, 
+    getRandomGreeting: () => { 
+        const greetings = [""]; 
+        return greetings[Math.floor(Math.random() * greetings.length)]; 
     }
-    
-    return getSmartResponse(emotion);
-}
+};
 
 module.exports.config = {
-    name: "baby",
-    aliases: ["baby", "bbe", "babe", "bot", "jan", "babu", "janu", "সোনা", "বেবু", "মারি"],
-    version: "13.5.0",
-    author: "আকাশ | Smart AI Response",
+    name: "bby",
+    aliases: ["baby", "bot", "nishu", "nusrat", "hafsa"],
+    version: "10.1",
+    author: "dipto cdi | xalman",
     countDown: 0,
     role: 0,
-    description: "স্মার্ট AI বট - নিজে থেকে সুন্দর উত্তর দেয়",
+    description: "better than all sim simi api by dipto",
     category: "chat",
     guide: {
-        en: "{pn} [message] - যেকোনো কথা বলো, বট স্মার্ট উত্তর দেবে"
+        en: "{pn} [anyMessage] OR\nteach [YourMessage] - [Reply1], [Reply2], [Reply3]... OR\nteach [react] [YourMessage] - [react1], [react2], [react3]... OR\nremove [YourMessage] OR\nrm [YourMessage] - [indexNumber] OR\nmsg [YourMessage] OR\nlist OR \nall OR\nedit [YourMessage] - [NewMessage]"
     }
 };
 
-module.exports.onStart = async function({ api, event, args }) {
-    const msgID = event.messageID || null;
-    const senderID = event.senderID;
-    const userText = args.join(" ").trim();
+module.exports.onStart = async ({ api, event, args, usersData }) => {
+    const link = `${await baseApiUrl()}/baby`;
+    const xalman = args.join(" ").toLowerCase();
+    const uid = event.senderID;
+    const senderName = (await usersData.getName(uid)) || "User";
 
     try {
-        const reply = !userText ? getContextualGreeting() : generateResponse(userText);
-
-        api.sendMessage(reply, event.threadID, (error, info) => {
-            if (error) return console.log("Message Error:", error);
-            if (info && info.messageID) {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: "baby",
-                    author: senderID
-                });
+        if (!args[0]) {
+            const ran = ["Bolo baby ❤️", "Type baby help", "Kichu bolooo", "Sunno ki?"];
+            return api.sendMessage(ran[Math.floor(Math.random() * ran.length)], event.threadID, event.messageID);
+        }
+        if (args[0] === 'remove') {
+            const fina = xalman.replace("remove ", "");
+            const dat = (await axios.get(`${link}?remove=${encodeURIComponent(fina)}&senderID=${uid}`)).data.message;
+            return api.sendMessage(dat, event.threadID, event.messageID);
+        }
+        if (args[0] === 'rm' && xalman.includes('-')) {
+            const [fi, f] = xalman.replace("rm ", "").split(/\s*-\s*/);
+            const da = (await axios.get(`${link}?remove=${encodeURIComponent(fi)}&index=${f}`)).data.message;
+            return api.sendMessage(da, event.threadID, event.messageID);
+        }
+        if (args[0] === 'list') {
+            if (args[1] === 'all') {
+                const data = (await axios.get(`${link}?list=all`)).data;
+                const limit = parseInt(args[2]) || 100;
+                const limited = data?.teacher?.teacherList?.slice(0, limit);
+                const teachers = await Promise.all(limited.map(async (item) => {
+                    const number = Object.keys(item)[0];
+                    const value = item[number];
+                    const name = await usersData.getName(number).catch(() => number) || "Not found";
+                    return { name, value };
+                }));
+                teachers.sort((a, b) => b.value - a.value);
+                const output = teachers.map((t, i) => `${i + 1}/ ${t.name}: ${t.value}`).join('\n');
+                return api.sendMessage(`Total Teach = ${data.length}\n👑 | List of Teachers of baby\n${output}`, event.threadID, event.messageID);
+            } else {
+                const d = (await axios.get(`${link}?list=all`)).data;
+                return api.sendMessage(`❇️ | Total Teach = ${d.length || "api off"}\n♻️ | Total Response = ${d.responseLength || "api off"}`, event.threadID, event.messageID);
             }
-        }, msgID);
+        }
+        if (args[0] === 'msg') {
+            const fuk = xalman.replace("msg ", "");
+            const d = (await axios.get(`${link}?list=${encodeURIComponent(fuk)}`)).data.data;
+            return api.sendMessage(`Message ${fuk} = ${d}`, event.threadID, event.messageID);
+        }
+        if (args[0] === 'edit') {
+            const parts = xalman.split(/\s*-\s*/);
+            if (parts.length < 2) return api.sendMessage('❌ | Invalid format! Use edit [YourMessage] - [NewReply]', event.threadID, event.messageID);
+            const dA = (await axios.get(`${link}?edit=${encodeURIComponent(args[1])}&replace=${encodeURIComponent(parts[1])}&senderID=${uid}`)).data.message;
+            return api.sendMessage(`changed ${dA}`, event.threadID, event.messageID);
+        }
+        if (args[0] === 'teach' && args[1] === 'react') {
+            const parts = xalman.replace("teach react ", "").split(/\s*-\s*/);
+            if (parts.length < 2) return api.sendMessage('❌ | Invalid format! Use: teach react message - ❤️, 😀', event.threadID, event.messageID);
+            const msg = parts[0].trim();
+            const reacts = parts[1].trim();
+            const res = await axios.get(`${link}?teach=${encodeURIComponent(msg)}&react=${encodeURIComponent(reacts)}`);
+            return api.sendMessage(`✅ Reacts added: ${res.data.message}`, event.threadID, event.messageID);
+        }
+        if (args[0] === 'teach' && args[1] === 'amar') {
+            const parts = xalman.split(/\s*-\s*/);
+            if (parts.length < 2) return api.sendMessage('❌ | Invalid format! Use: teach amar message - reply', event.threadID, event.messageID);
+            const msg = parts[0].replace("teach amar ", "").trim();
+            const reply = parts[1].trim();
+            const res = await axios.get(`${link}?teach=${encodeURIComponent(msg)}&senderID=${uid}&reply=${encodeURIComponent(reply)}&key=intro`);
+            return api.sendMessage(`✅ Intro reply added: ${res.data.message}`, event.threadID, event.messageID);
+        }
+        if (args[0] === 'teach' && args[1] !== 'amar' && args[1] !== 'react') {
+            const parts = xalman.split(/\s*-\s*/);
+            if (parts.length < 2) return api.sendMessage('❌ | Invalid format! Use: teach message - reply1, reply2', event.threadID, event.messageID);
+            const msg = parts[0].replace("teach ", "").trim();
+            const replies = parts[1].trim();
+            const res = await axios.get(`${link}?teach=${encodeURIComponent(msg)}&reply=${encodeURIComponent(replies)}&senderID=${uid}&threadID=${event.threadID}`);
+            const teacherName = (await usersData.get(res.data.teacher)).name || "Unknown";
+            const outputMessage = utils.monospace(`✅ Replies added: ${res.data.message}\n👤 Teacher: ${teacherName}\n📚 Total Teachs: ${res.data.teachs}`);
+            return api.sendMessage(outputMessage, event.threadID, event.messageID);
+        }
+
+        const resData = (await axios.get(`${link}?text=${encodeURIComponent(xalman)}&senderID=${uid}`)).data.reply;
+        const replyText = utils.monospace(resData);
+        api.sendMessage(replyText, event.threadID, (error, info) => {
+            global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, type: "reply", messageID: info.messageID, author: event.senderID, apiUrl: link });
+        }, event.messageID);
 
     } catch (e) {
-        console.log("Error in onStart:", e.message);
-        api.sendMessage("❌ একটু সমস্যা হয়েছে... আবার চেষ্টা করো! 💫", event.threadID, msgID);
+        console.log(e);
+        api.sendMessage("Check console for error", event.threadID, event.messageID);
     }
 };
 
-module.exports.onReply = async function({ api, event, Reply }) {
+module.exports.onReply = async ({ api, event, Reply }) => {
     try {
-        const msgID = event.messageID || null;
-        if (!event.body) return;
-
-        const userText = event.body.trim();
-        if (userText.length === 0) return;
-
-        const senderID = event.senderID;
-        const reply = generateResponse(userText);
-
-        api.sendMessage(reply, event.threadID, (error, info) => {
-            if (error) return console.log("Error:", error);
-            if (info && info.messageID) {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: "baby",
-                    author: senderID
-                });
-            }
-        }, msgID);
-
+        if (event.type == "message_reply") {
+            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(event.body?.toLowerCase())}&senderID=${event.senderID}`)).data.reply;
+            const replyText = utils.monospace(a);
+            await api.sendMessage(replyText, event.threadID, (error, info) => {
+                global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, type: "reply", messageID: info.messageID, author: event.senderID });
+            }, event.messageID);
+        }
     } catch (err) {
-        console.log("Error in onReply:", err.message);
-        api.sendMessage("💚 আমি শুনছি সোনা! বলো আরও 🤍", event.threadID, event.messageID || null);
+        return api.sendMessage(`Error: ${err.message}`, event.threadID, event.messageID);
     }
 };
 
-module.exports.onChat = async function({ api, event }) {
+module.exports.onChat = async ({ api, event, usersData }) => {
     try {
         const body = event.body ? event.body.toLowerCase() : "";
-        const msgID = event.messageID || null;
+        if (body.startsWith("baby") || body.startsWith("bby") || body.startsWith("bot") || body.startsWith("jan") || body.startsWith("babu") || body.startsWith("alya") || body.startsWith("nishu") || body.startsWith("nusrat") || body.startsWith("hafsa")) {
+            const arr = body.replace(/^\S+\s*/, "");
+            const uid = event.senderID;
+            const senderName = (await usersData.getName(uid)) || "User";
+            const baseReplies = [
+                "তোর তো বিয়ে হয় নাই বেবি পাইলি কই-🤦🏻", "পরকিয়া করছোছ নাকি শালা-🥲🤧", "কি খবর কেমনের আছো? 😊", "আজকে তো অনেক দিন পর কথা বলছো 😒",
+                "কোথায় ছিলি এতদিন? 🤔", "তোকে ছাড়া বড় মন খারাপ লাগে 💔", "একটু হাসি না তোর হাসি দেখলে ভালো লাগে 💕", "তোরে খুব মিস করছি জানিস? 🥺",
+                "তোর জন্য রোজ দোয়া করি ❤️", "তোকে পেয়ে আমি সত্যি ভাগ্যবান 😇", "তোর মুখে একটা মিষ্টি হাসি সবসময় থাকুক ✨", "তোকে খুব ভালোবাসি রে পাগল 💝",
+                "তুই আমার জীবনের সবচেয়ে সুন্দর মানুষ 🌸", "তোর মতো বন্ধু পেয়ে আমি ধন্য 🙏", "তোর কথা ভাবলে মনটা শান্তি পায় 🕊️", "তুই আমার সেরা ক্রাশ 💘",
+                "তোর জন্য আমি সবসময় আছি 🤗", "তুই আমার প্রাণের স্পন্দন 💓", "তোর স্মৃতি আমার চোখে ভাসে 🌙", "তোকে আল্লাহ আমার জন্য রেখেছে বলে বিশ্বাস হয় 🤲"
+            ];
 
-        const triggers = ["baby", "bby", "bot", "jan", "babu", "janu", "বেবু", "সোনা", "মারি"];
-        const hasTrigger = triggers.some(trigger => body.startsWith(trigger));
-
-        if (!hasTrigger) return;
-
-        const userText = body.replace(/^\S+\s*/, "").trim();
-        const senderID = event.senderID;
-
-        const reply = !userText ? getContextualGreeting() : generateResponse(userText);
-
-        api.sendMessage(reply, event.threadID, (error, info) => {
-            if (error) return console.log("Error:", error);
-            if (info && info.messageID) {
-                global.GoatBot.onReply.set(info.messageID, {
-                    commandName: "baby",
-                    author: senderID
-                });
+            if (!arr) {
+                const randomReply = baseReplies[Math.floor(Math.random() * baseReplies.length)];
+                const mentionObj = utils.realMention(senderName, uid, randomReply);
+                await api.sendMessage(mentionObj, event.threadID, (error, info) => {
+                    if (info) {
+                        global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, type: "reply", messageID: info.messageID, author: event.senderID });
+                    }
+                }, event.messageID);
+                return;
             }
-        }, msgID);
-
+            const a = (await axios.get(`${await baseApiUrl()}/baby?text=${encodeURIComponent(arr)}&senderID=${event.senderID}`)).data.reply;
+            const replyText = utils.monospace(a);
+            await api.sendMessage(replyText, event.threadID, (error, info) => {
+                global.GoatBot.onReply.set(info.messageID, { commandName: this.config.name, type: "reply", messageID: info.messageID, author: event.senderID });
+            }, event.messageID);
+        }
     } catch (err) {
-        console.log("Error in onChat:", err.message);
+        console.error("onChat Error:", err);
     }
 };
